@@ -11,21 +11,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
         color-scheme: light;
-        --paper: #f6f4ef;
-        --ink: #0b1320;
-        --ink-soft: #344055;
-        --accent: #f3a712;
-        --accent-2: #0ea5a5;
-        --accent-3: #ef5b5b;
-        --card: #ffffff;
-        --line: rgba(12, 18, 32, 0.12);
-        --shadow: 0 20px 60px rgba(10, 15, 30, 0.18);
+        --bg: #f9fafb;
+        --bg-elevated: #ffffff;
+        --ink: #0f172a;
+        --ink-muted: #64748b;
+        --line: #e2e8f0;
+        --accent: #10a37f;
+        --accent-dark: #0b7d62;
+        --accent-soft: rgba(16, 163, 127, 0.12);
+        --shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        --radius-lg: 20px;
+        --radius-md: 14px;
       }
 
       * {
@@ -34,46 +36,42 @@
 
       body {
         margin: 0;
-        font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+        font-family: "Sora", "Segoe UI", sans-serif;
         color: var(--ink);
-        background: var(--paper);
-        min-height: 100vh;
-        position: relative;
+        background: var(--bg);
         overflow-x: hidden;
       }
 
       body::before,
       body::after {
         content: "";
-        position: absolute;
-        z-index: 0;
-        width: 55vw;
-        height: 55vw;
+        position: fixed;
+        width: 42vw;
+        height: 42vw;
         border-radius: 50%;
-        filter: blur(80px);
+        filter: blur(90px);
         opacity: 0.35;
+        z-index: 0;
         pointer-events: none;
       }
 
       body::before {
-        background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(16, 163, 127, 0.45) 0%, transparent 65%);
         top: -20vw;
-        left: -10vw;
+        right: -8vw;
       }
 
       body::after {
-        background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(15, 118, 110, 0.35) 0%, transparent 70%);
         bottom: -25vw;
-        right: -15vw;
+        left: -12vw;
       }
 
-      .grid-overlay {
+      .noise {
         position: fixed;
         inset: 0;
-        background-image:
-          linear-gradient(to right, rgba(10, 15, 30, 0.06) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(10, 15, 30, 0.06) 1px, transparent 1px);
-        background-size: 80px 80px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        mix-blend-mode: multiply;
         pointer-events: none;
         z-index: 0;
       }
@@ -84,29 +82,37 @@
       }
 
       header {
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(16px);
+        background: rgba(249, 250, 251, 0.85);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        z-index: 10;
+      }
+
+      .nav {
         max-width: 1120px;
         margin: 0 auto;
-        padding: 28px 24px 0;
+        padding: 18px 24px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 18px;
       }
 
       .logo {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 12px;
-        font-weight: 700;
-        letter-spacing: 0.4px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
       }
 
-      .logo-badge {
-        width: 40px;
-        height: 40px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-        box-shadow: 0 12px 24px rgba(14, 165, 165, 0.25);
+      .logo-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: linear-gradient(140deg, #0f766e 0%, #10a37f 100%);
         display: grid;
         place-items: center;
         color: #fff;
@@ -115,13 +121,13 @@
 
       nav {
         display: flex;
-        gap: 20px;
+        gap: 18px;
         font-size: 0.95rem;
       }
 
       nav a {
-        color: var(--ink-soft);
         text-decoration: none;
+        color: var(--ink-muted);
         font-weight: 500;
       }
 
@@ -129,28 +135,31 @@
         color: var(--ink);
       }
 
-      .hero {
+      .container {
         max-width: 1120px;
         margin: 0 auto;
-        padding: 64px 24px 40px;
+        padding: 0 24px;
+      }
+
+      .hero {
+        padding: 72px 0 48px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 36px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 32px;
         align-items: center;
       }
 
       .hero h1 {
-        font-family: "DM Serif Display", "Times New Roman", serif;
         font-size: clamp(2.6rem, 5vw, 4.2rem);
-        margin: 0 0 16px;
-        letter-spacing: 0.5px;
+        margin: 0 0 18px;
+        letter-spacing: -0.03em;
       }
 
       .hero p {
-        font-size: 1.1rem;
-        color: var(--ink-soft);
         margin: 0 0 24px;
-        line-height: 1.6;
+        color: var(--ink-muted);
+        line-height: 1.7;
+        font-size: 1.05rem;
       }
 
       .cta {
@@ -160,14 +169,15 @@
       }
 
       .button {
-        padding: 12px 18px;
-        border-radius: 999px;
-        border: 1px solid transparent;
-        font-weight: 600;
-        text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
+        padding: 12px 18px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 1px solid transparent;
       }
 
       .button.primary {
@@ -177,43 +187,69 @@
       }
 
       .button.secondary {
-        background: transparent;
-        border-color: var(--line);
         color: var(--ink);
+        border-color: var(--line);
+        background: #fff;
       }
 
-      .hero-card {
-        background: var(--card);
-        border-radius: 24px;
+      .hero-panel {
+        background: var(--bg-elevated);
+        border-radius: var(--radius-lg);
         border: 1px solid var(--line);
         padding: 28px;
         box-shadow: var(--shadow);
       }
 
-      .hero-card .tagline {
+      .hero-panel h3 {
+        margin: 0 0 12px;
+        font-size: 1.2rem;
+      }
+
+      .hero-panel .signal {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: var(--accent-dark);
+        background: var(--accent-soft);
+        padding: 6px 10px;
+        border-radius: 999px;
         font-weight: 600;
-        color: var(--accent-2);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-size: 0.75rem;
       }
 
-      .hero-card h3 {
-        margin: 12px 0 16px;
-        font-size: 1.4rem;
-      }
-
-      .hero-card ul {
-        margin: 0;
+      .hero-panel ul {
+        margin: 14px 0 0;
         padding: 0 0 0 18px;
-        color: var(--ink-soft);
+        color: var(--ink-muted);
         line-height: 1.6;
       }
 
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin: 40px 0 0;
+      }
+
+      .metric {
+        background: var(--bg-elevated);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        padding: 16px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 1.3rem;
+      }
+
+      .metric span {
+        color: var(--ink-muted);
+        font-size: 0.9rem;
+      }
+
       section {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 48px 24px;
+        padding: 56px 0;
       }
 
       .section-title {
@@ -223,50 +259,75 @@
         margin-bottom: 24px;
       }
 
-      .section-title span {
-        display: inline-block;
-        width: 18px;
-        height: 18px;
+      .section-title .dot {
+        width: 14px;
+        height: 14px;
         border-radius: 4px;
-        background: var(--accent-3);
+        background: var(--accent);
       }
 
       .section-title h2 {
         margin: 0;
-        font-size: 1.8rem;
+        font-size: 1.9rem;
+        letter-spacing: -0.02em;
       }
 
-      .cards {
+      .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 20px;
       }
 
       .card {
-        background: var(--card);
-        border-radius: 18px;
+        background: var(--bg-elevated);
         border: 1px solid var(--line);
+        border-radius: var(--radius-md);
         padding: 20px;
-        box-shadow: 0 16px 40px rgba(10, 15, 30, 0.1);
       }
 
       .card h4 {
-        margin: 0 0 8px;
+        margin: 0 0 10px;
         font-size: 1.1rem;
       }
 
       .card p {
         margin: 0;
-        color: var(--ink-soft);
+        color: var(--ink-muted);
         line-height: 1.6;
       }
 
+      .workflow {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+      }
+
+      .step {
+        background: var(--bg-elevated);
+        border: 1px dashed var(--line);
+        border-radius: var(--radius-md);
+        padding: 16px;
+      }
+
+      .step span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent-dark);
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
       .code-block {
-        background: #111827;
-        color: #e5e7eb;
-        border-radius: 16px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: var(--radius-md);
         padding: 20px;
-        font-family: "Courier New", monospace;
+        font-family: "JetBrains Mono", monospace;
         font-size: 0.95rem;
         line-height: 1.6;
         overflow-x: auto;
@@ -281,23 +342,23 @@
       .pill {
         padding: 8px 12px;
         border-radius: 999px;
-        background: rgba(14, 165, 165, 0.12);
-        border: 1px solid rgba(14, 165, 165, 0.35);
-        font-size: 0.9rem;
+        border: 1px solid var(--line);
+        background: #fff;
         font-weight: 600;
-        color: #0f766e;
+        font-size: 0.9rem;
       }
 
-      .footer {
-        padding: 36px 24px 60px;
+      footer {
+        padding: 40px 0 60px;
         text-align: center;
-        color: var(--ink-soft);
+        color: var(--ink-muted);
+        font-size: 0.9rem;
       }
 
       [data-reveal] {
         opacity: 0;
-        transform: translateY(12px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
+        transform: translateY(14px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
       }
 
       [data-reveal].is-visible {
@@ -306,45 +367,39 @@
       }
 
       @media (max-width: 720px) {
-        header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
         nav {
           flex-wrap: wrap;
-        }
-
-        .hero {
-          padding-top: 40px;
+          justify-content: flex-start;
         }
       }
     </style>
   </head>
   <body>
-    <div class="grid-overlay" aria-hidden="true"></div>
+    <div class="noise" aria-hidden="true"></div>
     <div class="page">
       <header>
-        <div class="logo">
-          <div class="logo-badge">NC</div>
-          <span>neural-codex</span>
+        <div class="nav">
+          <div class="logo">
+            <div class="logo-mark">NC</div>
+            <span>neural-codex</span>
+          </div>
+          <nav>
+            <a href="#overview">Overview</a>
+            <a href="#workflow">Workflow</a>
+            <a href="#prompts">Prompts</a>
+            <a href="#setup">Setup</a>
+          </nav>
         </div>
-        <nav>
-          <a href="#overview">Overview</a>
-          <a href="#setup">Quick Setup</a>
-          <a href="#prompts">Prompts</a>
-          <a href="#skills">Skills</a>
-        </nav>
       </header>
 
-      <main>
+      <main class="container">
         <section class="hero" id="overview">
           <div data-reveal>
-            <h1>Codex-native workflows for serious iteration.</h1>
+            <h1>Codex-native workflows with a neural spine.</h1>
             <p>
-              neural-codex ports the neural-claude loop, prompts, and templates
-              into the Codex CLI. It is lean, file-based, and designed for
-              repeatable execution with clear state and logs.
+              neural-codex brings structured prompts, memory, and the Ralph loop
+              to the Codex CLI. It is file-based, traceable, and built for
+              repeatable execution without hidden state.
             </p>
             <div class="cta">
               <a class="button primary" href="#setup">Get started</a>
@@ -354,46 +409,114 @@
                 target="_blank"
                 rel="noreferrer"
               >
-                View on GitHub
+                View repository
               </a>
             </div>
+            <div class="metrics">
+              <div class="metric">
+                <strong>20+ prompts</strong>
+                <span>Namespaced and reusable</span>
+              </div>
+              <div class="metric">
+                <strong>PRD-driven</strong>
+                <span>Repeatable loop execution</span>
+              </div>
+              <div class="metric">
+                <strong>File-based</strong>
+                <span>Plans and logs in repo</span>
+              </div>
+            </div>
           </div>
-          <div class="hero-card" data-reveal>
-            <div class="tagline">What ships</div>
-            <h3>Prompts, templates, loops, and skills</h3>
+          <div class="hero-panel" data-reveal>
+            <div class="signal">Ralph loop ready</div>
+            <h3>What ships in the kit</h3>
             <ul>
-              <li>Ralph loop with PRD gating</li>
-              <li>Namespaced prompts for planning and routing</li>
-              <li>Templates for PRDs, progress logs, expertise</li>
-              <li>Skills for memory, worktrees, reviews, and learning</li>
+              <li>Loop control, planning, and routing prompts</li>
+              <li>Templates for PRD, progress, expertise</li>
+              <li>Skills for memory, reviews, and worktrees</li>
+              <li>Setup scripts for global and project installs</li>
             </ul>
           </div>
         </section>
 
         <section>
           <div class="section-title" data-reveal>
-            <span></span>
-            <h2>Why it works</h2>
+            <div class="dot"></div>
+            <h2>Why it feels different</h2>
           </div>
-          <div class="cards">
+          <div class="grid">
             <div class="card" data-reveal>
-              <h4>File-based state</h4>
-              <p>Every task, log, and plan lives in the repo for auditability.</p>
+              <h4>Low-noise automation</h4>
+              <p>
+                Every run is grounded in a PRD and a progress log. You can audit
+                the full decision trail.
+              </p>
             </div>
             <div class="card" data-reveal>
-              <h4>Small-loop discipline</h4>
-              <p>PRD-driven tasks keep the loop safe and measurable.</p>
+              <h4>Memory without magic</h4>
+              <p>
+                All memory is explicit, file-based, and under version control.
+              </p>
             </div>
             <div class="card" data-reveal>
-              <h4>Prompt namespace</h4>
-              <p>All workflow commands are under `neural.*` for clarity.</p>
+              <h4>Composable prompts</h4>
+              <p>
+                The `neural.*` namespace keeps workflow tools discoverable and
+                consistent across projects.
+              </p>
             </div>
+          </div>
+        </section>
+
+        <section id="workflow">
+          <div class="section-title" data-reveal>
+            <div class="dot"></div>
+            <h2>The neural loop</h2>
+          </div>
+          <div class="workflow" data-reveal>
+            <div class="step">
+              <span>1</span>
+              <h4>Plan</h4>
+              <p>Break work into PRD tasks with dependencies and acceptance.</p>
+            </div>
+            <div class="step">
+              <span>2</span>
+              <h4>Execute</h4>
+              <p>Run the Ralph loop to claim and solve tasks safely.</p>
+            </div>
+            <div class="step">
+              <span>3</span>
+              <h4>Verify</h4>
+              <p>Gate changes with tests and auto-commit on green.</p>
+            </div>
+            <div class="step">
+              <span>4</span>
+              <h4>Learn</h4>
+              <p>Log progress, capture memory, and refine prompts.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="prompts">
+          <div class="section-title" data-reveal>
+            <div class="dot"></div>
+            <h2>Prompts and skills</h2>
+          </div>
+          <div class="pill-group" data-reveal>
+            <div class="pill">neural.loop-start</div>
+            <div class="pill">neural.plan-execute</div>
+            <div class="pill">neural.route</div>
+            <div class="pill">neural.evolve</div>
+            <div class="pill">neural.output-style</div>
+            <div class="pill">worktree-manager</div>
+            <div class="pill">memory-system</div>
+            <div class="pill">code-reviewer</div>
           </div>
         </section>
 
         <section id="setup">
           <div class="section-title" data-reveal>
-            <span></span>
+            <div class="dot"></div>
             <h2>Quick setup</h2>
           </div>
           <div class="code-block" data-reveal>
@@ -404,58 +527,19 @@
           </div>
         </section>
 
-        <section id="prompts">
-          <div class="section-title" data-reveal>
-            <span></span>
-            <h2>Core prompts</h2>
-          </div>
-          <div class="pill-group" data-reveal>
-            <div class="pill">neural.loop-start</div>
-            <div class="pill">neural.loop-plan</div>
-            <div class="pill">neural.loop-status</div>
-            <div class="pill">neural.loop-cancel</div>
-            <div class="pill">neural.plan</div>
-            <div class="pill">neural.plan-execute</div>
-            <div class="pill">neural.route</div>
-            <div class="pill">neural.question</div>
-            <div class="pill">neural.output-style</div>
-          </div>
-        </section>
-
-        <section id="skills">
-          <div class="section-title" data-reveal>
-            <span></span>
-            <h2>Skills to start with</h2>
-          </div>
-          <div class="cards">
-            <div class="card" data-reveal>
-              <h4>autonomous-loop</h4>
-              <p>Ralph loop execution with PRD gating and logging.</p>
-            </div>
-            <div class="card" data-reveal>
-              <h4>worktree-manager</h4>
-              <p>Parallel worktrees for multiple Codex sessions.</p>
-            </div>
-            <div class="card" data-reveal>
-              <h4>memory-system</h4>
-              <p>Progress-log memory with read/write helpers.</p>
-            </div>
-          </div>
-        </section>
-
         <section>
           <div class="section-title" data-reveal>
-            <span></span>
-            <h2>Run the loop</h2>
+            <div class="dot"></div>
+            <h2>Run the Ralph loop</h2>
           </div>
           <div class="code-block" data-reveal>
-            TEST_CMD="npm test" scripts/neural-codex/ralph-loop.sh 5
+            TEST_CMD="pytest -q" scripts/neural-codex/ralph-loop.sh 5
           </div>
         </section>
       </main>
 
-      <footer class="footer">
-        Built for focused, repeatable Codex workflows. No hooks, no noise.
+      <footer>
+        Built for focused, repeatable Codex workflows.
       </footer>
     </div>
 
