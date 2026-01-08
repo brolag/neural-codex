@@ -139,11 +139,11 @@
         "Docs mention supported MCP servers and no Claude-specific hooks/TTS",
         "Quick start includes global + project setup"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 1,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": ""
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     }
   ]
 }
