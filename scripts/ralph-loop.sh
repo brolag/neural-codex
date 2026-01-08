@@ -100,7 +100,7 @@ Rules:
 - When done, print a brief summary and suggested targeted test command (if any), e.g., TEST: npm test -- file.spec.ts
 EOF
 )
-  timeout "${CODEx_TIMEOUT}" codex -p "${codex_prompt}" || return 1
+  timeout "${CODEx_TIMEOUT}" codex exec "${codex_prompt}" || return 1
 }
 
 run_tests() {
