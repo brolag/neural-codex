@@ -13,10 +13,10 @@
         "Prompt content avoids Claude-specific hooks/statusline/TTS references"
       ],
       "passes": false,
-      "attempts": 1,
+      "attempts": 2,
       "status": "in_progress",
       "in_progress": true,
-      "notes": "Tests failed"
+      "notes": "Codex failed"
     },
     {
       "id": "prompts-meta",

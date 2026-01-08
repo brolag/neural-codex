@@ -50,6 +50,22 @@ def _front_matter(text: str) -> dict[str, str]:
     return data
 
 
+def _body(text: str) -> str:
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        raise AssertionError("Prompt is missing YAML front matter start")
+
+    end_idx = None
+    for idx, line in enumerate(lines[1:], start=1):
+        if line.strip() == "---":
+            end_idx = idx
+            break
+    if end_idx is None:
+        raise AssertionError("Prompt is missing YAML front matter end")
+
+    return "\n".join(lines[end_idx + 1 :]).strip()
+
+
 def test_required_prompts_exist() -> None:
     for name in PROMPT_NAMES:
         path = _prompt_path(name)
@@ -62,6 +78,13 @@ def test_required_prompts_have_description_and_argument_hint() -> None:
         front = _front_matter(_read_prompt(path))
         assert front.get("description"), f"Missing description in {path}"
         assert front.get("argument-hint"), f"Missing argument-hint in {path}"
+
+
+def test_required_prompts_have_body_content() -> None:
+    for name in PROMPT_NAMES:
+        path = _prompt_path(name)
+        body = _body(_read_prompt(path))
+        assert body, f"Missing prompt body content in {path}"
 
 
 def test_required_prompts_avoid_claude_specific_terms() -> None:
