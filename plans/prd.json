@@ -119,11 +119,11 @@
         "scripts/setup-project.sh seeds .codex/skills into a project",
         "Existing setup behavior preserved"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 2,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": ""
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     },
     {
       "id": "docs-readme",
@@ -140,9 +140,9 @@
         "Quick start includes global + project setup"
       ],
       "passes": false,
-      "attempts": 0,
-      "status": "todo",
-      "in_progress": false,
+      "attempts": 1,
+      "status": "in_progress",
+      "in_progress": true,
       "notes": ""
     }
   ]

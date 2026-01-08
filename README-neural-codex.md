@@ -14,6 +14,8 @@ Codex-native prompts, templates, scripts, and agents that bring the neural-claud
 - Memory: `neural.memory`, `neural.recall`
 - Routing & analysis: `neural.route`, `neural.question`, `neural.pv`, `neural.evolve`
 - Research: `neural.research`, `neural.gh-learn`, `neural.yt-learn`
+- Sync & changelog: `neural.sync`, `neural.changelog-architect`
+- Task tracking: `neural.todo-new`, `neural.todo-check`
 - Meta creation: `neural.meta.agent`, `neural.meta.skill`, `neural.meta.prompt`, `neural.meta.improve`, `neural.meta.eval`, `neural.meta.brain`
 - Output styles: `neural.output-style` (default/concise/table/yaml/html/genui)
 
@@ -122,7 +124,7 @@ Notes:
 - For direct CLI usage: `scripts/memory_write.py` and `scripts/memory_read.py`.
 
 ## MCP config
-Project MCP stubs live in `.codex/config.toml` and include:
+Supported MCP servers are stubbed in `.codex/config.toml` and include:
 - chrome-devtools
 - github
 - search (Exa)
