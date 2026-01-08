@@ -8,4 +8,5 @@ Routing guidance:
 2) For the TASK, choose a single primary agent/persona; include a one-liner why.
 3) Remind to reset context before switching (fresh turn, restate objective).
 4) Suggest the most relevant prompt(s) to run next (e.g., loop-start, plan, research).
+5) If the task involves creating agents, skills, or prompts, suggest `neural.meta.agent`, `neural.meta.skill`, or `neural.meta.prompt`.
 Keep output brief.
