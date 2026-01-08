@@ -1,7 +1,48 @@
-# neural-codex setup
+# neural-codex
 
-This repository contains Codex-native prompts, templates, scripts, and config
-to port the neural-claude workflow into Codex.
+Codex-native prompts, templates, scripts, and agents that bring the neural-claude workflow to the Codex CLI. Everything is file-based, repo-local, and designed for repeatable iteration with clear state.
+
+- No Claude-specific hooks, status lines, or TTS
+- All state lives in `plans/` and `.codex/`
+- Prompts are namespaced as `neural.*`
+
+## What you get
+
+### Prompts
+- Loop control: `neural.loop-start`, `neural.loop-plan`, `neural.loop-status`, `neural.loop-cancel`
+- Planning: `neural.plan`, `neural.plan-execute`
+- Memory: `neural.memory`, `neural.recall`
+- Routing & analysis: `neural.route`, `neural.question`, `neural.pv`, `neural.evolve`
+- Research: `neural.research`, `neural.gh-learn`, `neural.yt-learn`
+- Meta creation: `neural.meta.agent`, `neural.meta.skill`, `neural.meta.prompt`, `neural.meta.improve`, `neural.meta.eval`, `neural.meta.brain`
+- Output styles: `neural.output-style` (default/concise/table/yaml/html/genui)
+
+### Skills
+Project-scoped skills in `.codex/skills/`:
+- autonomous-loop: Ralph loop usage and guardrails
+- worktree-manager: parallel worktrees for multi-session work
+- code-reviewer: production-minded reviews
+- memory-system: progress-log memory
+- pattern-detector: PRD/progress pattern analysis
+- prompt-engineering: prompt creation/refinement
+- plan-execute: structured planning and execution
+- youtube-learner: transcript-based summaries
+
+### Templates
+- `plans/prd.json` and `plans/progress.jsonl`
+- `expertise.template.yaml`
+- `todo-workflow.md`
+
+### Scripts
+- `scripts/ralph-loop.sh` and `scripts/ralph-once.sh`
+- `scripts/memory_read.py` / `scripts/memory_write.py`
+- `scripts/youtube-transcript.py`
+- `scripts/setup-global.sh` / `scripts/setup-project.sh`
+
+### Agents
+- `agents/multi-ai/AGENTS.md`
+- `agents/dispatcher/AGENTS.md`
+- `agents/meta-agent/AGENTS.md`
 
 ## Quick setup
 1) Run the global install from this repo:
@@ -18,7 +59,21 @@ scripts/setup-project.sh
 /prompts:neural.loop-start
 ```
 
-## Global install (one time)
+## Loop prerequisites
+The Ralph loop requires `flock` and `timeout`.
+
+macOS (Homebrew):
+```bash
+brew install util-linux coreutils
+export PATH="/opt/homebrew/opt/util-linux/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+```
+
+Linux:
+- Ensure `flock` (util-linux) and `timeout` (coreutils) are available in `PATH`.
+
+## Installation details
+
+### Global install (one time)
 ```bash
 scripts/setup-global.sh
 ```
@@ -33,7 +88,7 @@ Use `--force` to overwrite existing files:
 scripts/setup-global.sh --force
 ```
 
-## Project install (per repo)
+### Project install (per repo)
 ```bash
 scripts/setup-project.sh
 ```
@@ -51,38 +106,55 @@ Install into another path:
 scripts/setup-project.sh --path /path/to/project
 ```
 
-## Loop usage
+## Ralph loop usage
 ```bash
 TEST_CMD="npm test" scripts/neural-codex/ralph-loop.sh 5
 ```
 
-## Prompts
-After global setup, restart Codex and run:
+Notes:
+- The loop claims one task per iteration from `plans/prd.json`.
+- It writes progress to `plans/progress.jsonl`.
+- It commits only when tests pass.
+
+## Memory workflow
+- Use `/prompts:neural.memory` to append notes to `plans/progress.jsonl`.
+- Use `/prompts:neural.recall` to search the log.
+- For direct CLI usage: `scripts/memory_write.py` and `scripts/memory_read.py`.
+
+## MCP config
+Project MCP stubs live in `.codex/config.toml` and include:
+- chrome-devtools
+- github
+- search (Exa)
+- optional playwright
+
+Set tokens in your shell as needed (e.g., `GITHUB_PERSONAL_ACCESS_TOKEN`).
+
+## Repo layout
 ```
-/prompts:neural.loop-start
+.
+├── .codex/
+│   ├── prompts/
+│   ├── skills/
+│   ├── templates/
+│   └── config.toml
+├── agents/
+├── plans/
+├── scripts/
+└── README.md
 ```
 
-Key prompts:
-- loop: `neural.loop-start`, `neural.loop-plan`, `neural.loop-status`, `neural.loop-cancel`
-- planning: `neural.plan`, `neural.plan-execute`
-- memory: `neural.memory`, `neural.recall`
-- routing: `neural.route`, `neural.question`, `neural.pv`
-- research/learning: `neural.research`, `neural.gh-learn`, `neural.yt-learn`
-- meta: `neural.meta.agent`, `neural.meta.skill`, `neural.meta.prompt`, `neural.meta.improve`, `neural.meta.eval`, `neural.meta.brain`
-- output styles: `neural.output-style` (default/concise/table/yaml/html/genui)
+## Troubleshooting
 
-## Skills
-Project-scoped skills live in `.codex/skills/`:
-- autonomous-loop
-- worktree-manager
-- code-reviewer
-- memory-system
-- pattern-detector
-- prompt-engineering
-- plan-execute
-- youtube-learner
+Prompts not showing:
+- Run `scripts/setup-global.sh` and restart Codex.
 
-## Helper Scripts
-- `scripts/memory_write.py` and `scripts/memory_read.py` for progress-log memory
-- `scripts/youtube-transcript.py` for transcript extraction
-- In seeded projects, these live under `scripts/neural-codex/`
+Ralph loop fails immediately:
+- Ensure `flock` and `timeout` are in `PATH`.
+- Ensure `codex` CLI is installed and logged in.
+
+Tests not running:
+- Set `TEST_CMD` explicitly for your project.
+
+## GitHub Pages
+Static site lives in `docs/`. Enable Pages with source `main` / `docs/`.
