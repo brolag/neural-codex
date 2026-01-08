@@ -30,11 +30,11 @@
         "Meta prompts reference Codex paths (.codex/, plans/) and avoid .claude/",
         "Routing guidance references how to use meta prompts"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 2,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": ""
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     },
     {
       "id": "output-style-presets",
@@ -49,9 +49,9 @@
         "README documents the available output styles"
       ],
       "passes": false,
-      "attempts": 0,
-      "status": "todo",
-      "in_progress": false,
+      "attempts": 1,
+      "status": "in_progress",
+      "in_progress": true,
       "notes": ""
     },
     {
