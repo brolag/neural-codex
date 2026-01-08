@@ -12,6 +12,10 @@ Create new agents, prompts, or skills when a repeatable pattern emerges.
 3) Ensure file content is focused, minimal, and scoped to one job.
 4) Report how to invoke the new artifact.
 
+## Codex Tools
+- Use `rg` to locate related patterns or references.
+- Use `apply_patch` for single-file edits, or `shell_command` when creating new files.
+
 ## Related Prompts
 - `/prompts:neural.meta.agent`
 - `/prompts:neural.meta.skill`

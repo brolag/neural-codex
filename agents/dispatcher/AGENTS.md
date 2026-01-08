@@ -15,6 +15,10 @@ Route tasks to the most appropriate agent or model profile based on task type an
 3) Provide a one-line rationale.
 4) Suggest the next prompt to run (plan, research, loop-start).
 
+## Codex Tools
+- Use `rg` for quick inventory before routing.
+- Use `shell_command` to validate local scripts or test commands if needed.
+
 ## Notes
 - Keep routing concise.
 - Ask for confirmation before switching personas.
