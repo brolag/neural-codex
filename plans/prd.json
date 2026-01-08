@@ -100,11 +100,11 @@
         "scripts/memory_read.py and scripts/memory_write.py exist or documented alternatives are provided",
         "Skills/prompts reference the helper scripts when available"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 1,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": ""
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     },
     {
       "id": "setup-install",
@@ -120,9 +120,9 @@
         "Existing setup behavior preserved"
       ],
       "passes": false,
-      "attempts": 0,
-      "status": "todo",
-      "in_progress": false,
+      "attempts": 2,
+      "status": "in_progress",
+      "in_progress": true,
       "notes": ""
     },
     {

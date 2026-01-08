@@ -32,7 +32,12 @@ copy_dir() {
     [[ -e "$f" ]] || continue
     local base
     base="$(basename "$f")"
-    if [[ "$FORCE" == "1" || ! -e "$dst/$base" ]]; then
+    if [[ "$FORCE" == "1" ]]; then
+      rm -rf "$dst/$base"
+      cp -R "$f" "$dst/$base"
+      continue
+    fi
+    if [[ ! -e "$dst/$base" ]]; then
       cp -R "$f" "$dst/$base"
     fi
   done
