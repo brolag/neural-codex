@@ -82,11 +82,11 @@
         "Agents reference Codex tools and avoid Claude-specific hooks",
         "Root AGENTS.md documents routing and context reset guidance"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 1,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": ""
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     },
     {
       "id": "scripts-support",
@@ -101,9 +101,9 @@
         "Skills/prompts reference the helper scripts when available"
       ],
       "passes": false,
-      "attempts": 0,
-      "status": "todo",
-      "in_progress": false,
+      "attempts": 1,
+      "status": "in_progress",
+      "in_progress": true,
       "notes": ""
     },
     {
