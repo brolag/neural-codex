@@ -1,0 +1,134 @@
+{
+  "project": "neural-codex",
+  "max_attempts": 3,
+  "items": [
+    {
+      "id": "prompts-core",
+      "title": "Port missing core neural prompts from plugin",
+      "priority": "P0",
+      "depends_on": [],
+      "acceptance": [
+        "neural.loop-cancel, neural.plan-execute, neural.question, neural.pv, neural.sync, neural.changelog-architect exist under .codex/prompts",
+        "Each prompt has description and argument-hint where relevant",
+        "Prompt content avoids Claude-specific hooks/statusline/TTS references"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "prompts-meta",
+      "title": "Add meta prompts for agent/skill/prompt creation",
+      "priority": "P1",
+      "depends_on": ["prompts-core"],
+      "acceptance": [
+        "neural.meta.agent, neural.meta.skill, neural.meta.prompt, neural.meta.improve, neural.meta.eval, neural.meta.brain exist under .codex/prompts or documented alternative",
+        "Meta prompts reference Codex paths (.codex/, plans/) and avoid .claude/",
+        "Routing guidance references how to use meta prompts"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "output-style-presets",
+      "title": "Expand output-style presets",
+      "priority": "P1",
+      "depends_on": ["prompts-core"],
+      "acceptance": [
+        "neural.output-style supports default, concise, table, yaml, html, genui",
+        "No TTS preset included",
+        "README documents the available output styles"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "skills-core",
+      "title": "Create core neural skills in Codex format",
+      "priority": "P1",
+      "depends_on": [],
+      "acceptance": [
+        ".codex/skills includes memory-system, pattern-detector, prompt-engineering, plan-execute, worktree-manager, youtube-learner",
+        "Each SKILL.md uses Codex paths (plans/, .codex/) and no .claude references",
+        "Usage examples included for each skill"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "agents-core",
+      "title": "Port key agents into AGENTS.md format",
+      "priority": "P2",
+      "depends_on": ["prompts-core"],
+      "acceptance": [
+        "agents/multi-ai/AGENTS.md, agents/dispatcher/AGENTS.md, agents/meta-agent/AGENTS.md exist",
+        "Agents reference Codex tools and avoid Claude-specific hooks",
+        "Root AGENTS.md documents routing and context reset guidance"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "scripts-support",
+      "title": "Add helper scripts for memory and learning flows",
+      "priority": "P2",
+      "depends_on": ["skills-core"],
+      "acceptance": [
+        "scripts/youtube-transcript.py exists or a documented alternative is provided",
+        "scripts/memory_read.py and scripts/memory_write.py exist or documented alternatives are provided",
+        "Skills/prompts reference the helper scripts when available"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "setup-install",
+      "title": "Update setup scripts to install skills and helpers",
+      "priority": "P2",
+      "depends_on": ["skills-core", "scripts-support"],
+      "acceptance": [
+        "scripts/setup-global.sh installs .codex/skills into ~/.codex/neural-codex and ~/.codex/skills",
+        "scripts/setup-project.sh seeds .codex/skills into a project",
+        "Existing setup behavior preserved"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    },
+    {
+      "id": "docs-readme",
+      "title": "Document prompts, skills, and setup",
+      "priority": "P2",
+      "depends_on": ["prompts-core", "skills-core", "output-style-presets"],
+      "acceptance": [
+        "README-neural-codex.md (or README.md) lists prompts, skills, and loop usage",
+        "Docs mention supported MCP servers and no Claude-specific hooks/TTS",
+        "Quick start includes global + project setup"
+      ],
+      "passes": false,
+      "attempts": 0,
+      "status": "todo",
+      "in_progress": false,
+      "notes": ""
+    }
+  ]
+}

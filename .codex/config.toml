@@ -1,0 +1,35 @@
+# neural-codex project config (local scope)
+
+# Default model (adjust as needed)
+model = "gpt-5.2-codex"
+approval_policy = "on-failure"
+
+[reasoning]
+summary = "auto"
+effort = "auto"
+
+# MCP servers (enable/adjust as available)
+[mcpServers.chrome-devtools]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest"]
+description = "Chrome DevTools MCP (headless-friendly)"
+
+[mcpServers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+description = "GitHub MCP"
+# env.GITHUB_PERSONAL_ACCESS_TOKEN should be set
+
+[mcpServers.search]
+type = "sse"
+url = "https://mcp.exa.ai/sse"
+description = "Search MCP (Exa)"
+
+# Optional: Playwright/browser MCP (uncomment if needed)
+# [mcpServers.playwright]
+# command = "npx"
+# args = ["-y", "playwright-mcp@latest"]
+# description = "Playwright/browser automation MCP"
+
+# Notify hook (optional). Point to a script such as scripts/telegram_notify.sh
+# notify = ["bash", "scripts/telegram_notify.sh"]
