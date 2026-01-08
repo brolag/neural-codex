@@ -12,11 +12,11 @@
         "Each prompt has description and argument-hint where relevant",
         "Prompt content avoids Claude-specific hooks/statusline/TTS references"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 2,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": "Codex failed"
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     },
     {
       "id": "prompts-meta",
@@ -31,9 +31,9 @@
         "Routing guidance references how to use meta prompts"
       ],
       "passes": false,
-      "attempts": 0,
-      "status": "todo",
-      "in_progress": false,
+      "attempts": 1,
+      "status": "in_progress",
+      "in_progress": true,
       "notes": ""
     },
     {
