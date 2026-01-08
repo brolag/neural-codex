@@ -18,6 +18,7 @@ Codex-native prompts, templates, scripts, and agents that bring the neural-claud
 - Task tracking: `neural.todo-new`, `neural.todo-check`
 - Meta creation: `neural.meta.agent`, `neural.meta.skill`, `neural.meta.prompt`, `neural.meta.improve`, `neural.meta.eval`, `neural.meta.brain`
 - Output styles: `neural.output-style` (default/concise/table/yaml/html/genui)
+- Skills & config: `neural.skill`, `neural.profile`, `neural.test`
 
 ### Skills
 Project-scoped skills in `.codex/skills/`:
@@ -29,6 +30,10 @@ Project-scoped skills in `.codex/skills/`:
 - prompt-engineering: prompt creation/refinement
 - plan-execute: structured planning and execution
 - youtube-learner: transcript-based summaries
+- skill-creator: bootstrap new skills with SKILL.md template
+- skill-installer: install external skills from URLs/registries
+- deep-research: multi-source comprehensive research
+- test-runner: smart test execution with Ralph integration
 
 ### Templates
 - `plans/prd.json` and `plans/progress.jsonl`
@@ -123,6 +128,22 @@ Notes:
 - Use `/prompts:neural.recall` to search the log.
 - For direct CLI usage: `scripts/memory_write.py` and `scripts/memory_read.py`.
 
+## Profiles
+
+Named configuration sets for different workflows. Switch with `codex --profile <name>`:
+
+| Profile | Model | Approval | Use Case |
+|---------|-------|----------|----------|
+| default | gpt-5.2-codex | on-failure | Standard development |
+| fast | gpt-4.1-mini | on-failure | Quick tasks, low cost |
+| autonomous | gpt-5.2-codex | never | Ralph loop, unattended work |
+| careful | gpt-5.2-codex | untrusted | Sensitive changes |
+
+Example:
+```bash
+codex --profile autonomous exec "Fix the auth bug"
+```
+
 ## MCP config
 Supported MCP servers are stubbed in `.codex/config.toml` and include:
 - chrome-devtools
@@ -131,6 +152,17 @@ Supported MCP servers are stubbed in `.codex/config.toml` and include:
 - optional playwright
 
 Set tokens in your shell as needed (e.g., `GITHUB_PERSONAL_ACCESS_TOKEN`).
+
+## Advanced Config
+
+The config file supports advanced options (see `.codex/config.toml`):
+- **Profiles**: Named config sets with different models/approval policies
+- **Notifications**: Webhooks, desktop alerts, CI integration
+- **History**: Session transcripts with size caps
+- **Telemetry**: OpenTelemetry for observability
+- **TUI**: Clickable file citations (vscode, cursor, windsurf)
+
+Reference: https://developers.openai.com/codex/config-advanced/
 
 ## Repo layout
 ```

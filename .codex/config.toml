@@ -1,14 +1,48 @@
 # neural-codex project config (local scope)
+# See: https://developers.openai.com/codex/config-advanced/
+
+# Default profile (uncomment to set)
+# default_profile = "default"
 
 # Default model (adjust as needed)
 model = "gpt-5.2-codex"
 approval_policy = "on-failure"
 
+# Sandbox level: "workspace-write" (default) or "danger-full-access"
+# sandbox = "workspace-write"
+
 [reasoning]
 summary = "auto"
 effort = "auto"
 
-# MCP servers (enable/adjust as available)
+# ============================================================================
+# PROFILES - Named configuration sets for different workflows
+# ============================================================================
+
+[profiles.default]
+model = "gpt-5.2-codex"
+approval_policy = "on-failure"
+
+[profiles.fast]
+# Lighter model for quick tasks
+model = "gpt-4.1-mini"
+approval_policy = "on-failure"
+
+[profiles.autonomous]
+# For Ralph loop iterations - auto-approve safe operations
+model = "gpt-5.2-codex"
+approval_policy = "never"
+sandbox = "workspace-write"
+
+[profiles.careful]
+# For sensitive changes - require approval for everything
+model = "gpt-5.2-codex"
+approval_policy = "untrusted"
+
+# ============================================================================
+# MCP SERVERS
+# ============================================================================
+
 [mcpServers.chrome-devtools]
 command = "npx"
 args = ["-y", "chrome-devtools-mcp@latest"]
@@ -31,5 +65,48 @@ description = "Search MCP (Exa)"
 # args = ["-y", "playwright-mcp@latest"]
 # description = "Playwright/browser automation MCP"
 
-# Notify hook (optional). Point to a script such as scripts/telegram_notify.sh
+# ============================================================================
+# NOTIFICATIONS
+# ============================================================================
+
+# Notify hook for agent-turn-complete events
+# Useful for webhooks, desktop alerts, or CI integration
 # notify = ["bash", "scripts/telegram_notify.sh"]
+
+# Example: Desktop notification on macOS
+# notify = ["osascript", "-e", "display notification \"Codex completed\" with title \"Neural Codex\""]
+
+# Example: Webhook notification
+# notify = ["curl", "-X", "POST", "-d", "@-", "https://your-webhook.com/codex"]
+
+# ============================================================================
+# HISTORY & OBSERVABILITY
+# ============================================================================
+
+[history]
+# Save session transcripts locally
+# persistence = "local"
+# max_bytes = 10485760  # 10MB cap, auto-compact old entries
+
+# OpenTelemetry configuration (uncomment to enable)
+# [telemetry]
+# enabled = true
+# endpoint = "http://localhost:4318"  # OTLP HTTP endpoint
+# service_name = "neural-codex"
+
+# ============================================================================
+# TUI SETTINGS
+# ============================================================================
+
+# Clickable file citations in terminal
+# file_opener = "vscode"  # or "cursor", "windsurf"
+
+# ============================================================================
+# PROJECT SETTINGS
+# ============================================================================
+
+# Custom project root markers (in addition to .git)
+# project_root_markers = [".codex", "package.json", "Cargo.toml"]
+
+# Max bytes for AGENTS.md discovery
+# project_doc_max_bytes = 65536
