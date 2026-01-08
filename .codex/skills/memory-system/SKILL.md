@@ -24,6 +24,16 @@ $memory-system recall "<query>"
 $memory-system forget "<query or id>"
 ```
 
+## Usage Examples
+Remember a stable preference:
+```
+$memory-system remember "Prefer rg for file searches in this repo."
+```
+Recall recent memory about tests:
+```
+$memory-system recall "tests"
+```
+
 ## Write Memory (remember)
 - Append a JSONL entry to `plans/progress.jsonl` with:
   - ts (UTC ISO-8601)

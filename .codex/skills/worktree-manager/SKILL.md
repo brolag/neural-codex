@@ -27,6 +27,12 @@ $worktree-manager clean <name>
 $worktree-manager clean --stale
 ```
 
+## Usage Examples
+Create a worktree for a docs update:
+```
+$worktree-manager new docs-refresh
+```
+
 ## Recommended Process
 1) Create a worktree:
 ```
@@ -40,6 +46,7 @@ scripts/setup-project.sh --path ../worktrees/auth-system
 ```
 cd ../worktrees/auth-system && codex
 ```
+4) Confirm `.codex/` assets exist in the worktree before starting work.
 
 ## Safety
 - Never create worktrees inside other worktrees

@@ -22,12 +22,18 @@ Plan complex tasks, then execute in smaller, verifiable steps.
 2) Execute steps in order; keep changes small.
 3) Verify with tests or checks.
 4) Summarize results and next actions.
+5) If a plan exists in `plans/prd.json`, align with dependencies and attempts.
 
 ## Optional Multi-Model Routing
 If other CLIs are installed, route simple steps:
 - `codex --profile fast "..."`
 - `gemini -y "..."`
-- `claude` via MCP profile (if configured)
 
 ## Related Prompt
 Use `/prompts:neural.plan-execute` to follow the structured plan format.
+
+## Usage Examples
+Plan a multi-step refactor before editing:
+```
+/prompts:neural.plan-execute
+```

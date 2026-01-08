@@ -29,6 +29,12 @@ Run via:
 /prompts:neural.evolve
 ```
 
+## Usage Examples
+After several failed attempts, generate an automation idea list:
+```
+/prompts:neural.evolve
+```
+
 ## Safety
 - Read-only analysis
 - Do not edit PRD directly

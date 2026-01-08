@@ -23,6 +23,12 @@ Improve or create prompts that follow the neural-codex style.
 3) Include `description` and `argument-hint` frontmatter.
 4) Prefer short, numbered steps.
 
+## Usage Examples
+Improve a prompt with a tighter argument hint:
+```
+/prompts:neural.meta.improve
+```
+
 ## Related Prompts
 - `/prompts:neural.plan`
 - `/prompts:neural.output-style`

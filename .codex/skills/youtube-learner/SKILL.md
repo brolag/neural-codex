@@ -17,6 +17,12 @@ Generate concise learning notes from a YouTube transcript.
 $youtube-learner "<youtube-url>"
 ```
 
+## Usage Examples
+Summarize a conference talk:
+```
+$youtube-learner "https://www.youtube.com/watch?v=example"
+```
+
 ## Steps
 1) Run `scripts/youtube-transcript.py <url>` (or `scripts/neural-codex/youtube-transcript.py`).
 2) Summarize key ideas, steps, and risks.
@@ -24,3 +30,4 @@ $youtube-learner "<youtube-url>"
 
 ## Notes
 - If transcript fetch fails, explain why and how to fix it.
+- If the user asks to persist learnings, append a concise note to `plans/progress.jsonl`.

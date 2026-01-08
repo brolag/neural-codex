@@ -48,11 +48,11 @@
         "No TTS preset included",
         "README documents the available output styles"
       ],
-      "passes": false,
+      "passes": true,
       "attempts": 1,
-      "status": "in_progress",
-      "in_progress": true,
-      "notes": ""
+      "status": "done",
+      "in_progress": false,
+      "notes": "Tests passed"
     },
     {
       "id": "skills-core",
@@ -65,9 +65,9 @@
         "Usage examples included for each skill"
       ],
       "passes": false,
-      "attempts": 0,
-      "status": "todo",
-      "in_progress": false,
+      "attempts": 1,
+      "status": "in_progress",
+      "in_progress": true,
       "notes": ""
     },
     {
