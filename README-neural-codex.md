@@ -15,6 +15,10 @@ Codex-native prompts, templates, scripts, and agents that bring the neural-claud
 - Routing & analysis: `neural.route`, `neural.question`, `neural.pv`, `neural.evolve`
 - Research: `neural.research`, `neural.gh-learn`, `neural.yt-learn`
 - Sync & changelog: `neural.sync`, `neural.changelog-architect`
+- Execution helpers: `neural.course`, `neural.craft`, `neural.feature`, `neural.status`, `neural.onboard`
+- Metrics: `neural.kpi`, `neural.ca`, `neural.cost`
+- Quality: `neural.slop-scan`, `neural.slop-fix`, `neural.overseer`, `neural.tdd`, `neural.debug`
+- Multi-agent: `neural.squad`, `neural.pv-mesh`
 - Task tracking: `neural.todo-new`, `neural.todo-check`
 - Meta creation: `neural.meta.agent`, `neural.meta.skill`, `neural.meta.prompt`, `neural.meta.improve`, `neural.meta.eval`, `neural.meta.brain`
 - Output styles: `neural.output-style` (default/concise/table/yaml/html/genui)
@@ -23,12 +27,24 @@ Codex-native prompts, templates, scripts, and agents that bring the neural-claud
 ### Skills
 Project-scoped skills in `.codex/skills/`:
 - autonomous-loop: Ralph loop usage and guardrails
+- agentic-course: guided lessons and references
 - worktree-manager: parallel worktrees for multi-session work
 - code-reviewer: production-minded reviews
 - memory-system: progress-log memory
 - pattern-detector: PRD/progress pattern analysis
 - prompt-engineering: prompt creation/refinement
 - plan-execute: structured planning and execution
+- craft: CRAFT prompt builder
+- feature: branch-first workflow
+- debugging: root-cause workflow
+- tdd: red-green-refactor
+- kpi: agentic KPI tracking
+- compute-advantage: agentic leverage metric
+- cost-tracker: usage cost logging
+- slop-scan: technical debt detection
+- slop-fix: safe cleanup + refactor plans
+- overseer: pre-merge review
+- squad: multi-agent orchestration
 - youtube-learner: transcript-based summaries
 - skill-creator: bootstrap new skills with SKILL.md template
 - skill-installer: install external skills from URLs/registries
@@ -39,6 +55,7 @@ Project-scoped skills in `.codex/skills/`:
 - `plans/prd.json` and `plans/progress.jsonl`
 - `expertise.template.yaml`
 - `todo-workflow.md`
+- `craft.yaml`
 
 ### Scripts
 - `scripts/ralph-loop.sh` and `scripts/ralph-once.sh`
@@ -50,6 +67,11 @@ Project-scoped skills in `.codex/skills/`:
 - `agents/multi-ai/AGENTS.md`
 - `agents/dispatcher/AGENTS.md`
 - `agents/meta-agent/AGENTS.md`
+- `agents/code-reviewer/AGENTS.md`
+- `agents/codex/AGENTS.md`
+- `agents/gemini/AGENTS.md`
+- `agents/optimizer/AGENTS.md`
+- `agents/cognitive-amplifier/AGENTS.md`
 
 ## Quick setup
 1) Run the global install from this repo:
