@@ -12,6 +12,14 @@
 - Use namespaced prompts (`neural.*`) for loop control, recall, plan, evolve, research, todo, output styles.
 - Memory is explicit: append to `plans/progress.jsonl` or expertise files; no auto indexing.
 
+## Knowledge map
+- This file is the entry map for agent instructions; keep it short.
+- Harness guidance: `docs/AGENT-HARNESS.md`.
+- Setup + usage reference: `README-neural-codex.md`.
+- Task state: `plans/prd.json` and `plans/progress.jsonl`.
+- Skills procedures: `.codex/skills/` (each has `SKILL.md`).
+- Persona-specific guidance: `agents/*/AGENTS.md`.
+
 ## Safety & Style
 - Prefer small, incremental commits; avoid touching unrelated files.
 - Use `rg` for search; respect existing code style and tests.

@@ -19,6 +19,7 @@ Codex-native prompts, templates, scripts, and agents that bring the neural-claud
 - Meta creation: `neural.meta.agent`, `neural.meta.skill`, `neural.meta.prompt`, `neural.meta.improve`, `neural.meta.eval`, `neural.meta.brain`
 - Output styles: `neural.output-style` (default/concise/table/yaml/html/genui)
 - Skills & config: `neural.skill`, `neural.profile`, `neural.test`
+- Execution: `neural.shell`
 
 ### Skills
 Project-scoped skills in `.codex/skills/`:
@@ -127,6 +128,10 @@ Notes:
 - Use `/prompts:neural.memory` to append notes to `plans/progress.jsonl`.
 - Use `/prompts:neural.recall` to search the log.
 - For direct CLI usage: `scripts/memory_write.py` and `scripts/memory_read.py`.
+
+## Agent harness
+- Knowledge map and operating guidance: `docs/AGENT-HARNESS.md`.
+- Keep `AGENTS.md` short; move details into `docs/` and link them back.
 
 ## Profiles
 
