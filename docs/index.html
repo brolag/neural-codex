@@ -10,15 +10,15 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --matrix-green: #22d3ee;
-            --matrix-green-dark: #0e7490;
-            --matrix-green-glow: #22d3ee;
-            --matrix-bg: #020617;
-            --matrix-bg-light: #0f172a;
-            --terminal-border: #0b3b46;
-            --text-dim: #6bbbd0;
-            --text-bright: #e0f9ff;
-            --scanline: rgba(34, 211, 238, 0.035);
+            --matrix-green: #f7f7f7;
+            --matrix-green-dark: #9ca3af;
+            --matrix-green-glow: #d1d5db;
+            --matrix-bg: #0a0a0a;
+            --matrix-bg-light: #111111;
+            --terminal-border: #2b2b2b;
+            --text-dim: #9ca3af;
+            --text-bright: #f7f7f7;
+            --scanline: rgba(255, 255, 255, 0.03);
         }
 
         * {
@@ -879,7 +879,7 @@
             ctx.fillStyle = 'rgba(2, 6, 23, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#22d3ee';
+            ctx.fillStyle = '#d1d5db';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
