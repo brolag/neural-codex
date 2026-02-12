@@ -20,7 +20,7 @@ GLOBAL_SCRIPTS="${GLOBAL_ROOT}/scripts"
 
 SRC_PROMPTS="${REPO_ROOT}/.codex/prompts"
 SRC_TEMPLATES="${REPO_ROOT}/.codex/templates"
-SRC_SKILLS="${REPO_ROOT}/.codex/skills"
+SRC_SKILLS="${REPO_ROOT}/.agents/skills"
 SRC_SCRIPTS="${REPO_ROOT}/scripts"
 SRC_CONFIG="${REPO_ROOT}/.codex/config.toml"
 
@@ -56,6 +56,10 @@ mkdir -p "${HOME}/.codex/prompts"
 copy_dir "${GLOBAL_PROMPTS}" "${HOME}/.codex/prompts"
 
 # Install skills into Codex global skills dir (optional, for autodiscovery)
+mkdir -p "${HOME}/.agents/skills"
+copy_dir "${GLOBAL_SKILLS}" "${HOME}/.agents/skills"
+
+# Legacy fallback (optional)
 mkdir -p "${HOME}/.codex/skills"
 copy_dir "${GLOBAL_SKILLS}" "${HOME}/.codex/skills"
 

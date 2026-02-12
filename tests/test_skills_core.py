@@ -14,7 +14,7 @@ CORE_SKILLS = [
 
 def _skill_path(name: str) -> Path:
     repo_root = Path(__file__).resolve().parents[1]
-    return repo_root / ".codex" / "skills" / name / "SKILL.md"
+    return repo_root / ".agents" / "skills" / name / "SKILL.md"
 
 
 def _read_skill(path: Path) -> str:
@@ -39,4 +39,3 @@ def test_core_skills_use_codex_paths() -> None:
         assert (
             "plans/" in text or ".codex/" in text
         ), f"Missing Codex path reference in {name}"
-

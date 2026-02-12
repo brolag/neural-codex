@@ -105,8 +105,11 @@ description = "Search MCP (Exa)"
 # PROJECT SETTINGS
 # ============================================================================
 
-# Custom project root markers (in addition to .git)
-# project_root_markers = [".codex", "package.json", "Cargo.toml"]
+# Fallback filenames if AGENTS.md is missing
+project_doc_fallback_filenames = ["TEAM_GUIDE.md", ".agents.md", "PROJECT_GUIDE.md"]
 
 # Max bytes for AGENTS.md discovery
-# project_doc_max_bytes = 65536
+project_doc_max_bytes = 65536
+
+# Custom project root markers (in addition to .git)
+# project_root_markers = [".codex", "package.json", "Cargo.toml"]

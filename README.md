@@ -3,7 +3,7 @@
 Codex-native prompts, templates, scripts, and agents that bring the neural workflow to the Codex CLI. Everything is file-based, repo-local, and designed for repeatable iteration with clear state.
 
 - No legacy hooks, status lines, or TTS
-- All state lives in `plans/` and `.codex/`
+- All state lives in `plans/`, `.codex/`, and `.agents/`
 - Prompts are namespaced as `neural.*`
 
 ## What you get
@@ -22,7 +22,7 @@ Codex-native prompts, templates, scripts, and agents that bring the neural workf
 - Execution: `neural.shell`
 
 ### Skills
-Project-scoped skills in `.codex/skills/`:
+Project-scoped skills in `.agents/skills/`:
 - autonomous-loop: Ralph loop usage and guardrails
 - worktree-manager: parallel worktrees for multi-session work
 - code-reviewer: production-minded reviews
@@ -89,7 +89,8 @@ scripts/setup-global.sh
 This installs:
 - `~/.codex/neural-codex/` (prompts, templates, skills, scripts, config stub)
 - `~/.codex/prompts/` (so `/prompts:neural.*` appear)
-- `~/.codex/skills/` (optional autodiscovery)
+- `~/.agents/skills/` (optional autodiscovery)
+- Legacy: `~/.codex/skills/` (compatibility)
 
 Use `--force` to overwrite existing files:
 ```bash
@@ -104,7 +105,7 @@ scripts/setup-project.sh
 This seeds a project with:
 - `.codex/prompts/`
 - `.codex/templates/`
-- `.codex/skills/`
+- `.agents/skills/`
 - `.codex/config.toml` (MCP stubs)
 - `scripts/neural-codex/` (loop + helpers)
 - `plans/prd.json`, `plans/progress.jsonl` (from templates)
@@ -132,6 +133,8 @@ Notes:
 ## Agent harness
 - Knowledge map and operating guidance: `docs/AGENT-HARNESS.md`.
 - Keep `AGENTS.md` short; move details into `docs/` and link them back.
+- Docs index: `docs/README.md` and ExecPlans in `docs/PLANS.md`.
+- Validate doc coverage with `scripts/doc-lint.py`.
 
 ## Profiles
 
@@ -172,9 +175,10 @@ Reference: https://developers.openai.com/codex/config-advanced/
 ## Repo layout
 ```
 .
+├── .agents/
+│   └── skills/
 ├── .codex/
 │   ├── prompts/
-│   ├── skills/
 │   ├── templates/
 │   └── config.toml
 ├── agents/

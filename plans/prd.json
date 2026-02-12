@@ -60,7 +60,7 @@
       "priority": "P1",
       "depends_on": [],
       "acceptance": [
-        ".codex/skills includes memory-system, pattern-detector, prompt-engineering, plan-execute, worktree-manager, youtube-learner",
+        ".agents/skills includes memory-system, pattern-detector, prompt-engineering, plan-execute, worktree-manager, youtube-learner",
         "Each SKILL.md uses Codex paths (plans/, .codex/) and no legacy tool references",
         "Usage examples included for each skill"
       ],
@@ -115,8 +115,8 @@
         "scripts-support"
       ],
       "acceptance": [
-        "scripts/setup-global.sh installs .codex/skills into ~/.codex/neural-codex and ~/.codex/skills",
-        "scripts/setup-project.sh seeds .codex/skills into a project",
+        "scripts/setup-global.sh installs .agents/skills into ~/.codex/neural-codex and ~/.agents/skills (plus legacy ~/.codex/skills)",
+        "scripts/setup-project.sh seeds .agents/skills into a project (plus legacy .codex/skills)",
         "Existing setup behavior preserved"
       ],
       "passes": true,

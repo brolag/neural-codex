@@ -46,11 +46,15 @@ copy_dir() {
 
 echo "Setting up project at ${PROJECT_ROOT}"
 
-mkdir -p "${PROJECT_ROOT}/.codex/prompts" "${PROJECT_ROOT}/.codex/templates" "${PROJECT_ROOT}/.codex/skills"
+mkdir -p "${PROJECT_ROOT}/.codex/prompts" "${PROJECT_ROOT}/.codex/templates"
+mkdir -p "${PROJECT_ROOT}/.agents/skills" "${PROJECT_ROOT}/.codex/skills"
 mkdir -p "${PROJECT_ROOT}/scripts/neural-codex" "${PROJECT_ROOT}/plans"
 
 copy_dir "${GLOBAL_ROOT}/prompts" "${PROJECT_ROOT}/.codex/prompts"
 copy_dir "${GLOBAL_ROOT}/templates" "${PROJECT_ROOT}/.codex/templates"
+copy_dir "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.agents/skills"
+
+# Legacy fallback (optional)
 copy_dir "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.codex/skills"
 copy_dir "${GLOBAL_ROOT}/scripts" "${PROJECT_ROOT}/scripts/neural-codex"
 

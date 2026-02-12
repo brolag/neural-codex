@@ -15,10 +15,16 @@
 ## Knowledge map
 - This file is the entry map for agent instructions; keep it short.
 - Harness guidance: `docs/AGENT-HARNESS.md`.
+- Docs index: `docs/README.md`.
+- Architecture overview: `ARCHITECTURE.md`.
 - Setup + usage reference: `README-neural-codex.md`.
 - Task state: `plans/prd.json` and `plans/progress.jsonl`.
-- Skills procedures: `.codex/skills/` (each has `SKILL.md`).
+- ExecPlans for multi-hour work: `docs/PLANS.md` and `docs/exec-plans/active/`.
+- Skills procedures: `.agents/skills/` (each has `SKILL.md`). Legacy copies may exist in `.codex/skills/`.
 - Persona-specific guidance: `agents/*/AGENTS.md`.
+
+## Overrides
+- Use `AGENTS.override.md` for short-lived, local overrides. Keep it minimal and remove when done.
 
 ## Safety & Style
 - Prefer small, incremental commits; avoid touching unrelated files.
