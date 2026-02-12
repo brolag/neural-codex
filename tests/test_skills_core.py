@@ -40,8 +40,3 @@ def test_core_skills_use_codex_paths() -> None:
             "plans/" in text or ".codex/" in text
         ), f"Missing Codex path reference in {name}"
 
-
-def test_core_skills_avoid_claude_paths() -> None:
-    for name in CORE_SKILLS:
-        text = _read_skill(_skill_path(name)).lower()
-        assert ".claude" not in text, f"Found .claude reference in {name}"

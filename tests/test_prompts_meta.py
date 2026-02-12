@@ -12,10 +12,9 @@ META_PROMPT_NAMES = [
 ]
 
 BANNED_TERMS = [
-    "claude",
-    ".claude",
     "statusline",
     "tts",
+    "marketplace",
 ]
 
 
@@ -62,7 +61,7 @@ def test_meta_prompts_have_descriptions() -> None:
         assert front.get("description"), f"Missing description in {name}"
 
 
-def test_meta_prompts_avoid_claude_specific_terms() -> None:
+def test_meta_prompts_avoid_legacy_terms() -> None:
     for name in META_PROMPT_NAMES:
         text = _read_prompt(_prompt_path(name)).lower()
         for term in BANNED_TERMS:

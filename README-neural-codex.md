@@ -1,8 +1,8 @@
 # neural-codex
 
-Codex-native prompts, templates, scripts, and agents that bring the neural-claude workflow to the Codex CLI. Everything is file-based, repo-local, and designed for repeatable iteration with clear state.
+Codex-native prompts, templates, scripts, and agents that bring the neural workflow to the Codex CLI. Everything is file-based, repo-local, and designed for repeatable iteration with clear state.
 
-- No Claude-specific hooks, status lines, or TTS
+- No legacy hooks, status lines, or TTS
 - All state lives in `plans/` and `.codex/`
 - Prompts are namespaced as `neural.*`
 

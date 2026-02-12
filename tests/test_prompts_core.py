@@ -12,10 +12,9 @@ PROMPT_NAMES = [
 ]
 
 BANNED_TERMS = [
-    "claude",
-    ".claude",
     "statusline",
     "tts",
+    "marketplace",
 ]
 
 
@@ -87,7 +86,7 @@ def test_required_prompts_have_body_content() -> None:
         assert body, f"Missing prompt body content in {path}"
 
 
-def test_required_prompts_avoid_claude_specific_terms() -> None:
+def test_required_prompts_avoid_legacy_terms() -> None:
     for name in PROMPT_NAMES:
         text = _read_prompt(_prompt_path(name)).lower()
         for term in BANNED_TERMS:

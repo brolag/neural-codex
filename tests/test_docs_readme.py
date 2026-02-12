@@ -21,7 +21,7 @@ REQUIRED_MCP = [
 ]
 
 REQUIRED_SNIPPETS = [
-    "no claude-specific hooks",
+    "no legacy hooks",
     "scripts/setup-global.sh",
     "scripts/setup-project.sh",
 ]

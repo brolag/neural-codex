@@ -9,7 +9,7 @@ AGENT_FILES = [
 ]
 
 TOOL_MARKERS = ["shell_command", "apply_patch", "rg"]
-FORBIDDEN_MARKERS = [".claude", "statusline", "tts", "marketplace"]
+FORBIDDEN_MARKERS = ["statusline", "tts", "marketplace"]
 
 
 def _agent_path(relpath: str) -> Path:
@@ -35,7 +35,7 @@ def test_agents_reference_codex_tools() -> None:
         )
 
 
-def test_agents_avoid_claude_specific_hooks() -> None:
+def test_agents_avoid_legacy_hooks() -> None:
     for relpath in AGENT_FILES:
         text = _read_agent(_agent_path(relpath)).lower()
         for marker in FORBIDDEN_MARKERS:

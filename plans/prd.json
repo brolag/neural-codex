@@ -10,7 +10,7 @@
       "acceptance": [
         "neural.loop-cancel, neural.plan-execute, neural.question, neural.pv, neural.sync, neural.changelog-architect exist under .codex/prompts",
         "Each prompt has description and argument-hint where relevant",
-        "Prompt content avoids Claude-specific hooks/statusline/TTS references"
+        "Prompt content avoids legacy hooks/statusline/TTS references"
       ],
       "passes": true,
       "attempts": 2,
@@ -27,7 +27,7 @@
       ],
       "acceptance": [
         "neural.meta.agent, neural.meta.skill, neural.meta.prompt, neural.meta.improve, neural.meta.eval, neural.meta.brain exist under .codex/prompts or documented alternative",
-        "Meta prompts reference Codex paths (.codex/, plans/) and avoid .claude/",
+        "Meta prompts reference Codex paths (.codex/, plans/) and avoid legacy tool paths",
         "Routing guidance references how to use meta prompts"
       ],
       "passes": true,
@@ -61,7 +61,7 @@
       "depends_on": [],
       "acceptance": [
         ".codex/skills includes memory-system, pattern-detector, prompt-engineering, plan-execute, worktree-manager, youtube-learner",
-        "Each SKILL.md uses Codex paths (plans/, .codex/) and no .claude references",
+        "Each SKILL.md uses Codex paths (plans/, .codex/) and no legacy tool references",
         "Usage examples included for each skill"
       ],
       "passes": true,
@@ -79,7 +79,7 @@
       ],
       "acceptance": [
         "agents/multi-ai/AGENTS.md, agents/dispatcher/AGENTS.md, agents/meta-agent/AGENTS.md exist",
-        "Agents reference Codex tools and avoid Claude-specific hooks",
+        "Agents reference Codex tools and avoid legacy hooks",
         "Root AGENTS.md documents routing and context reset guidance"
       ],
       "passes": true,
@@ -136,7 +136,7 @@
       ],
       "acceptance": [
         "README-neural-codex.md (or README.md) lists prompts, skills, and loop usage",
-        "Docs mention supported MCP servers and no Claude-specific hooks/TTS",
+        "Docs mention supported MCP servers and no legacy hooks/TTS",
         "Quick start includes global + project setup"
       ],
       "passes": true,

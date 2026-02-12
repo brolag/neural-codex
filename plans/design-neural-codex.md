@@ -1,12 +1,12 @@
-# Technical Design: neural-codex (Codex-native port of neural-claude-code-plugin)
+# Technical Design: neural-codex (Codex-native port of the neural code plugin)
 
 ## Goals
-- Port key neural-claude capabilities to Codex-native primitives (skills/prompts/AGENTS/config) without Claude-specific hooks/statusline/TTS.
+- Port key neural capabilities to Codex-native primitives (skills/prompts/AGENTS/config) without legacy hooks/statusline/TTS.
 - Provide a reusable toolkit: loop automation (Ralph), namespaced prompts, MCP integrations, templates, agents, and notification hook.
 - Keep everything file-based and portable (bash + jq + Git + Codex CLI).
 
 ## Non-Goals
-- Re-implement Claude plugin hooks, statusline streaming, or TTS.
+- Re-implement legacy plugin hooks, statusline streaming, or TTS.
 - Build a marketplace/installer; distribution is repo-based.
 
 ## Constraints
@@ -28,7 +28,7 @@
   - Meta: meta-agent/skill scaffolding (optional).
 - **Templates**: expertise.template.yaml, todo-workflow.md under `.codex/templates/`.
 - **Agents**: convert key profiles to AGENTS.md (either per-agent in agents/ or consolidated). Include reset/routing guidance to avoid persona bleed.
-- **MCP**: Configure in `.codex/config.toml` (chrome-devtools, github, playwright/browser, search/Exa). No `.claude` JSONs.
+- **MCP**: Configure in `.codex/config.toml` (chrome-devtools, github, playwright/browser, search/Exa). No legacy JSON configs.
 - **Notify**: Optional `notify` hook calling `telegram_notify.sh` or similar; event source is Codex `notify`.
 - **Memory Store**: Files (expertise notes, progress log). Manual update via prompts/scripts (no auto hooks).
 
