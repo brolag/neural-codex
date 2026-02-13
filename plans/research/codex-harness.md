@@ -15,7 +15,7 @@ OpenAI’s harness engineering guidance emphasizes a structured knowledge base, 
 - Added `docs/PLANS.md` (ExecPlan template) and `docs/exec-plans/` folders.
 - Added `ARCHITECTURE.md` and expanded `AGENTS.md` with a concise knowledge map.
 - Moved skills to `.agents/skills` as canonical and added a legacy sync path.
-- Added a doc lint script (`scripts/doc-lint.py`) and tests to enforce doc structure.
+- Added a doc lint script (`scripts/doc-lint.sh`) and GitHub Actions workflow to enforce doc structure.
 - Added `.codex/config.toml` settings for `project_doc_fallback_filenames` and `project_doc_max_bytes`.
 
 ## Trade-offs
@@ -25,9 +25,8 @@ OpenAI’s harness engineering guidance emphasizes a structured knowledge base, 
 | Full harness (current) | Durable knowledge base, better autonomy, clearer ops | More docs to maintain and validate |
 
 ## Recommendations (next)
-1. Add CI to run `scripts/doc-lint.py` and tests on every PR.
-2. Create a lightweight doc-gardening automation (weekly) to validate staleness and link health.
-3. Expand `docs/references/` with primary sources for Codex usage and internal standards.
+1. Create a lightweight doc-gardening automation (weekly) to validate staleness and link health.
+2. Expand `docs/references/` with primary sources for Codex usage and internal standards.
 
 ## Sources
 - https://openai.com/index/harness-engineering/

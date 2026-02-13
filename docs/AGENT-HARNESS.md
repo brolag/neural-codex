@@ -34,4 +34,4 @@ This repo is designed for agent-first work: humans specify intent, agents execut
 - Prefer small, verifiable tasks with explicit test gates.
 - Update docs when behavior changes; stale guidance is worse than no guidance.
 - Add new doc entries in `docs/` and link them from `AGENTS.md`.
-- Run `scripts/doc-lint.py` to validate doc coverage.
+- Run `scripts/doc-lint.sh` to validate doc coverage.

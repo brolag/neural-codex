@@ -134,7 +134,7 @@ Notes:
 - Knowledge map and operating guidance: `docs/AGENT-HARNESS.md`.
 - Keep `AGENTS.md` short; move details into `docs/` and link them back.
 - Docs index: `docs/README.md` and ExecPlans in `docs/PLANS.md`.
-- Validate doc coverage with `scripts/doc-lint.py`.
+- Validate doc coverage with `scripts/doc-lint.sh`.
 
 ## Profiles
 
