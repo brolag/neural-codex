@@ -28,14 +28,14 @@ def test_scripts_support_files_exist() -> None:
 
 
 def test_memory_skill_references_helper_scripts() -> None:
-    path = _repo_root() / ".codex" / "skills" / "memory-system" / "SKILL.md"
+    path = _repo_root() / ".agents" / "skills" / "memory-system" / "SKILL.md"
     text = _read_text(path)
     assert "scripts/memory_write.py" in text
     assert "scripts/memory_read.py" in text
 
 
 def test_youtube_references_helper_script() -> None:
-    skill_path = _repo_root() / ".codex" / "skills" / "youtube-learner" / "SKILL.md"
+    skill_path = _repo_root() / ".agents" / "skills" / "youtube-learner" / "SKILL.md"
     prompt_path = _repo_root() / ".codex" / "prompts" / "neural.yt-learn.md"
     skill_text = _read_text(skill_path)
     prompt_text = _read_text(prompt_path)

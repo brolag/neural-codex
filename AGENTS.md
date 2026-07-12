@@ -1,9 +1,9 @@
 # neural-codex - Project Instructions
 
 ## Overview
-- Codex-native port of the neural workflow features: Ralph loop, namespaced prompts, templates, MCP, and agents.
+- Codex-native port of the neural workflow features: Ralph loop, lifecycle hooks, namespaced prompts, templates, MCP, and agents.
 - All state is file-based: `plans/prd.json` (tasks), `plans/progress.jsonl` (log), `.codex/prompts/` (prompts), `.codex/templates/` (templates), `scripts/` (automation).
-- No legacy hooks/statusline/TTS/marketplace.
+- Hooks use Codex's native `.codex/hooks.json` contract; no Claude hook paths, statusline, or TTS.
 - Setup and usage reference: `README-neural-codex.md`.
 
 ## Workflow

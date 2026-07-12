@@ -2,7 +2,8 @@
 
 Codex-native prompts, templates, scripts, and agents that bring the neural workflow to the Codex CLI. Everything is file-based, repo-local, and designed for repeatable iteration with clear state.
 
-- No legacy hooks, status lines, or TTS
+- Codex-native lifecycle hooks for safety, secret scanning, and compaction recovery
+- No legacy hooks from Claude, status lines, or TTS
 - All state lives in `plans/`, `.codex/`, and `.agents/`
 - Prompts are namespaced as `neural.*`
 
@@ -64,6 +65,13 @@ Project-scoped skills in `.agents/skills/`:
 - `scripts/youtube-transcript.py`
 - `scripts/setup-global.sh` / `scripts/setup-project.sh`
 
+### Lifecycle hooks
+- Block high-confidence destructive shell commands
+- Protect common credential and environment files from `apply_patch`
+- Detect obvious prompt-injection strings in executable content
+- Warn when tool output contains common secret formats
+- Preserve a recovery snapshot before context compaction
+
 ### Agents
 - `agents/multi-ai/AGENTS.md`
 - `agents/dispatcher/AGENTS.md`
@@ -84,7 +92,8 @@ scripts/setup-global.sh
 ```bash
 scripts/setup-project.sh
 ```
-4) Verify prompts:
+4) Open `/hooks`, review the installed definitions, and trust them.
+5) Verify prompts:
 ```
 /prompts:neural.loop-start
 ```
@@ -113,6 +122,7 @@ This installs:
 - `~/.codex/prompts/` (so `/prompts:neural.*` appear)
 - `~/.agents/skills/` (optional autodiscovery)
 - Legacy: `~/.codex/skills/` (compatibility)
+- `~/.codex/{default,fast,autonomous,careful}.config.toml` (Codex 0.134+ profiles)
 
 Use `--force` to overwrite existing files:
 ```bash
@@ -128,6 +138,7 @@ This seeds a project with:
 - `.codex/prompts/`
 - `.codex/templates/`
 - `.agents/skills/`
+- `.codex/hooks.json` and `.codex/hooks/`
 - `.codex/config.toml` (MCP stubs)
 - `scripts/neural-codex/` (loop + helpers)
 - `plans/prd.json`, `plans/progress.jsonl` (from templates)
@@ -160,14 +171,14 @@ Notes:
 
 ## Profiles
 
-Named configuration sets for different workflows. Switch with `codex --profile <name>`:
+Codex 0.134+ loads named profiles from `~/.codex/<name>.config.toml`. Switch with `codex --profile <name>`:
 
 | Profile | Model | Approval | Use Case |
 |---------|-------|----------|----------|
-| default | gpt-5.2-codex | on-failure | Standard development |
-| fast | gpt-4.1-mini | on-failure | Quick tasks, low cost |
-| autonomous | gpt-5.2-codex | never | Ralph loop, unattended work |
-| careful | gpt-5.2-codex | untrusted | Sensitive changes |
+| default | gpt-5.6 / medium | on-request | Standard development |
+| fast | gpt-5.6 / low | on-request | Latency-sensitive tasks |
+| autonomous | gpt-5.6 / high | never | Ralph loop, unattended work |
+| careful | gpt-5.6 / xhigh | untrusted | Sensitive changes |
 
 Example:
 ```bash
@@ -178,15 +189,18 @@ codex --profile autonomous exec "Fix the auth bug"
 Supported MCP servers are stubbed in `.codex/config.toml` and include:
 - chrome-devtools
 - github
-- search (Exa)
 - optional playwright
+
+Use `codex --search` for Codex's native web search instead of the retired Exa SSE stub.
 
 Set tokens in your shell as needed (e.g., `GITHUB_PERSONAL_ACCESS_TOKEN`).
 
 ## Advanced Config
 
 The config file supports advanced options (see `.codex/config.toml`):
-- **Profiles**: Named config sets with different models/approval policies
+- **GPT-5.6**: Current model alias with explicit reasoning effort and verbosity
+- **Profiles**: Separate `$CODEX_HOME/<name>.config.toml` overlays
+- **Hooks**: Native `.codex/hooks.json` definitions, reviewed with `/hooks`
 - **Notifications**: Webhooks, desktop alerts, CI integration
 - **History**: Session transcripts with size caps
 - **Telemetry**: OpenTelemetry for observability
@@ -200,7 +214,10 @@ Reference: https://developers.openai.com/codex/config-advanced/
 ├── .agents/
 │   └── skills/
 ├── .codex/
+│   ├── hooks.json
+│   ├── hooks/
 │   ├── prompts/
+│   ├── profiles/
 │   ├── templates/
 │   └── config.toml
 ├── agents/
@@ -213,6 +230,10 @@ Reference: https://developers.openai.com/codex/config-advanced/
 
 Prompts not showing:
 - Run `scripts/setup-global.sh` and restart Codex.
+
+GPT-5.6 reports unknown model metadata:
+- Update Codex and confirm the model is available for the current account/provider.
+- During a staged rollout, set `model = "gpt-5.5"` temporarily; do not silently rely on fallback metadata for production automation.
 
 Ralph loop fails immediately:
 - Ensure `flock` and `timeout` are in `PATH`.

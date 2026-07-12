@@ -17,12 +17,16 @@ GLOBAL_PROMPTS="${GLOBAL_ROOT}/prompts"
 GLOBAL_TEMPLATES="${GLOBAL_ROOT}/templates"
 GLOBAL_SKILLS="${GLOBAL_ROOT}/skills"
 GLOBAL_SCRIPTS="${GLOBAL_ROOT}/scripts"
+GLOBAL_HOOKS="${GLOBAL_ROOT}/hooks"
 
 SRC_PROMPTS="${REPO_ROOT}/.codex/prompts"
 SRC_TEMPLATES="${REPO_ROOT}/.codex/templates"
 SRC_SKILLS="${REPO_ROOT}/.agents/skills"
 SRC_SCRIPTS="${REPO_ROOT}/scripts"
 SRC_CONFIG="${REPO_ROOT}/.codex/config.toml"
+SRC_HOOKS="${REPO_ROOT}/.codex/hooks"
+SRC_HOOKS_CONFIG="${REPO_ROOT}/.codex/hooks.json"
+SRC_PROFILES="${REPO_ROOT}/.codex/profiles"
 
 copy_dir() {
   local src="$1"
@@ -32,6 +36,7 @@ copy_dir() {
     [[ -e "$f" ]] || continue
     local base
     base="$(basename "$f")"
+    [[ "$base" == "__pycache__" || "$base" == ".DS_Store" ]] && continue
     if [[ "$FORCE" == "1" ]]; then
       rm -rf "$dst/$base"
       cp -R "$f" "$dst/$base"
@@ -50,6 +55,13 @@ copy_dir "${SRC_PROMPTS}" "${GLOBAL_PROMPTS}"
 copy_dir "${SRC_TEMPLATES}" "${GLOBAL_TEMPLATES}"
 copy_dir "${SRC_SKILLS}" "${GLOBAL_SKILLS}"
 copy_dir "${SRC_SCRIPTS}" "${GLOBAL_SCRIPTS}"
+copy_dir "${SRC_HOOKS}" "${GLOBAL_HOOKS}"
+
+if [[ -f "${SRC_HOOKS_CONFIG}" ]]; then
+  if [[ "${FORCE}" == "1" || ! -f "${GLOBAL_ROOT}/hooks.json" ]]; then
+    cp "${SRC_HOOKS_CONFIG}" "${GLOBAL_ROOT}/hooks.json"
+  fi
+fi
 
 # Install prompts into Codex global prompts dir (required for slash commands)
 mkdir -p "${HOME}/.codex/prompts"
@@ -70,4 +82,13 @@ if [[ -f "${SRC_CONFIG}" ]]; then
   fi
 fi
 
-echo "Done. Restart Codex to pick up new prompts."
+# Codex 0.134+ loads named profiles from ~/.codex/<name>.config.toml.
+for profile in "${SRC_PROFILES}"/*.config.toml; do
+  [[ -e "${profile}" ]] || continue
+  target="${HOME}/.codex/$(basename "${profile}")"
+  if [[ "${FORCE}" == "1" || ! -f "${target}" ]]; then
+    cp "${profile}" "${target}"
+  fi
+done
+
+echo "Done. Restart Codex to pick up prompts and profiles."

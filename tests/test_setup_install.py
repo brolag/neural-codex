@@ -48,3 +48,25 @@ def test_setup_project_seeds_skills() -> None:
         text,
         "setup-project.sh should seed legacy project skills from the global install",
     )
+
+
+def test_setup_global_installs_hooks_and_profiles() -> None:
+    text = _read_script("setup-global.sh")
+    _assert_regex(
+        r'copy_dir\s+"\${SRC_HOOKS}"\s+"\${GLOBAL_HOOKS}"',
+        text,
+        "setup-global.sh should stage Codex-native hooks",
+    )
+    assert "${SRC_PROFILES}" in text
+    assert "${HOME}/.codex/$(basename \"${profile}\")" in text
+    assert '__pycache__' in text
+
+
+def test_setup_project_seeds_hooks() -> None:
+    text = _read_script("setup-project.sh")
+    _assert_regex(
+        r'copy_dir\s+"\${GLOBAL_ROOT}/hooks"\s+"\${PROJECT_ROOT}/\.codex/hooks"',
+        text,
+        "setup-project.sh should seed hook scripts",
+    )
+    assert '${PROJECT_ROOT}/.codex/hooks.json' in text

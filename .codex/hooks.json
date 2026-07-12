@@ -1,0 +1,66 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/dangerous_actions_blocker.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking command safety"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/prompt_injection_detector.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking command content"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/sensitive_file_guard.py\"",
+            "timeout": 3,
+            "statusMessage": "Protecting sensitive files"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/prompt_injection_detector.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking patch content"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/output_scanner.py\"",
+            "timeout": 3,
+            "statusMessage": "Scanning tool output for secrets"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.codex/hooks/pre_compact.py\"",
+            "timeout": 30,
+            "statusMessage": "Preserving compact context"
+          }
+        ]
+      }
+    ]
+  }
+}
