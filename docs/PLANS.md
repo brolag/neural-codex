@@ -13,6 +13,15 @@ Use ExecPlans for multi-hour tasks. Keep the plan concrete and update after each
 - In scope:
 - Out of scope:
 
+## Acceptance Contract
+- Scenario:
+  - Given:
+  - When:
+  - Then:
+- Validation command:
+- Behavioral backend: CLI | browser | desktop
+- Rollback:
+
 ## Approach
 1. <step>
 2. <step>
@@ -25,6 +34,10 @@ Use ExecPlans for multi-hour tasks. Keep the plan concrete and update after each
 
 ## Test/Verify
 - <command or explicit manual check>
+
+## Evidence
+- <test output, console log, screenshot, or artifact path>
+- Residual risks:
 
 ## Notes
 - <ongoing log>

@@ -24,6 +24,18 @@ This repo is designed for agent-first work: humans specify intent, agents execut
 - For long-running work, rely on compaction and the Ralph loop to keep progress coherent.
 - If networking is enabled, keep allowlists strict and treat tool output as untrusted.
 
+## Recommended change flow
+
+1. **Research:** inspect only the context needed for the decision; keep the checkout read-only.
+2. **Contract:** record objective, non-goals, acceptance scenarios, validation commands, and rollback.
+3. **Implement:** start from the distilled plan and change the smallest relevant harness component.
+4. **Exercise:** drive the CLI, browser, or desktop behavior and preserve raw evidence.
+5. **Review:** use an independent clean-context gate for security-sensitive or pre-merge work.
+
+Read `docs/VERIFICATION.md` for the evidence contract. A test result, behavioral
+scenario, and static review are complementary signals; none substitutes for the
+others.
+
 ## Lifecycle hooks
 
 - Treat hooks as deterministic guardrails around supported events, not as the primary sandbox boundary.
@@ -40,9 +52,11 @@ This repo is designed for agent-first work: humans specify intent, agents execut
 - `docs/references/` — authoritative references
 - `docs/generated/` — machine-generated artifacts
 - `docs/HOOKS.md` — hook contract, installation, trust, and validation
+- `docs/VERIFICATION.md` — acceptance contract, evidence lanes, and harness experiments
 
 ## Keeping the harness healthy
 - Prefer small, verifiable tasks with explicit test gates.
 - Update docs when behavior changes; stale guidance is worse than no guidance.
 - Add new doc entries in `docs/` and link them from `AGENTS.md`.
 - Run `scripts/doc-lint.sh` to validate doc coverage.
+- Preserve raw failure evidence before summarizing it; never commit evidence with secrets or PII.

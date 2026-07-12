@@ -1,11 +1,42 @@
 # neural-codex
 
-Codex-native prompts, templates, scripts, and agents that bring the neural workflow to the Codex CLI. Everything is file-based, repo-local, and designed for repeatable iteration with clear state.
+This extended reference mirrors the capability inventory in the canonical
+[`README.md`](README.md). Tests keep prompt, skill, and agent names synchronized.
+
+Codex-native prompts, templates, scripts, and agents for repeatable Codex CLI
+workflows. The source is versioned here; project task state stays explicit under
+`plans/`, while installed prompts and profiles live under `CODEX_HOME`.
 
 - Codex-native lifecycle hooks for safety, secret scanning, and compaction recovery
 - No legacy hooks from Claude, status lines, or TTS
-- All state lives in `plans/`, `.codex/`, and `.agents/`
+- Project workflow state is explicit in `plans/prd.json` and `plans/progress.jsonl`
 - Prompts are namespaced as `neural.*`
+
+## Start here
+
+Clone the repository and install the global assets once:
+
+```bash
+git clone https://github.com/brolag/neural-codex.git
+cd neural-codex
+scripts/setup-global.sh
+```
+
+Seed a target repository from the clone:
+
+```bash
+scripts/setup-project.sh --path /path/to/project
+```
+
+For a later project, run the installed setup script from that project root:
+
+```bash
+"${CODEX_HOME:-$HOME/.codex}/neural-codex/scripts/setup-project.sh" --path "$PWD"
+```
+
+Restart Codex, open `/hooks`, review and trust the installed definitions, then
+run `/prompts:neural.loop-start`. Installers preserve existing files unless you
+explicitly pass `--force`.
 
 ## What you get
 
@@ -90,22 +121,6 @@ validation commands.
 - `agents/optimizer/AGENTS.md`
 - `agents/cognitive-amplifier/AGENTS.md`
 
-## Quick setup
-1) Run the global install from this repo:
-```bash
-scripts/setup-global.sh
-```
-2) Restart Codex so `/prompts:neural.*` are picked up.
-3) In any project, run the project install:
-```bash
-scripts/setup-project.sh
-```
-4) Open `/hooks`, review the installed definitions, and trust them.
-5) Verify prompts:
-```
-/prompts:neural.loop-start
-```
-
 ## Loop prerequisites
 The Ralph loop requires `flock` and `timeout`.
 
@@ -141,7 +156,7 @@ scripts/setup-global.sh --force
 
 ### Project install (per repo)
 ```bash
-scripts/setup-project.sh
+scripts/setup-project.sh --path /path/to/project
 ```
 
 This seeds a project with:
@@ -153,9 +168,9 @@ This seeds a project with:
 - `scripts/neural-codex/` (loop + helpers)
 - `plans/prd.json`, `plans/progress.jsonl` (from templates)
 
-Install into another path:
+From a project root after the global install:
 ```bash
-scripts/setup-project.sh --path /path/to/project
+"${CODEX_HOME:-$HOME/.codex}/neural-codex/scripts/setup-project.sh" --path "$PWD"
 ```
 
 ## Ralph loop usage
@@ -177,6 +192,7 @@ Notes:
 - Knowledge map and operating guidance: `docs/AGENT-HARNESS.md`.
 - Keep `AGENTS.md` short; move details into `docs/` and link them back.
 - Docs index: `docs/README.md` and ExecPlans in `docs/PLANS.md`.
+- Verification contract and evidence lanes: `docs/VERIFICATION.md`.
 - Validate doc coverage with `scripts/doc-lint.sh`.
 
 ## Profiles
@@ -196,29 +212,32 @@ codex --profile autonomous exec "Fix the auth bug"
 ```
 
 ## MCP config
-Supported MCP servers are stubbed in `.codex/config.toml` and include:
+The included `.codex/config.toml` provides example stubs for:
 - chrome-devtools
 - github
-- optional playwright
 
 Use `codex --search` for Codex's native web search instead of the retired Exa SSE stub.
 
 Set tokens in your shell as needed (e.g., `GITHUB_PERSONAL_ACCESS_TOKEN`).
 
-## Advanced Config
+## Configuration scope
 
-The config file supports advanced options (see `.codex/config.toml`):
-- **GPT-5.6**: Current model alias with explicit reasoning effort and verbosity
-- **Profiles**: Separate `$CODEX_HOME/<name>.config.toml` overlays
-- **Hooks**: Native `.codex/hooks.json` definitions, reviewed with `/hooks`
-- **Notifications**: Webhooks, desktop alerts, CI integration
-- **History**: Session transcripts with size caps
-- **Telemetry**: OpenTelemetry for observability
-- **TUI**: Clickable file citations (vscode, cursor, windsurf)
+The included configuration currently sets:
 
-Reference: https://developers.openai.com/codex/config-advanced/
+- GPT-5.6 with explicit reasoning effort and verbosity
+- Named profile overlays under `$CODEX_HOME`
+- Workspace-write sandboxing with project network access disabled
+- Native hooks through `.codex/hooks.json`
+- Example Chrome DevTools and GitHub MCP servers
+
+Codex supports additional settings, but neural-codex does not enable them by
+default. Add only the options your workflow needs.
+
+Reference: https://developers.openai.com/codex/config-reference/
 
 Hook reference: [`docs/HOOKS.md`](docs/HOOKS.md)
+
+Verification reference: [`docs/VERIFICATION.md`](docs/VERIFICATION.md)
 
 ## Repo layout
 ```

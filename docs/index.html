@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>neural-codex — Hooks, prompts, and autonomous Codex workflows</title>
     <meta name="description" content="A Codex-native harness with lifecycle hooks, GPT-5.6 profiles, file-based memory, and test-gated autonomous loops.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet">
@@ -768,9 +769,10 @@
                 <span class="terminal-title">neural_codex — hooks ready // click to interact</span>
             </div>
             <div class="terminal-body" id="terminal-output">
+                <div class="terminal-line"><span class="prompt">$</span> <span class="command">git clone https://github.com/brolag/neural-codex.git &amp;&amp; cd neural-codex</span></div>
                 <div class="terminal-line"><span class="prompt">$</span> <span class="command">scripts/setup-global.sh</span></div>
                 <div class="terminal-line"><span class="success">[OK]</span> <span class="output">prompts + skills + GPT-5.6 profiles staged</span></div>
-                <div class="terminal-line"><span class="prompt">$</span> <span class="command">scripts/setup-project.sh</span></div>
+                <div class="terminal-line"><span class="prompt">$</span> <span class="command">scripts/setup-project.sh --path /path/to/project</span></div>
                 <div class="terminal-line"><span class="success">[OK]</span> <span class="output">project seeded with hooks + .codex/ + plans/</span></div>
                 <div class="terminal-line"><span class="prompt">></span> <span class="command">/hooks</span></div>
                 <div class="terminal-line"><span class="output">review and trust changed hook definitions_</span></div>
@@ -906,13 +908,13 @@
             <h3>SETUP</h3>
 
             <div class="code-block">
-                <div class="code-header"><span>1. Global install</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-                <pre><code><span class="prompt">$</span> scripts/setup-global.sh</code></pre>
+                <div class="code-header"><span>1. Clone and install globally</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
+                <pre><code><span class="prompt">$</span> git clone https://github.com/brolag/neural-codex.git &amp;&amp; cd neural-codex &amp;&amp; scripts/setup-global.sh</code></pre>
             </div>
 
             <div class="code-block">
                 <div class="code-header"><span>2. Project install</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-                <pre><code><span class="prompt">$</span> scripts/setup-project.sh</code></pre>
+                <pre><code><span class="prompt">$</span> scripts/setup-project.sh --path /path/to/project</code></pre>
             </div>
 
             <div class="code-block">
@@ -960,6 +962,7 @@
             Built by <a href="https://github.com/brolag">@brolag</a> //
             Powered by <a href="https://openai.com/codex/">Codex</a> //
             <a href="https://github.com/brolag/neural-codex/blob/main/docs/AGENT-HARNESS.md">AGENT_HARNESS</a> //
+            <a href="https://github.com/brolag/neural-codex/blob/main/docs/VERIFICATION.md">VERIFICATION</a> //
             <a href="https://github.com/brolag/neural-codex/blob/main/README-neural-codex.md">DOCS</a> //
             <a href="https://github.com/brolag/neural-codex/blob/main/LICENSE">MIT</a>
         </p>
@@ -1111,8 +1114,9 @@
 
             install: () => {
                 addLine('[SETUP]', 'success');
+                addLine('git clone https://github.com/brolag/neural-codex.git && cd neural-codex', 'command');
                 addLine('scripts/setup-global.sh', 'command');
-                addLine('scripts/setup-project.sh', 'command');
+                addLine('scripts/setup-project.sh --path /path/to/project', 'command');
                 addLine('/hooks', 'command');
                 addLine('/prompts:neural.loop-start', 'command');
             },

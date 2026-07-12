@@ -15,3 +15,4 @@ neural-codex is a Codex-native harness with file-based state, repo-local prompts
 - `docs/design-docs/README.md`
 - `docs/AGENT-HARNESS.md`
 - `docs/HOOKS.md`
+- `docs/VERIFICATION.md`
