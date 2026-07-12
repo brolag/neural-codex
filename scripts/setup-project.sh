@@ -19,7 +19,8 @@ if [[ -z "${PROJECT_ROOT}" ]]; then
   PROJECT_ROOT="$(pwd)"
 fi
 
-GLOBAL_ROOT="${HOME}/.codex/neural-codex"
+CODEX_ROOT="${CODEX_HOME:-${HOME}/.codex}"
+GLOBAL_ROOT="${CODEX_ROOT}/neural-codex"
 if [[ ! -d "${GLOBAL_ROOT}" ]]; then
   echo "Global neural-codex not found. Run scripts/setup-global.sh first."
   exit 1
@@ -33,6 +34,7 @@ copy_dir() {
     [[ -e "$f" ]] || continue
     local base
     base="$(basename "$f")"
+    [[ "$base" == "__pycache__" || "$base" == ".DS_Store" ]] && continue
     if [[ "$FORCE" == "1" ]]; then
       rm -rf "$dst/$base"
       cp -R "$f" "$dst/$base"
@@ -47,6 +49,7 @@ copy_dir() {
 echo "Setting up project at ${PROJECT_ROOT}"
 
 mkdir -p "${PROJECT_ROOT}/.codex/prompts" "${PROJECT_ROOT}/.codex/templates"
+mkdir -p "${PROJECT_ROOT}/.codex/hooks"
 mkdir -p "${PROJECT_ROOT}/.agents/skills" "${PROJECT_ROOT}/.codex/skills"
 mkdir -p "${PROJECT_ROOT}/scripts/neural-codex" "${PROJECT_ROOT}/plans"
 
@@ -57,6 +60,13 @@ copy_dir "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.agents/skills"
 # Legacy fallback (optional)
 copy_dir "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.codex/skills"
 copy_dir "${GLOBAL_ROOT}/scripts" "${PROJECT_ROOT}/scripts/neural-codex"
+copy_dir "${GLOBAL_ROOT}/hooks" "${PROJECT_ROOT}/.codex/hooks"
+
+if [[ -f "${GLOBAL_ROOT}/hooks.json" ]]; then
+  if [[ "${FORCE}" == "1" || ! -f "${PROJECT_ROOT}/.codex/hooks.json" ]]; then
+    cp "${GLOBAL_ROOT}/hooks.json" "${PROJECT_ROOT}/.codex/hooks.json"
+  fi
+fi
 
 # Seed config.toml if missing
 if [[ -f "${GLOBAL_ROOT}/config.toml" ]]; then
@@ -74,4 +84,4 @@ if [[ ! -f "${PROJECT_ROOT}/plans/progress.jsonl" && -f "${GLOBAL_ROOT}/template
   cp "${GLOBAL_ROOT}/templates/progress.template.jsonl" "${PROJECT_ROOT}/plans/progress.jsonl"
 fi
 
-echo "Done. Project prompts/templates/scripts installed."
+echo "Done. Project prompts/templates/scripts/hooks installed. Review hooks with /hooks."

@@ -1,115 +1,31 @@
 # neural-codex project config (local scope)
-# See: https://developers.openai.com/codex/config-advanced/
+# Current keys: https://developers.openai.com/codex/config-reference/
 
-# Default profile (uncomment to set)
-# default_profile = "default"
+# GPT-5.6 is the current frontier family. The alias routes to gpt-5.6-sol.
+model = "gpt-5.6"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "auto"
+model_verbosity = "medium"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
 
-# Default model (adjust as needed)
-model = "gpt-5.2-codex"
-approval_policy = "on-failure"
-
-# Sandbox level: "workspace-write" (default) or "danger-full-access"
-# sandbox = "workspace-write"
-
-[reasoning]
-summary = "auto"
-effort = "auto"
-
-# ============================================================================
-# PROFILES - Named configuration sets for different workflows
-# ============================================================================
-
-[profiles.default]
-model = "gpt-5.2-codex"
-approval_policy = "on-failure"
-
-[profiles.fast]
-# Lighter model for quick tasks
-model = "gpt-4.1-mini"
-approval_policy = "on-failure"
-
-[profiles.autonomous]
-# For Ralph loop iterations - auto-approve safe operations
-model = "gpt-5.2-codex"
-approval_policy = "never"
-sandbox = "workspace-write"
-
-[profiles.careful]
-# For sensitive changes - require approval for everything
-model = "gpt-5.2-codex"
-approval_policy = "untrusted"
-
-# ============================================================================
-# MCP SERVERS
-# ============================================================================
-
-[mcpServers.chrome-devtools]
-command = "npx"
-args = ["-y", "chrome-devtools-mcp@latest"]
-description = "Chrome DevTools MCP (headless-friendly)"
-
-[mcpServers.github]
-command = "npx"
-args = ["-y", "@modelcontextprotocol/server-github"]
-description = "GitHub MCP"
-# env.GITHUB_PERSONAL_ACCESS_TOKEN should be set
-
-[mcpServers.search]
-type = "sse"
-url = "https://mcp.exa.ai/sse"
-description = "Search MCP (Exa)"
-
-# Optional: Playwright/browser MCP (uncomment if needed)
-# [mcpServers.playwright]
-# command = "npx"
-# args = ["-y", "playwright-mcp@latest"]
-# description = "Playwright/browser automation MCP"
-
-# ============================================================================
-# NOTIFICATIONS
-# ============================================================================
-
-# Notify hook for agent-turn-complete events
-# Useful for webhooks, desktop alerts, or CI integration
-# notify = ["bash", "scripts/telegram_notify.sh"]
-
-# Example: Desktop notification on macOS
-# notify = ["osascript", "-e", "display notification \"Codex completed\" with title \"Neural Codex\""]
-
-# Example: Webhook notification
-# notify = ["curl", "-X", "POST", "-d", "@-", "https://your-webhook.com/codex"]
-
-# ============================================================================
-# HISTORY & OBSERVABILITY
-# ============================================================================
-
-[history]
-# Save session transcripts locally
-# persistence = "local"
-# max_bytes = 10485760  # 10MB cap, auto-compact old entries
-
-# OpenTelemetry configuration (uncomment to enable)
-# [telemetry]
-# enabled = true
-# endpoint = "http://localhost:4318"  # OTLP HTTP endpoint
-# service_name = "neural-codex"
-
-# ============================================================================
-# TUI SETTINGS
-# ============================================================================
-
-# Clickable file citations in terminal
-# file_opener = "vscode"  # or "cursor", "windsurf"
-
-# ============================================================================
-# PROJECT SETTINGS
-# ============================================================================
-
-# Fallback filenames if AGENTS.md is missing
+# Fallback filenames if AGENTS.md is missing.
 project_doc_fallback_filenames = ["TEAM_GUIDE.md", ".agents.md", "PROJECT_GUIDE.md"]
-
-# Max bytes for AGENTS.md discovery
 project_doc_max_bytes = 65536
 
-# Custom project root markers (in addition to .git)
-# project_root_markers = [".codex", "package.json", "Cargo.toml"]
+[features]
+hooks = true
+
+[sandbox_workspace_write]
+network_access = false
+
+# MCP servers are examples. Add credentials through the shell, never here.
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest"]
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+
+# Hooks live in .codex/hooks.json. Review and trust them with /hooks.

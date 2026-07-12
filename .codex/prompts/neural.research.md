@@ -1,11 +1,20 @@
 ---
-description: MCP-backed research prompt
+description: Source-backed research with Codex native web search
 argument-hint: QUERY="<topic>"
 ---
 
-Research workflow (assumes a search MCP such as Exa/web-search is configured):
-1) Form 3–5 focused sub-queries from QUERY.
-2) Use the search MCP to fetch results; prefer sources with recency and authority.
-3) Synthesize: key findings, trade-offs, constraints; include source URLs.
-4) Keep to a tight summary + bullets; call out any uncertainties.
-If MCP is unavailable, state that and propose next steps.
+Research QUERY using Codex web search. Define the decision or question first,
+then run only the focused searches needed to answer it. Prefer official and
+primary sources; record dates for time-sensitive claims and distinguish facts,
+inferences, and unresolved uncertainty.
+
+Return:
+
+- A direct answer or recommendation
+- The material evidence and trade-offs
+- Actionable next steps
+- Links placed next to the claims they support
+
+If web search is unavailable, say which evidence could not be verified instead
+of filling gaps from memory. Launch Codex with `--search` when native search is
+not already enabled.

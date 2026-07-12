@@ -1,2 +1,4 @@
 __pycache__/
 .pytest_cache/
+.codex/compact-context.md
+exercise-evidence/

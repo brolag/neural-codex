@@ -1,48 +1,43 @@
 ---
-description: Switch between Codex profiles for different workflows
+description: Choose or create a current Codex profile for a workflow
 argument-hint: PROFILE=<default|fast|autonomous|careful>
 ---
 
-You are switching Codex profiles for the neural-codex workflow.
+Select the requested profile from `$CODEX_HOME/<name>.config.toml` and show the
+exact command that starts Codex with it. Do not edit configuration unless the
+user asks to create or change a profile.
 
-## Available Profiles
+## Bundled profiles
 
-| Profile | Model | Approval | Use Case |
-|---------|-------|----------|----------|
-| default | gpt-5.2-codex | on-failure | Standard development |
-| fast | gpt-4.1-mini | on-failure | Quick tasks, low cost |
-| autonomous | gpt-5.2-codex | never | Ralph loop, unattended work |
-| careful | gpt-5.2-codex | untrusted | Sensitive changes, review all |
+| Profile | Model / effort | Approval | Use case |
+|---------|----------------|----------|----------|
+| default | gpt-5.6 / medium | on-request | Standard development |
+| fast | gpt-5.6 / low | on-request | Latency-sensitive work |
+| autonomous | gpt-5.6 / high | never | Test-gated unattended loops |
+| careful | gpt-5.6 / xhigh | untrusted | Sensitive changes |
 
-## Usage
+Launch a new session:
 
-Switch profile for current session:
 ```bash
 codex --profile fast
 ```
 
-Use in Ralph loop:
+Run a non-interactive task:
+
 ```bash
-codex --profile autonomous exec ...
+codex --profile autonomous exec "<task>"
 ```
 
-## Profile Selection Guide
+Codex 0.134+ does not read `[profiles.<name>]` tables. To create a custom
+profile, write top-level keys to `$CODEX_HOME/<name>.config.toml`:
 
-1. **default**: Day-to-day development with safety nets
-2. **fast**: Quick research, simple edits, cost-sensitive tasks
-3. **autonomous**: Ralph loop iterations, batch processing, CI tasks
-4. **careful**: Production deployments, security-sensitive code, database migrations
-
-## Creating Custom Profiles
-
-Edit `.codex/config.toml`:
 ```toml
-[profiles.my-profile]
-model = "gpt-5.2-codex"
+model = "gpt-5.6"
+model_reasoning_effort = "medium"
+model_verbosity = "medium"
 approval_policy = "on-request"
-sandbox = "workspace-write"
+sandbox_mode = "workspace-write"
 ```
 
-Then use: `codex --profile my-profile`
-
-Outputs: Confirm the profile switch and summarize active settings.
+Keep the recommendation outcome-focused: identify the profile, explain the
+quality/latency and approval trade-off, and provide the launch command.

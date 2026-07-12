@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install neural-codex assets into ~/.codex (global).
+# Install neural-codex assets into CODEX_HOME (defaults to ~/.codex).
 # Usage: scripts/setup-global.sh [--force]
 
 FORCE=0
@@ -12,17 +12,22 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-GLOBAL_ROOT="${HOME}/.codex/neural-codex"
+CODEX_ROOT="${CODEX_HOME:-${HOME}/.codex}"
+GLOBAL_ROOT="${CODEX_ROOT}/neural-codex"
 GLOBAL_PROMPTS="${GLOBAL_ROOT}/prompts"
 GLOBAL_TEMPLATES="${GLOBAL_ROOT}/templates"
 GLOBAL_SKILLS="${GLOBAL_ROOT}/skills"
 GLOBAL_SCRIPTS="${GLOBAL_ROOT}/scripts"
+GLOBAL_HOOKS="${GLOBAL_ROOT}/hooks"
 
 SRC_PROMPTS="${REPO_ROOT}/.codex/prompts"
 SRC_TEMPLATES="${REPO_ROOT}/.codex/templates"
 SRC_SKILLS="${REPO_ROOT}/.agents/skills"
 SRC_SCRIPTS="${REPO_ROOT}/scripts"
 SRC_CONFIG="${REPO_ROOT}/.codex/config.toml"
+SRC_HOOKS="${REPO_ROOT}/.codex/hooks"
+SRC_HOOKS_CONFIG="${REPO_ROOT}/.codex/hooks.json"
+SRC_PROFILES="${REPO_ROOT}/.codex/profiles"
 
 copy_dir() {
   local src="$1"
@@ -32,6 +37,7 @@ copy_dir() {
     [[ -e "$f" ]] || continue
     local base
     base="$(basename "$f")"
+    [[ "$base" == "__pycache__" || "$base" == ".DS_Store" ]] && continue
     if [[ "$FORCE" == "1" ]]; then
       rm -rf "$dst/$base"
       cp -R "$f" "$dst/$base"
@@ -50,18 +56,25 @@ copy_dir "${SRC_PROMPTS}" "${GLOBAL_PROMPTS}"
 copy_dir "${SRC_TEMPLATES}" "${GLOBAL_TEMPLATES}"
 copy_dir "${SRC_SKILLS}" "${GLOBAL_SKILLS}"
 copy_dir "${SRC_SCRIPTS}" "${GLOBAL_SCRIPTS}"
+copy_dir "${SRC_HOOKS}" "${GLOBAL_HOOKS}"
+
+if [[ -f "${SRC_HOOKS_CONFIG}" ]]; then
+  if [[ "${FORCE}" == "1" || ! -f "${GLOBAL_ROOT}/hooks.json" ]]; then
+    cp "${SRC_HOOKS_CONFIG}" "${GLOBAL_ROOT}/hooks.json"
+  fi
+fi
 
 # Install prompts into Codex global prompts dir (required for slash commands)
-mkdir -p "${HOME}/.codex/prompts"
-copy_dir "${GLOBAL_PROMPTS}" "${HOME}/.codex/prompts"
+mkdir -p "${CODEX_ROOT}/prompts"
+copy_dir "${GLOBAL_PROMPTS}" "${CODEX_ROOT}/prompts"
 
 # Install skills into Codex global skills dir (optional, for autodiscovery)
 mkdir -p "${HOME}/.agents/skills"
 copy_dir "${GLOBAL_SKILLS}" "${HOME}/.agents/skills"
 
 # Legacy fallback (optional)
-mkdir -p "${HOME}/.codex/skills"
-copy_dir "${GLOBAL_SKILLS}" "${HOME}/.codex/skills"
+mkdir -p "${CODEX_ROOT}/skills"
+copy_dir "${GLOBAL_SKILLS}" "${CODEX_ROOT}/skills"
 
 # Store a config stub for project setup
 if [[ -f "${SRC_CONFIG}" ]]; then
@@ -70,4 +83,13 @@ if [[ -f "${SRC_CONFIG}" ]]; then
   fi
 fi
 
-echo "Done. Restart Codex to pick up new prompts."
+# Codex 0.134+ loads named profiles from $CODEX_HOME/<name>.config.toml.
+for profile in "${SRC_PROFILES}"/*.config.toml; do
+  [[ -e "${profile}" ]] || continue
+  target="${CODEX_ROOT}/$(basename "${profile}")"
+  if [[ "${FORCE}" == "1" || ! -f "${target}" ]]; then
+    cp "${profile}" "${target}"
+  fi
+done
+
+echo "Done. Restart Codex to pick up prompts and profiles."
