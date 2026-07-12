@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOKS = ROOT / ".codex" / "hooks"
@@ -53,6 +55,72 @@ def test_recursive_delete_inside_tmp_is_not_mistaken_for_root() -> None:
     result = run_hook(
         "dangerous_actions_blocker.py",
         {"tool_name": "Bash", "tool_input": {"command": "rm -rf /tmp/disposable-build"}},
+    )
+    assert result.returncode == 0
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "rm -fr /",
+        "rm -fr ~",
+        "rm -rf //",
+        "rm -rf /*",
+        "rm -rf $HOME/*",
+        "rm -rf ~/*",
+        "rm --recursive --force /",
+        'rm -rf "$HOME"',
+        "rm -rf ${HOME}",
+        "sudo rm -R -f -- /",
+        "sudo --preserve-env rm -rf /",
+    ],
+)
+def test_equivalent_root_and_home_deletions_are_blocked(command: str) -> None:
+    result = run_hook(
+        "dangerous_actions_blocker.py",
+        {"tool_name": "Bash", "tool_input": {"command": command}},
+    )
+    assert result.returncode == 2
+    assert "Recursive deletion" in result.stderr
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        'bash -c "rm -rf /"',
+        "sh -c 'rm -fr $HOME'",
+        "zsh -c 'rm --recursive --force ${HOME}'",
+        'sudo bash -c "rm -R -f /"',
+        'env SAFE=1 bash -lc "rm -rf /"',
+        'bash -c "sh -c \'rm -rf /\'"',
+        'bash -c "rm -rf /*"',
+        "sudo sh -c 'rm -rf ~/*'",
+    ],
+)
+def test_shell_wrapped_root_and_home_deletions_are_blocked(command: str) -> None:
+    result = run_hook(
+        "dangerous_actions_blocker.py",
+        {"tool_name": "Bash", "tool_input": {"command": command}},
+    )
+    assert result.returncode == 2
+    assert "Recursive deletion" in result.stderr
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "echo rm -rf /",
+        "/bin/echo rm -rf /",
+        "git rm -rf /",
+        "printf '%s' 'rm -rf /'",
+        'bash -c "echo rm -rf /"',
+        'bash -c "rm -rf /tmp/disposable-build"',
+    ],
+)
+def test_commands_that_only_mention_safe_deletions_are_allowed(command: str) -> None:
+    result = run_hook(
+        "dangerous_actions_blocker.py",
+        {"tool_name": "Bash", "tool_input": {"command": command}},
     )
     assert result.returncode == 0
 

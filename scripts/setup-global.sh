@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install neural-codex assets into ~/.codex (global).
+# Install neural-codex assets into CODEX_HOME (defaults to ~/.codex).
 # Usage: scripts/setup-global.sh [--force]
 
 FORCE=0
@@ -12,7 +12,8 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-GLOBAL_ROOT="${HOME}/.codex/neural-codex"
+CODEX_ROOT="${CODEX_HOME:-${HOME}/.codex}"
+GLOBAL_ROOT="${CODEX_ROOT}/neural-codex"
 GLOBAL_PROMPTS="${GLOBAL_ROOT}/prompts"
 GLOBAL_TEMPLATES="${GLOBAL_ROOT}/templates"
 GLOBAL_SKILLS="${GLOBAL_ROOT}/skills"
@@ -64,16 +65,16 @@ if [[ -f "${SRC_HOOKS_CONFIG}" ]]; then
 fi
 
 # Install prompts into Codex global prompts dir (required for slash commands)
-mkdir -p "${HOME}/.codex/prompts"
-copy_dir "${GLOBAL_PROMPTS}" "${HOME}/.codex/prompts"
+mkdir -p "${CODEX_ROOT}/prompts"
+copy_dir "${GLOBAL_PROMPTS}" "${CODEX_ROOT}/prompts"
 
 # Install skills into Codex global skills dir (optional, for autodiscovery)
 mkdir -p "${HOME}/.agents/skills"
 copy_dir "${GLOBAL_SKILLS}" "${HOME}/.agents/skills"
 
 # Legacy fallback (optional)
-mkdir -p "${HOME}/.codex/skills"
-copy_dir "${GLOBAL_SKILLS}" "${HOME}/.codex/skills"
+mkdir -p "${CODEX_ROOT}/skills"
+copy_dir "${GLOBAL_SKILLS}" "${CODEX_ROOT}/skills"
 
 # Store a config stub for project setup
 if [[ -f "${SRC_CONFIG}" ]]; then
@@ -82,10 +83,10 @@ if [[ -f "${SRC_CONFIG}" ]]; then
   fi
 fi
 
-# Codex 0.134+ loads named profiles from ~/.codex/<name>.config.toml.
+# Codex 0.134+ loads named profiles from $CODEX_HOME/<name>.config.toml.
 for profile in "${SRC_PROFILES}"/*.config.toml; do
   [[ -e "${profile}" ]] || continue
-  target="${HOME}/.codex/$(basename "${profile}")"
+  target="${CODEX_ROOT}/$(basename "${profile}")"
   if [[ "${FORCE}" == "1" || ! -f "${target}" ]]; then
     cp "${profile}" "${target}"
   fi

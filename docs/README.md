@@ -9,6 +9,7 @@ This directory is the system of record for agent work. Keep it current and link 
 - `QUALITY_SCORE.md` — quality rubric and acceptance gates
 - `RELIABILITY.md` — stability, testing, and rollback strategy
 - `SECURITY.md` — threat model, secrets, and safety boundaries
+- `HOOKS.md` — lifecycle event map, trust flow, guardrails, and validation
 - `FRONTEND.md` — UI conventions and UX principles
 
 ## Knowledge Bases

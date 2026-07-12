@@ -24,6 +24,9 @@ REQUIRED_SNIPPETS = [
     "no legacy hooks",
     "scripts/setup-global.sh",
     "scripts/setup-project.sh",
+    "docs/hooks.md",
+    "/hooks",
+    "gpt-5.6",
 ]
 
 
@@ -54,3 +57,17 @@ def test_readmes_call_out_mcp_servers() -> None:
         assert "mcp" in text, f"Missing MCP reference in {readme}"
         for server in REQUIRED_MCP:
             assert server in text, f"Missing MCP server '{server}' in {readme}"
+
+
+def test_github_page_covers_current_hook_and_profile_flow() -> None:
+    text = _read_text(_repo_root() / "docs" / "index.html")
+    for snippet in [
+        'id="hooks"',
+        'id="profiles"',
+        "LIFECYCLE_HOOKS",
+        "GPT_5.6_PROFILES",
+        "COMMAND_GUARD",
+        "COMPACTION_RECOVERY",
+        "/hooks",
+    ]:
+        assert snippet in text, f"GitHub Page missing current content: {snippet}"

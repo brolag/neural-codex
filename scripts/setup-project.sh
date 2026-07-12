@@ -19,7 +19,8 @@ if [[ -z "${PROJECT_ROOT}" ]]; then
   PROJECT_ROOT="$(pwd)"
 fi
 
-GLOBAL_ROOT="${HOME}/.codex/neural-codex"
+CODEX_ROOT="${CODEX_HOME:-${HOME}/.codex}"
+GLOBAL_ROOT="${CODEX_ROOT}/neural-codex"
 if [[ ! -d "${GLOBAL_ROOT}" ]]; then
   echo "Global neural-codex not found. Run scripts/setup-global.sh first."
   exit 1

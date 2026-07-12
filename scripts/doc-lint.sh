@@ -14,6 +14,7 @@ REQUIRED_FILES=(
   "docs/QUALITY_SCORE.md"
   "docs/RELIABILITY.md"
   "docs/SECURITY.md"
+  "docs/HOOKS.md"
   "docs/FRONTEND.md"
   "docs/design-docs/README.md"
   "docs/exec-plans/README.md"
@@ -26,6 +27,7 @@ REQUIRED_AGENTS_REFS=(
   "docs/README.md"
   "docs/PLANS.md"
   "ARCHITECTURE.md"
+  "docs/HOOKS.md"
 )
 
 REQUIRED_DOCS_INDEX_TERMS=(
@@ -34,6 +36,7 @@ REQUIRED_DOCS_INDEX_TERMS=(
   "product-specs"
   "references"
   "generated"
+  "HOOKS.md"
 )
 
 failures=()

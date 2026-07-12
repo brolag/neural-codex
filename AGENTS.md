@@ -17,6 +17,7 @@
 - Harness guidance: `docs/AGENT-HARNESS.md`.
 - Docs index: `docs/README.md`.
 - Architecture overview: `ARCHITECTURE.md`.
+- Lifecycle hook contract and trust flow: `docs/HOOKS.md`.
 - Setup + usage reference: `README-neural-codex.md`.
 - Task state: `plans/prd.json` and `plans/progress.jsonl`.
 - ExecPlans for multi-hour work: `docs/PLANS.md` and `docs/exec-plans/active/`.

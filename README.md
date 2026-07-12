@@ -55,6 +55,14 @@ Project-scoped skills in `.agents/skills/`:
 - Warn when tool output contains common secret formats
 - Preserve a recovery snapshot before context compaction
 
+The deletion guard tokenizes commands and recognizes reordered short flags,
+long options, quoted home variables, privilege wrappers, and nested shell `-c`
+forms while allowing quoted examples and narrower paths such as temporary build
+directories. Hooks are defense in depth; Codex
+sandboxing and approval policy remain the security boundary. See
+[`docs/HOOKS.md`](docs/HOOKS.md) for the event map, trust flow, limitations, and
+validation commands.
+
 ### Agents
 - `agents/multi-ai/AGENTS.md`
 - `agents/dispatcher/AGENTS.md`
@@ -96,11 +104,13 @@ scripts/setup-global.sh
 ```
 
 This installs:
-- `~/.codex/neural-codex/` (prompts, templates, skills, scripts, config stub)
-- `~/.codex/prompts/` (so `/prompts:neural.*` appear)
+- `$CODEX_HOME/neural-codex/` (prompts, templates, skills, scripts, config stub)
+- `$CODEX_HOME/prompts/` (so `/prompts:neural.*` appear)
 - `~/.agents/skills/` (optional autodiscovery)
-- Legacy: `~/.codex/skills/` (compatibility)
-- `~/.codex/{default,fast,autonomous,careful}.config.toml` (Codex 0.134+ profiles)
+- Legacy: `$CODEX_HOME/skills/` (compatibility)
+- `$CODEX_HOME/{default,fast,autonomous,careful}.config.toml` (Codex 0.134+ profiles)
+
+`CODEX_HOME` defaults to `~/.codex` when it is unset.
 
 Use `--force` to overwrite existing files:
 ```bash
@@ -149,7 +159,7 @@ Notes:
 
 ## Profiles
 
-Codex 0.134+ loads named profiles from `~/.codex/<name>.config.toml`. Switch with `codex --profile <name>`:
+Codex 0.134+ loads named profiles from `$CODEX_HOME/<name>.config.toml`. Switch with `codex --profile <name>`:
 
 | Profile | Model | Approval | Use Case |
 |---------|-------|----------|----------|
@@ -185,6 +195,8 @@ The config file supports advanced options (see `.codex/config.toml`):
 - **TUI**: Clickable file citations (vscode, cursor, windsurf)
 
 Reference: https://developers.openai.com/codex/config-advanced/
+
+Hook reference: [`docs/HOOKS.md`](docs/HOOKS.md)
 
 ## Repo layout
 ```

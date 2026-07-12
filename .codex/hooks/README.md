@@ -6,7 +6,7 @@ the installed hooks do not depend on `jq`.
 
 ## Included hooks
 
-- `dangerous_actions_blocker.py`: blocks high-confidence destructive Bash commands and warns on recursive deletion.
+- `dangerous_actions_blocker.py`: blocks high-confidence destructive Bash commands, including root/home targets and content globs through common shell wrappers, and warns on other recursive deletion.
 - `prompt_injection_detector.py`: blocks obvious instruction-injection strings in executable commands and non-document patches.
 - `sensitive_file_guard.py`: blocks `apply_patch` writes to common credential and environment files.
 - `output_scanner.py`: warns when `tool_response` contains common secret formats.
