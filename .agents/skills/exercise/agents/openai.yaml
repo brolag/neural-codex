@@ -1,0 +1,4 @@
+interface:
+  display_name: "Exercise"
+  short_description: "Verify behavior end to end with evidence"
+  default_prompt: "Use $exercise to verify this change through real user behavior."

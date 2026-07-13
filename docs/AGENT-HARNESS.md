@@ -8,6 +8,7 @@ This repo is designed for agent-first work: humans specify intent, agents execut
 - `docs/README.md` is the knowledge base index.
 - `ARCHITECTURE.md` provides a system overview.
 - `docs/PLANS.md` and `docs/exec-plans/active/` are for multi-hour ExecPlans.
+- `docs/WORKFLOW.md` defines the gated development flow and its durable artifacts.
 - `plans/prd.json` is the task list; `plans/progress.jsonl` is the execution log.
 - `.agents/skills/` contains reusable procedures; each skill has a `SKILL.md` manifest.
 - `.codex/hooks.json` maps supported lifecycle events to handlers under `.codex/hooks/`.
@@ -26,13 +27,14 @@ This repo is designed for agent-first work: humans specify intent, agents execut
 
 ## Recommended change flow
 
-1. **Research:** inspect only the context needed for the decision; keep the checkout read-only.
-2. **Contract:** record objective, non-goals, acceptance scenarios, validation commands, and rollback.
-3. **Implement:** start from the distilled plan and change the smallest relevant harness component.
-4. **Exercise:** drive the CLI, browser, or desktop behavior and preserve raw evidence.
-5. **Review:** use an independent clean-context gate for security-sensitive or pre-merge work.
+1. **Discover:** use `$discover` to inspect the repository, map four classes of unknowns, and keep the checkout read-only.
+2. **Specify:** use `$spec` to record signatures, invariants, non-goals, dependencies, acceptance, and validation, then stop for approval.
+3. **Craft:** use `$craft` to capture the baseline and implement only the approved contract.
+4. **Vet:** use `$vet` for an independent clean-context review of the neutral diff and acceptance evidence.
+5. **Exercise:** use `$exercise` to drive the CLI, installer, browser, or desktop behavior and preserve raw evidence.
 
-Read `docs/VERIFICATION.md` for the evidence contract. A test result, behavioral
+Read `docs/WORKFLOW.md` for the gate transitions and `docs/VERIFICATION.md` for
+the evidence contract. A test result, behavioral
 scenario, and static review are complementary signals; none substitutes for the
 others.
 
@@ -52,6 +54,7 @@ others.
 - `docs/references/` — authoritative references
 - `docs/generated/` — machine-generated artifacts
 - `docs/HOOKS.md` — hook contract, installation, trust, and validation
+- `docs/WORKFLOW.md` — discovery, planning, implementation, review, and behavioral gates
 - `docs/VERIFICATION.md` — acceptance contract, evidence lanes, and harness experiments
 
 ## Keeping the harness healthy

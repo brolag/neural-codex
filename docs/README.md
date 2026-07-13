@@ -6,6 +6,7 @@ This directory is the system of record for agent work. Keep it current and link 
 - [`DESIGN.md`](DESIGN.md) — architectural intent and core constraints
 - [`PLANS.md`](PLANS.md) — ExecPlan format for multi-hour work
 - [`VERIFICATION.md`](VERIFICATION.md) — done contract, evidence lanes, and proof of work
+- [`WORKFLOW.md`](WORKFLOW.md) — `$discover -> $spec -> $craft -> $vet + $exercise` gates and artifacts
 - [`PRODUCT_SENSE.md`](PRODUCT_SENSE.md) — user value, success metrics, and priorities
 - [`QUALITY_SCORE.md`](QUALITY_SCORE.md) — quality rubric and acceptance gates
 - [`RELIABILITY.md`](RELIABILITY.md) — stability, testing, and rollback strategy

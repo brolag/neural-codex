@@ -15,6 +15,7 @@ REQUIRED_FILES=(
   "docs/RELIABILITY.md"
   "docs/SECURITY.md"
   "docs/HOOKS.md"
+  "docs/WORKFLOW.md"
   "docs/VERIFICATION.md"
   "docs/FRONTEND.md"
   "docs/design-docs/README.md"
@@ -30,6 +31,7 @@ REQUIRED_AGENTS_REFS=(
   "docs/PLANS.md"
   "ARCHITECTURE.md"
   "docs/HOOKS.md"
+  "docs/WORKFLOW.md"
   "docs/VERIFICATION.md"
 )
 
@@ -40,6 +42,7 @@ REQUIRED_DOCS_INDEX_TERMS=(
   "references"
   "generated"
   "HOOKS.md"
+  "WORKFLOW.md"
   "VERIFICATION.md"
 )
 

@@ -26,6 +26,51 @@ if [[ ! -d "${GLOBAL_ROOT}" ]]; then
   exit 1
 fi
 
+LEGACY_CRAFT_SHA256="ec6c84c5e8add0ea8cd9c1eb2fe9244fd60a4dd8a12e71181970c884cbabb2bc"
+
+file_sha256() {
+  local path="$1"
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$path" | awk '{print $1}'
+  else
+    sha256sum "$path" | awk '{print $1}'
+  fi
+}
+
+migrate_known_legacy_craft() {
+  local src_root="$1"
+  local dst_root="$2"
+  local dst_craft="${dst_root}/craft"
+  local dst_skill="${dst_craft}/SKILL.md"
+
+  [[ "$FORCE" == "0" && -f "$dst_skill" ]] || return 0
+
+  local hash
+  hash="$(file_sha256 "$dst_skill")"
+  if [[ "$hash" != "$LEGACY_CRAFT_SHA256" ]]; then
+    grep -qF "# CRAFT Framework" "$dst_skill" || return 0
+    grep -qF "CRAFT = Context, Requirements, Actions, Flow, Tests." "$dst_skill" || return 0
+  fi
+
+  local extra
+  extra="$(find "$dst_craft" -mindepth 1 -maxdepth 1 ! -name SKILL.md -print -quit)"
+  if [[ "$hash" != "$LEGACY_CRAFT_SHA256" || -n "$extra" ]]; then
+    local backup="${dst_root}/craft.legacy-backup"
+    if [[ -e "$backup" ]]; then
+      echo "Cannot migrate customized legacy craft skill: backup already exists at ${backup}." >&2
+      return 1
+    fi
+    mv "$dst_craft" "$backup"
+    cp -R "${src_root}/craft" "$dst_craft"
+    echo "Migrated customized legacy craft skill at ${dst_craft}; preserved the original at ${backup}."
+    return 0
+  fi
+
+  rm -rf "$dst_craft"
+  cp -R "${src_root}/craft" "$dst_craft"
+  echo "Migrated legacy craft skill at ${dst_craft}."
+}
+
 copy_dir() {
   local src="$1"
   local dst="$2"
@@ -55,9 +100,11 @@ mkdir -p "${PROJECT_ROOT}/scripts/neural-codex" "${PROJECT_ROOT}/plans"
 
 copy_dir "${GLOBAL_ROOT}/prompts" "${PROJECT_ROOT}/.codex/prompts"
 copy_dir "${GLOBAL_ROOT}/templates" "${PROJECT_ROOT}/.codex/templates"
+migrate_known_legacy_craft "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.agents/skills"
 copy_dir "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.agents/skills"
 
 # Legacy fallback (optional)
+migrate_known_legacy_craft "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.codex/skills"
 copy_dir "${GLOBAL_ROOT}/skills" "${PROJECT_ROOT}/.codex/skills"
 copy_dir "${GLOBAL_ROOT}/scripts" "${PROJECT_ROOT}/scripts/neural-codex"
 copy_dir "${GLOBAL_ROOT}/hooks" "${PROJECT_ROOT}/.codex/hooks"

@@ -29,6 +29,51 @@ SRC_HOOKS="${REPO_ROOT}/.codex/hooks"
 SRC_HOOKS_CONFIG="${REPO_ROOT}/.codex/hooks.json"
 SRC_PROFILES="${REPO_ROOT}/.codex/profiles"
 
+LEGACY_CRAFT_SHA256="ec6c84c5e8add0ea8cd9c1eb2fe9244fd60a4dd8a12e71181970c884cbabb2bc"
+
+file_sha256() {
+  local path="$1"
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "$path" | awk '{print $1}'
+  else
+    sha256sum "$path" | awk '{print $1}'
+  fi
+}
+
+migrate_known_legacy_craft() {
+  local src_root="$1"
+  local dst_root="$2"
+  local dst_craft="${dst_root}/craft"
+  local dst_skill="${dst_craft}/SKILL.md"
+
+  [[ "$FORCE" == "0" && -f "$dst_skill" ]] || return 0
+
+  local hash
+  hash="$(file_sha256 "$dst_skill")"
+  if [[ "$hash" != "$LEGACY_CRAFT_SHA256" ]]; then
+    grep -qF "# CRAFT Framework" "$dst_skill" || return 0
+    grep -qF "CRAFT = Context, Requirements, Actions, Flow, Tests." "$dst_skill" || return 0
+  fi
+
+  local extra
+  extra="$(find "$dst_craft" -mindepth 1 -maxdepth 1 ! -name SKILL.md -print -quit)"
+  if [[ "$hash" != "$LEGACY_CRAFT_SHA256" || -n "$extra" ]]; then
+    local backup="${dst_root}/craft.legacy-backup"
+    if [[ -e "$backup" ]]; then
+      echo "Cannot migrate customized legacy craft skill: backup already exists at ${backup}." >&2
+      return 1
+    fi
+    mv "$dst_craft" "$backup"
+    cp -R "${src_root}/craft" "$dst_craft"
+    echo "Migrated customized legacy craft skill at ${dst_craft}; preserved the original at ${backup}."
+    return 0
+  fi
+
+  rm -rf "$dst_craft"
+  cp -R "${src_root}/craft" "$dst_craft"
+  echo "Migrated legacy craft skill at ${dst_craft}."
+}
+
 copy_dir() {
   local src="$1"
   local dst="$2"
@@ -54,9 +99,19 @@ mkdir -p "${GLOBAL_ROOT}"
 
 copy_dir "${SRC_PROMPTS}" "${GLOBAL_PROMPTS}"
 copy_dir "${SRC_TEMPLATES}" "${GLOBAL_TEMPLATES}"
+migrate_known_legacy_craft "${SRC_SKILLS}" "${GLOBAL_SKILLS}"
 copy_dir "${SRC_SKILLS}" "${GLOBAL_SKILLS}"
 copy_dir "${SRC_SCRIPTS}" "${GLOBAL_SCRIPTS}"
 copy_dir "${SRC_HOOKS}" "${GLOBAL_HOOKS}"
+
+# Keep the installed upgrade entrypoints current even when other existing
+# scripts are preserved. A stale setup-project.sh cannot apply new migrations.
+for installer in setup-global.sh setup-project.sh; do
+  if [[ -f "${SRC_SCRIPTS}/${installer}" ]]; then
+    cp "${SRC_SCRIPTS}/${installer}" "${GLOBAL_SCRIPTS}/${installer}"
+    chmod +x "${GLOBAL_SCRIPTS}/${installer}"
+  fi
+done
 
 if [[ -f "${SRC_HOOKS_CONFIG}" ]]; then
   if [[ "${FORCE}" == "1" || ! -f "${GLOBAL_ROOT}/hooks.json" ]]; then
@@ -70,10 +125,12 @@ copy_dir "${GLOBAL_PROMPTS}" "${CODEX_ROOT}/prompts"
 
 # Install skills into Codex global skills dir (optional, for autodiscovery)
 mkdir -p "${HOME}/.agents/skills"
+migrate_known_legacy_craft "${SRC_SKILLS}" "${HOME}/.agents/skills"
 copy_dir "${GLOBAL_SKILLS}" "${HOME}/.agents/skills"
 
 # Legacy fallback (optional)
 mkdir -p "${CODEX_ROOT}/skills"
+migrate_known_legacy_craft "${SRC_SKILLS}" "${CODEX_ROOT}/skills"
 copy_dir "${GLOBAL_SKILLS}" "${CODEX_ROOT}/skills"
 
 # Store a config stub for project setup

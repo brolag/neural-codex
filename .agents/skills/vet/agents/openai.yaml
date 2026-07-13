@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vet"
+  short_description: "Run an independent pre-ship review gate"
+  default_prompt: "Use $vet to independently review this change before it ships."

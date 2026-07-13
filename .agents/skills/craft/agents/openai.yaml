@@ -1,0 +1,4 @@
+interface:
+  display_name: "Craft"
+  short_description: "Build an approved plan and verify the result"
+  default_prompt: "Use $craft to implement the approved plan and run the ship gates."
