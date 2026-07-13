@@ -32,6 +32,7 @@
       background: var(--bg);
       font: 15px/1.7 "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
       overflow-x: hidden;
+      isolation: isolate;
     }
     a { color: inherit; }
     code, pre { font-family: inherit; }
@@ -41,17 +42,18 @@
     #matrix-bg {
       position: fixed;
       inset: 0;
-      z-index: -2;
+      z-index: 0;
       width: 100%;
       height: 100%;
-      opacity: .14;
+      opacity: .34;
+      pointer-events: none;
     }
     .matrix-shade {
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: 1;
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(10,10,10,.38), rgba(10,10,10,.84));
+      background: linear-gradient(180deg, rgba(10,10,10,.12), rgba(10,10,10,.56));
     }
     .scanlines {
       position: fixed;
@@ -60,6 +62,7 @@
       pointer-events: none;
       background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.025) 2px, rgba(255,255,255,.025) 4px);
     }
+    main, footer { position: relative; z-index: 2; }
 
     header {
       position: sticky;
@@ -152,7 +155,6 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .eyebrow::before { animation: none; }
-      #matrix-bg { display: none; }
     }
   </style>
 </head>
@@ -278,12 +280,11 @@ plugins/neural-codex/
   </footer>
   <script>
     (() => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
       const canvas = document.getElementById('matrix-bg');
       const context = canvas.getContext('2d');
       const characters = 'アイウエオカキクケコサシスセソタチツテト0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       const fontSize = 14;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let drops = [];
       let animationFrame;
 
@@ -295,6 +296,20 @@ plugins/neural-codex/
         canvas.style.height = `${window.innerHeight}px`;
         context.setTransform(scale, 0, 0, scale, 0, 0);
         drops = Array(Math.ceil(window.innerWidth / fontSize)).fill(1);
+      };
+
+      const drawStaticMatrix = () => {
+        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        context.font = `${fontSize}px monospace`;
+        for (let column = 0; column < drops.length; column += 1) {
+          const head = Math.floor(Math.random() * (window.innerHeight / fontSize));
+          const trail = 12 + Math.floor(Math.random() * 18);
+          for (let offset = 0; offset < trail; offset += 1) {
+            const row = (head - offset + Math.ceil(window.innerHeight / fontSize)) % Math.ceil(window.innerHeight / fontSize);
+            context.fillStyle = `rgba(209, 213, 219, ${Math.max(.08, 1 - offset / trail)})`;
+            context.fillText(characters[Math.floor(Math.random() * characters.length)], column * fontSize, row * fontSize);
+          }
+        }
       };
 
       let lastDraw = 0;
@@ -317,9 +332,14 @@ plugins/neural-codex/
       };
 
       resize();
-      window.addEventListener('resize', resize, { passive: true });
-      animationFrame = requestAnimationFrame(draw);
+      if (reducedMotion) drawStaticMatrix();
+      else animationFrame = requestAnimationFrame(draw);
+      window.addEventListener('resize', () => {
+        resize();
+        if (reducedMotion) drawStaticMatrix();
+      }, { passive: true });
       document.addEventListener('visibilitychange', () => {
+        if (reducedMotion) return;
         if (document.hidden) cancelAnimationFrame(animationFrame);
         else animationFrame = requestAnimationFrame(draw);
       });

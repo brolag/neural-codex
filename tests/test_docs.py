@@ -85,6 +85,15 @@ def test_github_page_has_required_sections_and_local_links() -> None:
     assert "https://github.com/brolag/neural-codex/blob/main/docs/VERIFICATION.md" in text
 
 
+def test_github_page_keeps_visible_gray_matrix_with_reduced_motion_fallback() -> None:
+    text = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+    assert 'id="matrix-bg"' in text
+    assert "--matrix: #f7f7f7" in text
+    assert "drawStaticMatrix" in text
+    assert "prefers-reduced-motion: reduce" in text
+    assert "#matrix-bg { display: none; }" not in text
+
+
 def test_configuration_is_advisory_and_current() -> None:
     text = (ROOT / "docs" / "CONFIGURATION.md").read_text(encoding="utf-8")
     assert not re.search(r'^model = "gpt-5\.6"$', text, re.MULTILINE)
