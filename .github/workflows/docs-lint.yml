@@ -1,4 +1,4 @@
-name: Docs Lint
+name: Validate Plugin
 
 on:
   pull_request:
@@ -8,9 +8,18 @@ on:
     - cron: "0 14 * * 1" # Weekly Monday 14:00 UTC
 
 jobs:
-  docs-lint:
+  validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Validate docs
-        run: bash scripts/doc-lint.sh
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install test runner
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Run supported test suite
+        run: python -m pytest -q
+      - name: Validate plugin documentation
+        run: ./scripts/doc-lint.sh
