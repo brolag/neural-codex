@@ -3,3 +3,6 @@ __pycache__/
 .codex/compact-context.md
 exercise-evidence/
 .playwright-cli/
+
+# Local planning artifacts
+plans/
