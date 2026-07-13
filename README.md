@@ -8,6 +8,7 @@ workflows. The source is versioned here; project task state stays explicit under
 - No legacy hooks from Claude, status lines, or TTS
 - Project workflow state is explicit in `plans/prd.json` and `plans/progress.jsonl`
 - Prompts are namespaced as `neural.*`
+- A gated `$discover -> $spec -> $craft -> $vet + $exercise` workflow keeps intent, approval, implementation, review, and behavioral evidence separate
 
 ## Start here
 
@@ -32,8 +33,14 @@ For a later project, run the installed setup script from that project root:
 ```
 
 Restart Codex, open `/hooks`, review and trust the installed definitions, then
-run `/prompts:neural.loop-start`. Installers preserve existing files unless you
-explicitly pass `--force`.
+start planned work with `$discover` or run `/prompts:neural.loop-start` for the
+Ralph task loop. Installers preserve existing files unless you explicitly pass
+`--force`. During a normal upgrade, the installer automatically replaces only
+the legacy CRAFT-builder skill shipped by earlier neural-codex releases. If that
+legacy directory contains local changes, it is preserved as
+`craft.legacy-backup` before the new orchestrator becomes active. The two
+installed setup entrypoints are also refreshed so later project installs apply
+the same migration; other existing scripts remain preserved.
 
 ## What you get
 
@@ -63,8 +70,12 @@ Project-scoped skills in `.agents/skills/`:
 - memory-system: progress-log memory
 - pattern-detector: PRD/progress pattern analysis
 - prompt-engineering: prompt creation/refinement
-- plan-execute: structured planning and execution
-- craft: CRAFT prompt builder
+- discover: grounded unknowns mapping before planning
+- spec: approvable, dependency-aware `plan.md` contract
+- craft: build orchestrator for an approved plan
+- vet: independent clean-context `SHIP` / `HOLD` review
+- exercise: evidence-backed user-behavior verification
+- plan-execute: lightweight planning/execution alternative without the full gated workflow
 - feature: branch-first workflow
 - debugging: root-cause workflow
 - tdd: red-green-refactor
@@ -80,6 +91,10 @@ Project-scoped skills in `.agents/skills/`:
 - skill-installer: install external skills from URLs/registries
 - deep-research: multi-source comprehensive research
 - test-runner: smart test execution with Ralph integration
+
+The `$craft` skill is the build orchestrator. `/prompts:neural.craft` is still
+the legacy CRAFT acronym builder (Context, Requirements, Actions, Flow, Tests)
+and continues to emit `plans/craft/<slug>.yaml`.
 
 ### Templates
 - `plans/prd.json` and `plans/progress.jsonl`
@@ -170,6 +185,22 @@ From a project root after the global install:
 "${CODEX_HOME:-$HOME/.codex}/neural-codex/scripts/setup-project.sh" --path "$PWD"
 ```
 
+## Planned development workflow
+
+Use the gates in order for non-trivial changes:
+
+1. `$discover` inspects the real repository, surfaces unknowns, and writes `unknowns-map.md` without editing implementation code.
+2. `$spec` consumes that map, writes a draft `plan.md` with signatures and executable acceptance, then stops for approval.
+3. `$craft` records `baseline.md`, implements only the approved plan, and measures the before/after delta.
+4. `$vet` independently reviews the neutral diff and acceptance evidence, returning `SHIP` or `HOLD`.
+5. `$exercise` drives the CLI, installer, documentation, web, or desktop behavior and returns evidence-backed `PASS` or `FAIL`.
+
+`$craft` requires both review and behavioral evidence before it can mark the
+plan done. It stops for human ship approval and does not commit, push, merge,
+deploy, or send external messages automatically. See
+[`docs/WORKFLOW.md`](docs/WORKFLOW.md) for artifact shapes, failure behavior,
+and copy-pasteable validation commands.
+
 ## Ralph loop usage
 ```bash
 TEST_CMD="npm test" scripts/neural-codex/ralph-loop.sh 5
@@ -190,6 +221,7 @@ Notes:
 - Keep `AGENTS.md` short; move details into `docs/` and link them back.
 - Docs index: `docs/README.md` and ExecPlans in `docs/PLANS.md`.
 - Verification contract and evidence lanes: `docs/VERIFICATION.md`.
+- Gated development workflow: `docs/WORKFLOW.md`.
 - Validate doc coverage with `scripts/doc-lint.sh`.
 
 ## Profiles

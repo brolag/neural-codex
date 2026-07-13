@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec"
+  short_description: "Turn research into an approvable plan"
+  default_prompt: "Use $spec to create an approvable plan before implementation."

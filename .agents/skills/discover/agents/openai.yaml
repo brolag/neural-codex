@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discover"
+  short_description: "Map unknowns before planning a change"
+  default_prompt: "Use $discover to surface unknowns before we plan this change."
