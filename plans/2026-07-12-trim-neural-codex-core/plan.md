@@ -1,10 +1,12 @@
 ---
 project: neural-codex
 created: 2026-07-12
-status: in-progress
+status: done
 modified:
   - 2026-07-12
-commits: []
+commits:
+  - a4c47d0
+  - d713756
 related:
   back:
     - plans/2026-07-12-discover-spec-craft-vet/plan.md
@@ -76,7 +78,7 @@ Contradiction scan:
 - [x] S5: Rewrite `README.md`, `AGENTS.md`, and `ARCHITECTURE.md` as a concise, truthful description of the plugin; remove duplicate `README-neural-codex.md`; reduce `docs/` to the workflow, hook, verification, harness, configuration, and GitHub Page surfaces; and clearly label the removal of legacy commands as a breaking change. -- verify: `./scripts/doc-lint.sh && ! rg -n 'Ralph loop|/prompts:|\.codex/prompts|agents/\*/AGENTS|setup-global|setup-project|plan-execute|code-reviewer|slop-scan|memory-system' README.md AGENTS.md ARCHITECTURE.md docs` | test: `tests/test_docs.py`
 - [x] S6: Replace inventory tests with semantic plugin tests: manifest/path schema, exact five-skill allowlist, skill frontmatter and cross-links, hook portability/trust, stale-reference denial, marketplace source, README commands, GitHub Page links, and validation of every retained skill with Codex's `quick_validate.py`. Update CI to run only the supported suite. -- verify: `for skill in plugins/neural-codex/skills/*; do python3 /Users/brolag/.codex/skills/.system/skill-creator/scripts/quick_validate.py "$skill" || exit 1; done && python3 -m pytest -q && ./scripts/doc-lint.sh` | test: `tests/`
 - [x] S7: Exercise the result as a user: add the local marketplace, confirm Codex resolves the plugin and exactly five skills, review/trust hooks in a disposable context, run a representative `discover -> spec -> craft -> vet -> exercise` dry workflow, and inspect the GitHub Page at desktop and mobile widths with no broken links or stale capability claims. Record exact commands, screenshots, and results without committing machine-specific paths or caches. -- verify: `test -f plans/2026-07-12-trim-neural-codex-core/exercise-report.md && rg -n 'PASS|FAIL|BLOCKED' plans/2026-07-12-trim-neural-codex-core/exercise-report.md`
-- [~] S8: Run a clean-context `$vet` review over the complete branch diff, resolve every actionable finding, rerun the full validation, push a feature branch, open a ready PR, wait for required checks, and squash-merge only on a SHIP verdict and green required checks. -- verify: `test -f plans/2026-07-12-trim-neural-codex-core/vet-report.md && rg -n 'SHIP' plans/2026-07-12-trim-neural-codex-core/vet-report.md && git status --short && gh pr checks --watch` | must_include: `SHIP`
+- [x] S8: Run a clean-context `$vet` review over the complete branch diff, resolve every actionable finding, rerun the full validation, push a feature branch, open a ready PR, wait for required checks, and squash-merge only on a SHIP verdict and green required checks. -- verify: `test -f plans/2026-07-12-trim-neural-codex-core/vet-report.md && rg -n 'SHIP' plans/2026-07-12-trim-neural-codex-core/vet-report.md && git status --short && gh pr checks --watch` | must_include: `SHIP`
 
 ## Out of scope
 
@@ -102,3 +104,4 @@ No optional HTML rendering was requested, so `plan.md` is the only plan artifact
 <!-- append-only; post-approval changes: YYYY-MM-DD - what changed - why -->
 - 2026-07-12 - Moved the installable plugin under `plugins/neural-codex/`, changed the repo marketplace to the canonical local source path, and removed the redundant manifest `hooks` field - required by `$plugin-creator` repo-marketplace and validation contracts discovered at implementation start.
 - 2026-07-12 - Replaced the hardcoded GPT-5.6 Codex example with product-aware model guidance - live Codex CLI 0.142.5 rejected that ID for ChatGPT authentication, while the default available model completed the full plugin workflow.
+- 2026-07-12 - Reactivated the inactive GitHub Actions workflow and expanded it from documentation lint to the supported pytest plus documentation suite - required to obtain a real green PR check before merge.
