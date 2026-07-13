@@ -1,0 +1,36 @@
+{
+  "name": "neural-codex",
+  "version": "1.0.0",
+  "description": "A gated Codex workflow from discovery through independent review and behavioral verification.",
+  "author": {
+    "name": "Alfredo Bonilla",
+    "url": "https://github.com/brolag"
+  },
+  "homepage": "https://brolag.github.io/neural-codex/",
+  "repository": "https://github.com/brolag/neural-codex",
+  "keywords": [
+    "codex",
+    "planning",
+    "code-review",
+    "verification"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Neural Codex",
+    "shortDescription": "Plan, build, review, and exercise Codex changes.",
+    "longDescription": "Five evidence-gated skills for discovering unknowns, specifying work, building it, reviewing it independently, and exercising real user behavior.",
+    "developerName": "Alfredo Bonilla",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://brolag.github.io/neural-codex/",
+    "defaultPrompt": [
+      "Discover the unknowns before planning this change.",
+      "Turn this request into an approvable spec.",
+      "Build and verify the approved plan."
+    ],
+    "brandColor": "#7C3AED"
+  }
+}

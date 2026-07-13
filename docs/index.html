@@ -1,1348 +1,232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>neural-codex — Hooks, prompts, and autonomous Codex workflows</title>
-    <meta name="description" content="A Codex-native harness with lifecycle hooks, GPT-5.6 profiles, file-based memory, and test-gated autonomous loops.">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --matrix-green: #f7f7f7;
-            --matrix-green-dark: #9ca3af;
-            --matrix-green-glow: #d1d5db;
-            --matrix-bg: #0a0a0a;
-            --matrix-bg-light: #111111;
-            --terminal-border: #2b2b2b;
-            --text-dim: #9ca3af;
-            --text-bright: #f7f7f7;
-            --scanline: rgba(255, 255, 255, 0.03);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            width: 100%;
-            max-width: 100vw;
-            overflow-x: hidden;
-        }
-
-        body {
-            font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-            background: var(--matrix-bg);
-            color: var(--matrix-green);
-            line-height: 1.6;
-        }
-
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.15;
-        }
-
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            pointer-events: none;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                var(--scanline) 2px,
-                var(--scanline) 4px
-            );
-        }
-
-        .glow {
-            text-shadow: 0 0 5px var(--matrix-green), 0 0 10px var(--matrix-green), 0 0 20px var(--matrix-green-dark);
-        }
-
-        .glow-subtle {
-            text-shadow: 0 0 5px var(--matrix-green-dark);
-        }
-
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            background: rgba(10, 10, 10, 0.95);
-            border-bottom: 1px solid var(--terminal-border);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .logo-icon {
-            font-size: 1.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--matrix-green);
-            text-shadow: 0 0 10px var(--matrix-green);
-        }
-
-        .nav-links a::before {
-            content: '> ';
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .nav-links a:hover::before {
-            opacity: 1;
-        }
-
-        .btn {
-            padding: 0.6rem 1.2rem;
-            border: 1px solid var(--matrix-green);
-            background: transparent;
-            color: var(--matrix-green);
-            font-family: inherit;
-            font-size: 0.85rem;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn:hover {
-            background: var(--matrix-green);
-            color: var(--matrix-bg);
-            box-shadow: 0 0 20px var(--matrix-green-dark);
-        }
-
-        .btn::before {
-            content: '[';
-        }
-
-        .btn::after {
-            content: ']';
-        }
-
-        .btn-star {
-            border-color: #d1d5db;
-            color: #d1d5db;
-        }
-
-        .btn-star:hover {
-            background: #d1d5db;
-            color: var(--matrix-bg);
-            box-shadow: 0 0 20px rgba(209, 213, 219, 0.35);
-        }
-
-        .btn-star svg {
-            transition: transform 0.3s;
-        }
-
-        .btn-star:hover svg {
-            transform: scale(1.2) rotate(15deg);
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 6rem 2rem 4rem;
-            text-align: center;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 1rem;
-            border: 1px solid var(--terminal-border);
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-bottom: 2rem;
-        }
-
-        .hero-badge .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--matrix-green);
-            border-radius: 50%;
-            animation: blink 1s infinite;
-            box-shadow: 0 0 10px var(--matrix-green);
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 400;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1px;
-        }
-
-        h1 .highlight {
-            color: var(--matrix-green);
-            font-weight: 700;
-        }
-
-        .hero-subtitle {
-            font-size: 1rem;
-            color: var(--text-dim);
-            max-width: 640px;
-            margin-bottom: 2.5rem;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 3rem;
-        }
-
-        .terminal {
-            background: rgba(10, 10, 10, 0.88);
-            border: 1px solid var(--terminal-border);
-            width: 100%;
-            max-width: 820px;
-            text-align: left;
-            box-shadow: 0 0 40px rgba(34, 211, 238, 0.15);
-        }
-
-        .terminal-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: rgba(17, 17, 17, 0.7);
-            border-bottom: 1px solid var(--terminal-border);
-        }
-
-        .terminal-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .terminal-dot.red { background: #6b7280; box-shadow: 0 0 5px #6b7280; }
-        .terminal-dot.yellow { background: #9ca3af; box-shadow: 0 0 5px #9ca3af; }
-        .terminal-dot.green { background: #d1d5db; box-shadow: 0 0 5px #d1d5db; }
-
-        .terminal-title {
-            flex: 1;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-        }
-
-        .terminal-body {
-            padding: 1.5rem;
-            font-size: 0.85rem;
-            min-height: 280px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .terminal-line {
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            animation: typeIn 0.3s forwards;
-        }
-
-        .terminal-line:nth-child(1) { animation-delay: 0.3s; }
-        .terminal-line:nth-child(2) { animation-delay: 0.6s; }
-        .terminal-line:nth-child(3) { animation-delay: 0.9s; }
-        .terminal-line:nth-child(4) { animation-delay: 1.2s; }
-        .terminal-line:nth-child(5) { animation-delay: 1.5s; }
-        .terminal-line:nth-child(6) { animation-delay: 1.8s; }
-        .terminal-line:nth-child(7) { animation-delay: 2.1s; }
-        .terminal-line:nth-child(8) { animation-delay: 2.4s; }
-
-        @keyframes typeIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .prompt { color: var(--matrix-green); }
-        .command { color: #f7f7f7; }
-        .output { color: var(--text-dim); }
-        .success { color: var(--matrix-green); }
-        .dim { color: #6b7280; }
-
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 16px;
-            background: var(--matrix-green);
-            animation: cursorBlink 1s infinite;
-            vertical-align: middle;
-            margin-left: 2px;
-        }
-
-        @keyframes cursorBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .section {
-            padding: 5rem 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.8rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-
-        .section-header h2::before {
-            content: '## ';
-            color: var(--text-dim);
-        }
-
-        .section-header p {
-            color: var(--text-dim);
-            font-size: 0.95rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        #workflow .section-header h2 {
-            font-size: clamp(1.05rem, 4.5vw, 1.8rem);
-            overflow-wrap: anywhere;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .feature-card {
-            background: rgba(17, 17, 17, 0.6);
-            border: 1px solid var(--terminal-border);
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover {
-            border-color: var(--matrix-green);
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.12);
-        }
-
-        .feature-card h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .feature-card h3::before {
-            content: '>';
-            color: var(--text-dim);
-        }
-
-        .feature-card p {
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            line-height: 1.7;
-        }
-
-        .commands-section {
-            background: rgba(17, 17, 17, 0.45);
-            border-top: 1px solid var(--terminal-border);
-            border-bottom: 1px solid var(--terminal-border);
-        }
-
-        .commands-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .command-card {
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid var(--terminal-border);
-            padding: 1rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .command-card:hover {
-            border-color: var(--matrix-green);
-        }
-
-        .command-card code {
-            display: block;
-            font-size: 0.95rem;
-            color: var(--matrix-green);
-            margin-bottom: 0.5rem;
-        }
-
-        .command-card p {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-        }
-
-        .hook-flow {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
-            gap: 0.75rem;
-            align-items: center;
-            margin-top: 2rem;
-        }
-
-        .flow-step {
-            min-height: 96px;
-            padding: 1rem;
-            border: 1px solid var(--terminal-border);
-            background: rgba(10, 10, 10, 0.8);
-        }
-
-        .flow-step strong {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .flow-step span {
-            color: var(--text-dim);
-            font-size: 0.72rem;
-        }
-
-        .flow-arrow {
-            color: var(--text-dim);
-        }
-
-        .profile-note {
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            margin-top: 1.25rem;
-            text-align: center;
-        }
-
-        .install-box {
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid var(--terminal-border);
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .install-box h3 {
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-dim);
-        }
-
-        .install-box h3::before {
-            content: '# ';
-        }
-
-        .code-block {
-            background: var(--matrix-bg);
-            border: 1px solid var(--terminal-border);
-            margin-bottom: 1rem;
-            overflow: hidden;
-            min-width: 0;
-            max-width: 100%;
-        }
-
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: rgba(17, 17, 17, 0.7);
-            border-bottom: 1px solid var(--terminal-border);
-            font-size: 0.75rem;
-            color: var(--text-dim);
-        }
-
-        .copy-btn {
-            padding: 0.25rem 0.5rem;
-            background: transparent;
-            border: 1px solid var(--terminal-border);
-            color: var(--text-dim);
-            font-size: 0.7rem;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:hover {
-            border-color: var(--matrix-green);
-            color: var(--matrix-green);
-        }
-
-        .copy-btn.copied {
-            border-color: var(--matrix-green);
-            color: var(--matrix-green);
-        }
-
-        .code-block pre {
-            padding: 1rem;
-            margin: 0;
-            font-size: 0.85rem;
-            overflow-x: auto;
-            width: 100%;
-            min-width: 0;
-            max-width: 100%;
-        }
-
-        .code-block pre code {
-            display: block;
-            width: 100%;
-            min-width: 0;
-            max-width: 100%;
-            overflow-x: auto;
-            white-space: pre;
-        }
-
-        .cta-section {
-            text-align: center;
-            padding: 6rem 2rem;
-            border-top: 1px solid var(--terminal-border);
-        }
-
-        .cta-section h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta-section p {
-            color: var(--text-dim);
-            margin-bottom: 2rem;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        footer {
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid var(--terminal-border);
-            font-size: 0.8rem;
-            color: var(--text-dim);
-        }
-
-        footer a {
-            color: var(--matrix-green);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        .footer-crosslinks {
-            max-width: 480px;
-            margin: 0 auto 1.5rem;
-            text-align: left;
-            font-size: 0.8rem;
-        }
-
-        .footer-crosslinks-title {
-            color: var(--text-dim);
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
-        }
-
-        .footer-crosslinks-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-crosslinks-list li {
-            margin-bottom: 0.25rem;
-            display: flex;
-            align-items: baseline;
-            gap: 0;
-        }
-
-        .footer-crosslinks-list .crosslink-prompt {
-            color: var(--text-dim);
-            margin-right: 0.5rem;
-            flex-shrink: 0;
-        }
-
-        .footer-crosslinks-list a {
-            color: var(--matrix-green);
-            text-decoration: none;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-
-        .footer-crosslinks-list a:hover {
-            text-decoration: none;
-            text-shadow: 0 0 8px var(--matrix-green), 0 0 16px var(--matrix-green-dark);
-        }
-
-        .footer-crosslinks-list .crosslink-desc {
-            color: var(--text-dim);
-            margin-left: 0.75rem;
-            opacity: 0.7;
-        }
-
-        .version-badge {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            padding: 0.5rem 1rem;
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid var(--terminal-border);
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            z-index: 100;
-        }
-
-        .terminal-input-line {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            border-top: 1px solid var(--terminal-border);
-            background: rgba(17, 17, 17, 0.7);
-        }
-
-        .terminal-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--matrix-green);
-            font-family: inherit;
-            font-size: 0.85rem;
-            margin-left: 0.5rem;
-            outline: none;
-            caret-color: var(--matrix-green);
-        }
-
-        .terminal-input::placeholder {
-            color: #4b5563;
-        }
-
-        .terminal-body::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .terminal-body::-webkit-scrollbar-thumb {
-            background: var(--terminal-border);
-        }
-
-        .glitch {
-            animation: glitch 0.3s infinite;
-        }
-
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        .rainbow {
-            animation: rainbow 0.5s infinite;
-        }
-
-        @keyframes rainbow {
-            0% { color: #e5e7eb; }
-            17% { color: #d1d5db; }
-            33% { color: #cbd5e1; }
-            50% { color: #bfc5d2; }
-            67% { color: #cfd4dc; }
-            83% { color: #e2e5ea; }
-            100% { color: #e5e7eb; }
-        }
-
-        .typing-effect {
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typing 1s steps(40);
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            h1 { font-size: 1.8rem; }
-            .section { padding-inline: 1rem; }
-            .install-box { padding: 1rem; }
-            .version-badge { position: static; width: fit-content; margin: 0 auto 1rem; }
-            .terminal-body { font-size: 0.75rem; }
-            .terminal-input { font-size: 0.75rem; }
-            .footer-crosslinks { text-align: center; }
-            .footer-crosslinks-list li { justify-content: center; }
-            .hook-flow { grid-template-columns: 1fr; }
-            .flow-arrow { transform: rotate(90deg); text-align: center; }
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--matrix-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--terminal-border);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--matrix-green-dark);
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Neural Codex: five evidence-gated skills for Codex.">
+  <title>Neural Codex — evidence-gated work</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #09080f;
+      --surface: #13111d;
+      --surface-2: #1b1728;
+      --line: #302945;
+      --text: #f7f3ff;
+      --muted: #aaa1bd;
+      --violet: #a78bfa;
+      --cyan: #67e8f9;
+      --green: #86efac;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .34);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% -10%, rgba(124, 58, 237, .28), transparent 34rem),
+        radial-gradient(circle at 90% 20%, rgba(8, 145, 178, .14), transparent 30rem),
+        var(--bg);
+      font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    code { color: var(--cyan); }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(9, 8, 15, .78);
+      backdrop-filter: blur(18px);
+    }
+    nav { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; text-decoration: none; letter-spacing: -.02em; }
+    .brand-mark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-2); color: var(--violet); }
+    .nav-links { display: flex; gap: 22px; color: var(--muted); font-size: 14px; }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero { padding: 112px 0 82px; }
+    .eyebrow { margin: 0 0 18px; color: var(--violet); font-size: 13px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { max-width: 900px; margin: 0; font-size: clamp(48px, 9vw, 92px); line-height: .96; letter-spacing: -.065em; }
+    h1 span { color: transparent; background: linear-gradient(100deg, var(--violet), var(--cyan)); background-clip: text; -webkit-background-clip: text; }
+    .lede { max-width: 720px; margin: 30px 0 0; color: var(--muted); font-size: clamp(19px, 2.4vw, 24px); }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+    .button { padding: 12px 18px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--text); font-weight: 750; text-decoration: none; }
+    .button.primary { border-color: transparent; background: var(--text); color: var(--bg); }
+
+    section { padding: 78px 0; border-top: 1px solid rgba(255,255,255,.07); }
+    .section-head { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: end; margin-bottom: 34px; }
+    h2 { margin: 0; font-size: clamp(34px, 5vw, 54px); line-height: 1.05; letter-spacing: -.045em; }
+    .section-head p { margin: 0; color: var(--muted); }
+
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .gate { position: relative; min-height: 210px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(145deg, var(--surface-2), var(--surface)); box-shadow: var(--shadow); }
+    .gate::after { content: "→"; position: absolute; right: -16px; top: 50%; z-index: 2; width: 22px; color: var(--muted); text-align: center; }
+    .gate:last-child::after { display: none; }
+    .gate small { color: var(--muted); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .gate h3 { margin: 34px 0 8px; color: var(--violet); font-size: 22px; }
+    .gate p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .card { padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: rgba(19, 17, 29, .78); }
+    .card h3 { margin: 0 0 8px; font-size: 20px; }
+    .card p { margin: 0; color: var(--muted); }
+    .badge { display: inline-flex; margin-bottom: 18px; padding: 5px 9px; border: 1px solid rgba(134,239,172,.22); border-radius: 999px; color: var(--green); background: rgba(134,239,172,.06); font: 700 12px/1.3 "SFMono-Regular", monospace; }
+
+    .terminal { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: #0c0a12; box-shadow: var(--shadow); }
+    .terminal-bar { display: flex; gap: 7px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #514761; }
+    pre { margin: 0; padding: 26px; overflow-x: auto; color: #d8d1e5; font-size: 14px; line-height: 1.9; }
+    pre strong { color: var(--green); font-weight: 600; }
+
+    .structure { display: grid; grid-template-columns: .85fr 1.15fr; gap: 16px; }
+    .principle { display: flex; flex-direction: column; justify-content: space-between; min-height: 320px; padding: 30px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(145deg, rgba(124,58,237,.18), rgba(19,17,29,.8)); }
+    .principle blockquote { margin: 0; font-size: clamp(28px, 4vw, 43px); line-height: 1.08; letter-spacing: -.04em; }
+    .principle p { margin: 26px 0 0; color: var(--muted); }
+
+    footer { padding: 44px 0 60px; color: var(--muted); }
+    .footer-row { display: flex; justify-content: space-between; gap: 24px; }
+
+    @media (max-width: 900px) {
+      .flow { grid-template-columns: 1fr; }
+      .gate { min-height: 0; }
+      .gate::after { content: "↓"; top: auto; right: 50%; bottom: -18px; }
+      .section-head, .structure { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 24px, 1120px); }
+      .nav-links a:not(:last-child) { display: none; }
+      .hero { padding: 80px 0 62px; }
+      section { padding: 60px 0; }
+      .grid { grid-template-columns: 1fr; }
+      .install-terminal pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+      .footer-row { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
-    <canvas id="matrix-bg"></canvas>
-    <div class="scanlines"></div>
-
-    <nav>
-        <div class="logo">
-            <span class="logo-icon">></span>
-            <span class="glow-subtle">neural_codex</span>
-        </div>
-        <ul class="nav-links">
-            <li><a href="#features">features</a></li>
-            <li><a href="#hooks">hooks</a></li>
-            <li><a href="#profiles">profiles</a></li>
-            <li><a href="#workflow">workflow</a></li>
-            <li><a href="#commands">prompts</a></li>
-            <li><a href="#install">install</a></li>
-            <li><a href="https://github.com/brolag/neural-codex">github</a></li>
-        </ul>
-        <a href="https://github.com/brolag/neural-codex" class="btn btn-star">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-            </svg>
-            STAR
-        </a>
+  <header>
+    <nav class="wrap" aria-label="Primary navigation">
+      <a class="brand" href="#top"><span class="brand-mark">N</span> Neural Codex</a>
+      <div class="nav-links">
+        <a href="#workflow">Workflow</a>
+        <a href="#hooks">Hooks</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/brolag/neural-codex">GitHub ↗</a>
+      </div>
     </nav>
+  </header>
 
-    <section class="hero">
-        <div class="hero-badge">
-            <span class="dot"></span>
-            GPT_5.6_READY // CODEX_NATIVE_HOOKS
-        </div>
-        <h1>CODEX WORKFLOWS WITH<br><span class="highlight glow">BUILT-IN GUARDRAILS</span></h1>
-        <p class="hero-subtitle">
-            > Lifecycle hooks, GPT-5.6 profiles, and a discover → spec → craft → vet workflow grounded in repository evidence_
-        </p>
-        <div class="hero-cta">
-            <a href="https://github.com/brolag/neural-codex" class="btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-                </svg>
-                VIEW_SOURCE
-            </a>
-            <a href="#install" class="btn">QUICK_START</a>
-        </div>
+  <main id="top">
+    <div class="hero wrap">
+      <p class="eyebrow">Native Codex plugin · five focused skills</p>
+      <h1>Evidence before <span>confidence.</span></h1>
+      <p class="lede">Discover the unknowns. Lock the plan. Build against it. Review independently. Exercise what the user will actually touch.</p>
+      <div class="actions">
+        <a class="button primary" href="#install">Install Neural Codex</a>
+        <a class="button" href="https://github.com/brolag/neural-codex/blob/main/docs/WORKFLOW.md">Read the workflow</a>
+      </div>
+    </div>
 
-        <div class="terminal" id="interactive-terminal">
-            <div class="terminal-header">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">neural_codex — hooks ready // click to interact</span>
-            </div>
-            <div class="terminal-body" id="terminal-output">
-                <div class="terminal-line"><span class="prompt">$</span> <span class="command">git clone https://github.com/brolag/neural-codex.git &amp;&amp; cd neural-codex</span></div>
-                <div class="terminal-line"><span class="prompt">$</span> <span class="command">scripts/setup-global.sh</span></div>
-                <div class="terminal-line"><span class="success">[OK]</span> <span class="output">prompts + skills + GPT-5.6 profiles staged</span></div>
-                <div class="terminal-line"><span class="prompt">$</span> <span class="command">scripts/setup-project.sh --path /path/to/project</span></div>
-                <div class="terminal-line"><span class="success">[OK]</span> <span class="output">project seeded with hooks + .codex/ + plans/</span></div>
-                <div class="terminal-line"><span class="prompt">></span> <span class="command">/hooks</span></div>
-                <div class="terminal-line"><span class="output">review and trust changed hook definitions_</span></div>
-                <div class="terminal-line"><span class="prompt">></span> <span class="command">/prompts:neural.onboard</span></div>
-                <div class="terminal-line"><span class="output">guided tour ready_</span></div>
-            </div>
-            <div class="terminal-input-line">
-                <span class="prompt">></span>
-                <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" spellcheck="false" placeholder="type a command...">
-            </div>
+    <section id="workflow">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>One path. Five gates.</h2>
+          <p>Each skill has a distinct authority and stopping condition. Small work can enter later; material work keeps planning, building, review, and behavior separate.</p>
         </div>
+        <div class="flow" aria-label="Neural Codex workflow">
+          <article class="gate"><small>01 · map</small><h3>$discover</h3><p>Find architectural unknowns and produce an evidence-backed map.</p></article>
+          <article class="gate"><small>02 · contract</small><h3>$spec</h3><p>Lock signatures, invariants, dependencies, and executable acceptance.</p></article>
+          <article class="gate"><small>03 · build</small><h3>$craft</h3><p>Capture a baseline, implement the approved plan, and measure the delta.</p></article>
+          <article class="gate"><small>04 · challenge</small><h3>$vet</h3><p>Review in fresh context and return an evidence-backed SHIP or HOLD.</p></article>
+          <article class="gate"><small>05 · use</small><h3>$exercise</h3><p>Run tests, drive real behavior, and return PASS or FAIL.</p></article>
+        </div>
+      </div>
     </section>
 
-    <section id="features" class="section">
-        <div class="section-header">
-            <h2>FEATURES</h2>
-            <p>> Codex-first primitives that stay in sync with your repo_</p>
+    <section id="hooks">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Guardrails with visible limits.</h2>
+          <p>Dependency-free Python hooks travel with the plugin. Codex does not trust them automatically: inspect them through <code>/hooks</code> first.</p>
         </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3>FILE_BASED_STATE</h3>
-                <p>Plans and memory live in `plans/` and `.codex/` with explicit logs.</p>
-            </div>
-            <div class="feature-card">
-                <h3>RALPH_LOOP</h3>
-                <p>Autonomous iteration with test gating using `scripts/ralph-loop.sh`.</p>
-            </div>
-            <div class="feature-card">
-                <h3>GATED_WORKFLOW</h3>
-                <p>Separate unknowns, approval, implementation, review, and observed user behavior.</p>
-            </div>
-            <div class="feature-card">
-                <h3>QUALITY_GUARDS</h3>
-                <p>Slop scan, TDD guidance, and overseer reviews to keep code tight.</p>
-            </div>
-            <div class="feature-card">
-                <h3>METRICS</h3>
-                <p>Track plan/review velocity, autonomy, cost, and compute advantage.</p>
-            </div>
-            <div class="feature-card">
-                <h3>MULTI_AGENT</h3>
-                <p>Squad orchestration with architect/dev/critic roles and worktree isolation.</p>
-            </div>
-            <div class="feature-card">
-                <h3>NATIVE_HOOKS</h3>
-                <p>PreToolUse, PostToolUse, and PreCompact guardrails using Codex's current event contract.</p>
-            </div>
-            <div class="feature-card">
-                <h3>GPT_5.6_PROFILES</h3>
-                <p>Separate low, medium, high, and xhigh profile overlays for current Codex versions.</p>
-            </div>
+        <div class="grid">
+          <article class="card"><span class="badge">PreToolUse</span><h3>Dangerous actions</h3><p>Blocks high-confidence destructive shell commands and protected-branch force pushes.</p></article>
+          <article class="card"><span class="badge">PreToolUse</span><h3>Sensitive files</h3><p>Stops patch writes to common credential and environment files.</p></article>
+          <article class="card"><span class="badge">PostToolUse</span><h3>Output scanning</h3><p>Warns when tool output resembles secrets without echoing the detected value.</p></article>
+          <article class="card"><span class="badge">PreCompact</span><h3>Context recovery</h3><p>Preserves a small project note so work can recover after compaction.</p></article>
         </div>
+      </div>
     </section>
 
-    <section id="hooks" class="section commands-section">
-        <div class="section-header">
-            <h2>LIFECYCLE_HOOKS</h2>
-            <p>> Deterministic guardrails around Codex tool use and context compaction_</p>
+    <section id="install">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Install from the repository marketplace.</h2>
+          <p>No copy script and no silent configuration mutation. Add the marketplace, install the plugin, start a new task, then review its hooks.</p>
         </div>
+        <div class="terminal install-terminal" aria-label="Installation commands">
+          <div class="terminal-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <pre><code><strong>$</strong> codex plugin marketplace add brolag/neural-codex
+<strong>$</strong> codex plugin add neural-codex@neural-codex
+<strong>$</strong> codex plugin list
 
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3>COMMAND_GUARD</h3>
-                <p>Blocks root/home targets and content globs—including nested shell wrappers—without mistaking quoted examples or git subcommands for direct deletion.</p>
-            </div>
-            <div class="feature-card">
-                <h3>SENSITIVE_FILES</h3>
-                <p>Rejects apply_patch writes to environment files, credentials, private keys, and package registry credentials.</p>
-            </div>
-            <div class="feature-card">
-                <h3>OUTPUT_SCANNER</h3>
-                <p>Warns when supported tool responses contain API keys, provider tokens, private keys, or credential-bearing database URLs.</p>
-            </div>
-            <div class="feature-card">
-                <h3>COMPACTION_RECOVERY</h3>
-                <p>Captures branch, recent commits, modified files, and the latest plan before Codex compacts the conversation.</p>
-            </div>
+<strong>></strong> /hooks</code></pre>
         </div>
-
-        <div class="hook-flow" aria-label="Hook installation and trust flow">
-            <div class="flow-step"><strong>01 // INSTALL</strong><span>Seed hooks.json and Python handlers into the project.</span></div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step"><strong>02 // REVIEW</strong><span>Open /hooks and inspect every new or changed definition.</span></div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step"><strong>03 // TRUST</strong><span>Codex records trust against the exact hook hash.</span></div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-step"><strong>04 // RUN</strong><span>Matching hooks execute concurrently around supported events.</span></div>
-        </div>
-        <p class="profile-note">Hooks are defense-in-depth guardrails, not a replacement for sandboxing, approvals, or repository policy.</p>
+      </div>
     </section>
 
-    <section id="profiles" class="section">
-        <div class="section-header">
-            <h2>GPT_5.6_PROFILES</h2>
-            <p>> Current Codex profile overlays with explicit reasoning and approval boundaries_</p>
+    <section id="structure">
+      <div class="wrap structure">
+        <div class="principle">
+          <blockquote>Five skills. One plugin. No shadow inventory.</blockquote>
+          <p>The 1.0 structure removes unsupported command bundles, personas, profiles, templates, loops, and installers.</p>
         </div>
-
-        <div class="commands-grid">
-            <div class="command-card"><code>default</code><p>medium // on-request // daily development</p></div>
-            <div class="command-card"><code>fast</code><p>low // on-request // latency-sensitive work</p></div>
-            <div class="command-card"><code>autonomous</code><p>high // never // test-gated loops</p></div>
-            <div class="command-card"><code>careful</code><p>xhigh // untrusted // sensitive changes</p></div>
+        <div class="terminal" aria-label="Plugin structure">
+          <div class="terminal-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <pre><code>.agents/plugins/marketplace.json
+plugins/neural-codex/
+├── .codex-plugin/plugin.json
+├── skills/
+│   ├── discover/
+│   ├── spec/
+│   ├── craft/
+│   ├── vet/
+│   └── exercise/
+└── hooks/
+    ├── hooks.json
+    └── *.py</code></pre>
         </div>
-        <p class="profile-note">Codex 0.134+ loads profiles from $CODEX_HOME/&lt;name&gt;.config.toml (default: ~/.codex). If GPT-5.6 is not yet available for your account, use GPT-5.5 temporarily instead of relying on fallback metadata.</p>
+      </div>
     </section>
 
-    <section id="workflow" class="section commands-section">
-        <div class="section-header">
-            <h2>DISCOVER_SPEC_CRAFT_VET</h2>
-            <p>> Durable artifacts and independent gates for non-trivial changes_</p>
+    <section id="configuration">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Model choice stays with Codex and you.</h2>
+          <p>Neural Codex never changes model, reasoning effort, approvals, sandboxing, network access, or global configuration. API availability does not guarantee Codex availability.</p>
         </div>
-
-        <div class="commands-grid">
-            <div class="command-card"><code>$discover</code><p>Map knowns, unknowns, blindspots, and references into unknowns-map.md.</p></div>
-            <div class="command-card"><code>$spec</code><p>Lock signatures, invariants, dependencies, and executable acceptance in plan.md.</p></div>
-            <div class="command-card"><code>$craft</code><p>Capture the baseline, implement the approved plan, and measure the delta.</p></div>
-            <div class="command-card"><code>$vet</code><p>Review a neutral diff in fresh context and return SHIP or HOLD.</p></div>
-            <div class="command-card"><code>$exercise</code><p>Drive the real user flow and return evidence-backed PASS or FAIL.</p></div>
+        <div class="grid">
+          <article class="card"><h3>Available model first</h3><p>Use the Codex default or a model your client explicitly exposes. Apply GPT-5.6 prompting principles without hardcoding an unsupported ID.</p></article>
+          <article class="card"><h3>Permission stays separate</h3><p>A stronger model is not broader authority. Choose approval and sandbox policy independently.</p></article>
         </div>
-        <p class="profile-note">$craft requires both review and behavioral evidence before the human ship decision. It never commits, pushes, merges, or deploys automatically.</p>
-        <p class="profile-note">Different command, preserved workflow: <code>/prompts:neural.craft</code> remains the legacy Context, Requirements, Actions, Flow, Tests YAML builder.</p>
+        <div class="actions"><a class="button" href="https://github.com/brolag/neural-codex/blob/main/docs/CONFIGURATION.md">View configuration examples</a><a class="button" href="https://github.com/brolag/neural-codex/blob/main/docs/VERIFICATION.md">Review the release gate</a></div>
+      </div>
     </section>
+  </main>
 
-    <section id="commands" class="section commands-section">
-        <div class="section-header">
-            <h2>PROMPTS</h2>
-            <p>> Namespaced prompts for common workflows_</p>
-        </div>
-
-        <div class="commands-grid">
-            <div class="command-card"><code>/prompts:neural.loop-start</code><p>Autonomous loop</p></div>
-            <div class="command-card"><code>/prompts:neural.craft</code><p>CRAFT spec builder</p></div>
-            <div class="command-card"><code>/prompts:neural.kpi</code><p>KPI dashboard</p></div>
-            <div class="command-card"><code>/prompts:neural.ca</code><p>Compute advantage</p></div>
-            <div class="command-card"><code>/prompts:neural.slop-scan</code><p>Tech debt scan</p></div>
-            <div class="command-card"><code>/prompts:neural.overseer</code><p>Pre-merge review</p></div>
-            <div class="command-card"><code>/prompts:neural.course</code><p>Agentic course</p></div>
-            <div class="command-card"><code>/prompts:neural.squad</code><p>Squad orchestration</p></div>
-        </div>
-    </section>
-
-    <section id="install" class="section">
-        <div class="section-header">
-            <h2>INSTALLATION</h2>
-            <p>> Install, review trust, and verify in 4 steps_</p>
-        </div>
-
-        <div class="install-box">
-            <h3>SETUP</h3>
-
-            <div class="code-block">
-                <div class="code-header"><span>1. Clone and install globally</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-                <pre><code><span class="prompt">$</span> git clone https://github.com/brolag/neural-codex.git &amp;&amp; cd neural-codex &amp;&amp; scripts/setup-global.sh</code></pre>
-            </div>
-
-            <div class="code-block">
-                <div class="code-header"><span>2. Project install</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-                <pre><code><span class="prompt">$</span> scripts/setup-project.sh --path /path/to/project</code></pre>
-            </div>
-
-            <div class="code-block">
-                <div class="code-header"><span>3. Review and trust hooks</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-                <pre><code><span class="prompt">></span> /hooks</code></pre>
-            </div>
-
-            <div class="code-block">
-                <div class="code-header"><span>4. Verify prompts</span><button class="copy-btn" onclick="copyCode(this)">COPY</button></div>
-                <pre><code><span class="prompt">></span> /prompts:neural.loop-start</code></pre>
-            </div>
-
-            <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 1rem;">Restart Codex after global install. Project hooks remain disabled until you review and trust their exact definitions. Normal upgrades migrate the legacy craft skill and archive customized copies as craft.legacy-backup.</p>
-        </div>
-    </section>
-
-    <section class="cta-section">
-        <h2 class="glow-subtle">> READY FOR A SAFER AGENT LOOP?</h2>
-        <p>Codex-native workflows with explicit state, trust boundaries, and verification gates.</p>
-        <a href="https://github.com/brolag/neural-codex" class="btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-            </svg>
-            CLONE_REPO
-        </a>
-    </section>
-
-    <footer>
-        <div class="footer-crosslinks">
-            <div class="footer-crosslinks-title">── more from indie mind ──</div>
-            <ul class="footer-crosslinks-list">
-                <li>
-                    <span class="crosslink-prompt">&gt;</span>
-                    <a href="https://brolag.github.io/dendrite/" target="_blank" rel="noopener noreferrer">dendrite</a>
-                    <span class="crosslink-desc">Opinionated TUI stack for agentic coding</span>
-                </li>
-                <li>
-                    <span class="crosslink-prompt">&gt;</span>
-                    <a href="https://www.indie-mind.com/" target="_blank" rel="noopener noreferrer">www.indie-mind.com</a>
-                    <span class="crosslink-desc">AI adoption consulting</span>
-                </li>
-            </ul>
-        </div>
-        <p>
-            Built by <a href="https://github.com/brolag">@brolag</a> //
-            Powered by <a href="https://openai.com/codex/">Codex</a> //
-            <a href="https://github.com/brolag/neural-codex/blob/main/docs/AGENT-HARNESS.md">AGENT_HARNESS</a> //
-            <a href="https://github.com/brolag/neural-codex/blob/main/docs/VERIFICATION.md">VERIFICATION</a> //
-            <a href="https://github.com/brolag/neural-codex/blob/main/README-neural-codex.md">DOCS</a> //
-            <a href="https://github.com/brolag/neural-codex/blob/main/LICENSE">MIT</a>
-        </p>
-    </footer>
-
-    <div class="version-badge">HOOKS // GPT-5.6</div>
-
-    <script>
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resize();
-        window.addEventListener('resize', resize);
-
-        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const fontSize = 14;
-        let columns = Math.floor(canvas.width / fontSize);
-        let drops = Array(columns).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(2, 6, 23, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#d1d5db';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const char = chars[Math.floor(Math.random() * chars.length)];
-                const x = i * fontSize;
-                const y = drops[i] * fontSize;
-
-                ctx.fillText(char, x, y);
-
-                if (y > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        function copyCode(btn) {
-            const codeBlock = btn.closest('.code-block');
-            const code = codeBlock.querySelector('code').innerText.replace(/^\$ /, '');
-
-            navigator.clipboard.writeText(code).then(() => {
-                btn.textContent = 'COPIED';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = 'COPY';
-                    btn.classList.remove('copied');
-                }, 2000);
-            });
-        }
-
-        const terminalInput = document.getElementById('terminal-input');
-        const terminalOutput = document.getElementById('terminal-output');
-        const terminal = document.getElementById('interactive-terminal');
-        let commandHistory = [];
-        let historyIndex = -1;
-        let matrixSpeed = 50;
-        let hackedMode = false;
-
-        terminal.addEventListener('click', () => terminalInput.focus());
-
-        terminalInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = terminalInput.value.trim().toLowerCase();
-                if (cmd) {
-                    commandHistory.push(cmd);
-                    historyIndex = commandHistory.length;
-                    processCommand(cmd);
-                    terminalInput.value = '';
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    terminalInput.value = commandHistory[historyIndex];
-                }
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    terminalInput.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = commandHistory.length;
-                    terminalInput.value = '';
-                }
-            }
-        });
-
-        function addLine(content, type = 'output') {
-            const line = document.createElement('div');
-            line.className = 'terminal-line';
-            line.style.opacity = '1';
-            line.innerHTML = `<span class="${type}">${content}</span>`;
-            terminalOutput.appendChild(line);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        }
-
-        function addPromptLine(cmd) {
-            const line = document.createElement('div');
-            line.className = 'terminal-line';
-            line.style.opacity = '1';
-            line.innerHTML = `<span class="prompt">></span> <span class="command">${cmd}</span>`;
-            terminalOutput.appendChild(line);
-        }
-
-        const commands = {
-            help: () => {
-                addLine('Available commands:', 'success');
-                addLine('  help      - Show this menu');
-                addLine('  about     - About neural-codex');
-                addLine('  install   - Show setup commands');
-                addLine('  hooks     - Show lifecycle guardrails');
-                addLine('  profiles  - Show GPT-5.6 profiles');
-                addLine('  prompts   - List key prompts');
-                addLine('  skills    - List key skills');
-                addLine('  loop      - Show Ralph loop example');
-                addLine('  matrix    - Toggle matrix intensity');
-                addLine('  hack      - ???');
-                addLine('  sudo      - Try it...');
-                addLine('  clear     - Clear terminal');
-                addLine('  whoami    - Who are you?');
-                addLine('  repo      - Open GitHub repo');
-                addLine('  star      - ★ Star the repo!');
-            },
-
-            about: () => {
-                addLine('[NEURAL CODEX]', 'success');
-                addLine('Codex-native hooks, prompts, profiles, and loops.');
-                addLine('File-based state. Explicit trust. Test-gated autonomy.');
-                addLine('');
-                addLine('> github.com/brolag/neural-codex');
-            },
-
-            install: () => {
-                addLine('[SETUP]', 'success');
-                addLine('git clone https://github.com/brolag/neural-codex.git && cd neural-codex', 'command');
-                addLine('scripts/setup-global.sh', 'command');
-                addLine('scripts/setup-project.sh --path /path/to/project', 'command');
-                addLine('/hooks', 'command');
-                addLine('/prompts:neural.loop-start', 'command');
-            },
-
-            hooks: () => {
-                addLine('[LIFECYCLE HOOKS]', 'success');
-                ['PreToolUse  -> command + sensitive-file guards','PostToolUse -> secret output scanner','PreCompact  -> recovery snapshot','Trust       -> review with /hooks'].forEach(item => addLine(`  > ${item}`));
-            },
-
-            profiles: () => {
-                addLine('[GPT-5.6 PROFILES]', 'success');
-                ['default    medium / on-request','fast       low / on-request','autonomous high / never','careful    xhigh / untrusted'].forEach(item => addLine(`  > ${item}`));
-            },
-
-            prompts: () => {
-                addLine('[PROMPTS]', 'success');
-                ['neural.loop-start','neural.craft','neural.kpi','neural.ca','neural.slop-scan','neural.overseer','neural.course','neural.squad'].forEach(p => addLine(`  > /prompts:${p}`));
-            },
-
-            skills: () => {
-                addLine('[SKILLS]', 'success');
-                ['discover','spec','craft','vet','exercise','agentic-course','kpi','slop-scan','tdd','squad'].forEach(s => addLine(`  > $${s}`));
-            },
-
-            loop: () => {
-                addLine('[RALPH LOOP]', 'success');
-                addLine('TEST_CMD="npm test" scripts/ralph-loop.sh 5', 'command');
-            },
-
-            matrix: () => {
-                matrixSpeed = matrixSpeed === 50 ? 20 : 50;
-                clearInterval(window.matrixInterval);
-                window.matrixInterval = setInterval(drawMatrix, matrixSpeed);
-                document.getElementById('matrix-bg').style.opacity = matrixSpeed === 20 ? '0.4' : '0.15';
-                addLine(matrixSpeed === 20 ? '[MATRIX OVERDRIVE ENGAGED]' : '[MATRIX NORMALIZED]', 'success');
-            },
-
-            hack: () => {
-                hackedMode = !hackedMode;
-                if (hackedMode) {
-                    document.body.classList.add('glitch');
-                    addLine('[ACCESSING MAINFRAME...]', 'success');
-                    setTimeout(() => addLine('> Bypassing firewall...'), 300);
-                    setTimeout(() => addLine('> Decrypting protocols...'), 600);
-                    setTimeout(() => addLine('> Spinning up Ralph loop...'), 900);
-                    setTimeout(() => {
-                        addLine('[ACCESS GRANTED]', 'success');
-                        addLine('Just kidding. This is a landing page.');
-                        document.body.classList.remove('glitch');
-                    }, 1500);
-                }
-            },
-
-            sudo: () => {
-                addLine('[PERMISSION DENIED]', 'dim');
-                addLine('Nice try. You are not in the sudoers file.');
-                addLine('This incident will be reported.');
-            },
-
-            clear: () => {
-                terminalOutput.innerHTML = '';
-                addLine('[TERMINAL CLEARED]', 'success');
-            },
-
-            whoami: () => {
-                addLine('[IDENTITY CHECK]', 'success');
-                addLine('You are a developer.');
-                addLine('You seek better loops.');
-                addLine('You found one.');
-                addLine('');
-                addLine('> Clone the repo. Ship faster.');
-            },
-
-            repo: () => {
-                addLine('[OPENING GITHUB...]', 'success');
-                setTimeout(() => {
-                    window.open('https://github.com/brolag/neural-codex', '_blank');
-                }, 500);
-            },
-
-            star: () => {
-                addLine('&nbsp;', 'output');
-                addLine('&nbsp;&nbsp;&nbsp;&nbsp;★', 'success');
-                addLine('&nbsp;&nbsp;&nbsp;/|\\', 'success');
-                addLine('&nbsp;&nbsp;/_|_\\', 'success');
-                addLine('&nbsp;', 'output');
-                addLine('[THANK YOU] Stars help others discover this project!', 'success');
-                addLine('Opening GitHub...', 'output');
-                setTimeout(() => {
-                    window.open('https://github.com/brolag/neural-codex', '_blank');
-                }, 1000);
-            },
-
-            hello: () => {
-                addLine('Hello, human.', 'success');
-                addLine('Ready to build something?');
-            },
-
-            hi: () => commands.hello(),
-
-            ls: () => {
-                addLine('agents/  plans/  scripts/  .codex/hooks/  README.md', 'output');
-            },
-
-            pwd: () => {
-                addLine('/neural-codex', 'output');
-            },
-
-            vim: () => {
-                addLine('[ERROR] How do I exit this?!', 'dim');
-            },
-
-            emacs: () => {
-                addLine('[ERROR] Nice OS, but where\'s the text editor?', 'dim');
-            },
-
-            '42': () => {
-                addLine('The answer to life, the universe, and everything.', 'success');
-            },
-
-            ping: () => {
-                addLine('PONG', 'success');
-            },
-
-            date: () => {
-                addLine(new Date().toString(), 'output');
-            },
-
-            uptime: () => {
-                addLine('neural-codex: Always iterating, never sleeping.', 'output');
-            }
-        };
-
-        function processCommand(cmd) {
-            addPromptLine(cmd);
-
-            if (commands[cmd]) {
-                commands[cmd]();
-            } else if (cmd.startsWith('echo ')) {
-                addLine(cmd.substring(5), 'output');
-            } else if (cmd.startsWith('cd ')) {
-                addLine('[ERROR] This is a website, not a filesystem.', 'dim');
-            } else if (cmd === 'rm -rf /') {
-                addLine('[BLOCKED]', 'dim');
-                addLine('Nice try, chaos agent.');
-            } else {
-                addLine(`Command not found: ${cmd}`, 'dim');
-                addLine('Type "help" for available commands.', 'output');
-            }
-        }
-
-        let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        let konamiIndex = 0;
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    activateKonami();
-                    konamiIndex = 0;
-                }
-            } else {
-                konamiIndex = 0;
-            }
-        });
-
-        function activateKonami() {
-            document.body.classList.add('rainbow');
-            addLine('', 'output');
-            addLine('[KONAMI CODE ACTIVATED]', 'success');
-            addLine('> 30 LIVES GRANTED', 'success');
-            addLine('> INFINITE POWER MODE', 'success');
-            addLine('', 'output');
-
-            setTimeout(() => {
-                document.body.classList.remove('rainbow');
-            }, 3000);
-        }
-
-        window.matrixInterval = setInterval(drawMatrix, matrixSpeed);
-    </script>
+  <footer>
+    <div class="wrap footer-row">
+      <span>Neural Codex · native plugin workflow</span>
+      <span><a href="https://github.com/brolag/neural-codex#readme">Docs</a> · <a href="https://github.com/brolag/neural-codex">Source</a></span>
+    </div>
+  </footer>
 </body>
 </html>

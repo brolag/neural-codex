@@ -4,59 +4,44 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 REQUIRED_FILES=(
+  "README.md"
   "AGENTS.md"
   "ARCHITECTURE.md"
+  ".agents/plugins/marketplace.json"
+  "plugins/neural-codex/.codex-plugin/plugin.json"
+  "plugins/neural-codex/hooks/hooks.json"
   "docs/README.md"
   "docs/AGENT-HARNESS.md"
-  "docs/DESIGN.md"
-  "docs/PLANS.md"
-  "docs/PRODUCT_SENSE.md"
-  "docs/QUALITY_SCORE.md"
-  "docs/RELIABILITY.md"
-  "docs/SECURITY.md"
+  "docs/CONFIGURATION.md"
   "docs/HOOKS.md"
-  "docs/WORKFLOW.md"
   "docs/VERIFICATION.md"
-  "docs/FRONTEND.md"
-  "docs/design-docs/README.md"
-  "docs/exec-plans/README.md"
-  "docs/product-specs/README.md"
-  "docs/references/README.md"
-  "docs/references/harness-research.md"
-  "docs/generated/README.md"
+  "docs/WORKFLOW.md"
+  "docs/index.html"
 )
 
-REQUIRED_AGENTS_REFS=(
+CORE_SKILLS=(discover spec craft vet exercise)
+DOCS_WITH_COMPLETE_FLOW=(
+  "README.md"
   "docs/README.md"
-  "docs/PLANS.md"
-  "ARCHITECTURE.md"
-  "docs/HOOKS.md"
   "docs/WORKFLOW.md"
-  "docs/VERIFICATION.md"
+  "docs/index.html"
 )
 
-REQUIRED_DOCS_INDEX_TERMS=(
-  "design-docs"
-  "exec-plans"
-  "product-specs"
-  "references"
-  "generated"
-  "HOOKS.md"
-  "WORKFLOW.md"
-  "VERIFICATION.md"
+STALE_PATTERNS=(
+  "/prompts:"
+  ".codex/prompts"
+  "scripts/setup-global.sh"
+  "scripts/setup-project.sh"
+  "scripts/ralph-loop.sh"
+  ".agents/skills/"
 )
 
 failures=()
 
-have_rg=0
-if command -v rg >/dev/null 2>&1; then
-  have_rg=1
-fi
-
 contains_text() {
   local file="$1"
   local needle="$2"
-  if [[ "$have_rg" == "1" ]]; then
+  if command -v rg >/dev/null 2>&1; then
     rg -q --fixed-strings "$needle" "$file"
   else
     grep -qF "$needle" "$file"
@@ -64,43 +49,35 @@ contains_text() {
 }
 
 for rel in "${REQUIRED_FILES[@]}"; do
-  path="${ROOT_DIR}/${rel}"
-  if [[ ! -f "$path" ]]; then
-    failures+=("Missing required file: ${rel}")
-    continue
-  fi
-  if [[ ! -s "$path" ]]; then
-    failures+=("Empty required file: ${rel}")
+  if [[ ! -s "${ROOT_DIR}/${rel}" ]]; then
+    failures+=("Missing or empty required file: ${rel}")
   fi
 done
 
-agents_path="${ROOT_DIR}/AGENTS.md"
-if [[ -f "$agents_path" ]]; then
-  for ref in "${REQUIRED_AGENTS_REFS[@]}"; do
-    if ! contains_text "$agents_path" "$ref"; then
-      failures+=("AGENTS.md missing reference: ${ref}")
+for skill in "${CORE_SKILLS[@]}"; do
+  skill_file="plugins/neural-codex/skills/${skill}/SKILL.md"
+  if [[ ! -s "${ROOT_DIR}/${skill_file}" ]]; then
+    failures+=("Missing skill: ${skill_file}")
+  fi
+  for rel in "${DOCS_WITH_COMPLETE_FLOW[@]}"; do
+    if [[ -f "${ROOT_DIR}/${rel}" ]] && ! contains_text "${ROOT_DIR}/${rel}" "\$${skill}"; then
+      failures+=("${rel} does not name \$${skill}")
     fi
   done
-else
-  failures+=("Missing required file: AGENTS.md")
-fi
+done
 
-docs_index_path="${ROOT_DIR}/docs/README.md"
-if [[ -f "$docs_index_path" ]]; then
-  for term in "${REQUIRED_DOCS_INDEX_TERMS[@]}"; do
-    if ! contains_text "$docs_index_path" "$term"; then
-      failures+=("docs/README.md missing section for: ${term}")
+for pattern in "${STALE_PATTERNS[@]}"; do
+  while IFS= read -r rel; do
+    [[ -z "$rel" ]] && continue
+    if contains_text "${ROOT_DIR}/${rel}" "$pattern"; then
+      failures+=("Stale reference ${pattern} in ${rel}")
     fi
-  done
-else
-  failures+=("Missing required file: docs/README.md")
-fi
+  done < <(printf '%s\n' README.md AGENTS.md ARCHITECTURE.md docs/*.md docs/index.html)
+done
 
 if [[ "${#failures[@]}" -gt 0 ]]; then
-  for item in "${failures[@]}"; do
-    echo "[FAIL] ${item}"
-  done
+  printf '[FAIL] %s\n' "${failures[@]}"
   exit 1
 fi
 
-echo "[OK] Doc structure validated"
+echo "[OK] Plugin documentation validated"
