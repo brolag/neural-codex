@@ -1,65 +1,60 @@
-# Agent Harness Guide
+# Agent harness contract
 
-## Purpose
-This repo is designed for agent-first work: humans specify intent, agents execute, and repo artifacts are the system of record. Keep instructions short and navigable.
+Neural Codex separates authoring from evaluation. The five skills form a gated
+artifact flow rather than a collection of unrelated commands.
 
-## Knowledge map
-- `AGENTS.md` is the entry map for agents; it should stay concise and point to deeper docs.
-- `docs/README.md` is the knowledge base index.
-- `ARCHITECTURE.md` provides a system overview.
-- `docs/PLANS.md` and `docs/exec-plans/active/` are for multi-hour ExecPlans.
-- `docs/WORKFLOW.md` defines the gated development flow and its durable artifacts.
-- `plans/prd.json` is the task list; `plans/progress.jsonl` is the execution log.
-- `.agents/skills/` contains reusable procedures; each skill has a `SKILL.md` manifest.
-- `.codex/hooks.json` maps supported lifecycle events to handlers under `.codex/hooks/`.
-- `$CODEX_HOME/<name>.config.toml` stores named profile overlays installed from `.codex/profiles/`.
-- `agents/*/AGENTS.md` contain persona-scoped guidance.
+```text
+request
+  -> $discover -> unknowns-map.md
+  -> $spec     -> plan.md + approval
+  -> $craft    -> implementation + baseline/delta
+  -> $vet      -> SHIP | HOLD
+  -> $exercise -> PASS | FAIL
+```
 
-## Instruction overrides
-- Use `AGENTS.override.md` for short-lived local overrides.
-- Configure fallback filenames and size caps in `.codex/config.toml` as needed.
+## Authority by gate
 
-## Skills + shell + long runs
-- Encode repeatable workflows as skills. Keep them procedural, with clear steps and templates.
-- Use shell execution for concrete work: install, run, and write artifacts to disk.
-- For long-running work, rely on compaction and the Ralph loop to keep progress coherent.
-- If networking is enabled, keep allowlists strict and treat tool output as untrusted.
+| Gate | May inspect | May write | Must not do |
+|---|---|---|---|
+| `$discover` | repository and relevant sources | `unknowns-map.md` | implement |
+| `$spec` | map, repository, tests, docs | `plan.md` | implement |
+| `$craft` | approved plan and implementation | code and evidence | self-approve or publish |
+| `$vet` | neutral diff bundle and acceptance | review report | rewrite scope or excuse missing evidence |
+| `$exercise` | runnable product and public docs | behavioral evidence | infer behavior from source alone |
 
-## Recommended change flow
+Small edits may enter later in the flow, but authority remains separated. A
+builder cannot turn its own confidence into a `SHIP` verdict.
 
-1. **Discover:** use `$discover` to inspect the repository, map four classes of unknowns, and keep the checkout read-only.
-2. **Specify:** use `$spec` to record signatures, invariants, non-goals, dependencies, acceptance, and validation, then stop for approval.
-3. **Craft:** use `$craft` to capture the baseline and implement only the approved contract.
-4. **Vet:** use `$vet` for an independent clean-context review of the neutral diff and acceptance evidence.
-5. **Exercise:** use `$exercise` to drive the CLI, installer, browser, or desktop behavior and preserve raw evidence.
+## Why the harness is artifact-based
 
-Read `docs/WORKFLOW.md` for the gate transitions and `docs/VERIFICATION.md` for
-the evidence contract. A test result, behavioral
-scenario, and static review are complementary signals; none substitutes for the
-others.
+The workflow treats code, plans, tests, and reports as an operational substrate:
 
-## Lifecycle hooks
+| Property | Neural Codex expression |
+|---|---|
+| Executable | Acceptance criteria name commands, tests, and observable outcomes. |
+| Inspectable | Plans, diffs, baselines, review reports, and exercise evidence remain readable. |
+| Stateful | The plan and its append-only amendments preserve progress across long tasks. |
+| Governed | Approval, sandbox, hook trust, and ship boundaries are explicit state rather than prompt advice. |
 
-- Treat hooks as deterministic guardrails around supported events, not as the primary sandbox boundary.
-- Review and trust new or changed definitions with `/hooks` before expecting them to run.
-- Keep handlers dependency-free when practical and fail safely on malformed input.
-- Add positive and negative regression probes for every blocking rule.
-- Read `docs/HOOKS.md` before changing matchers, event fields, timeouts, or output shapes.
+This is why a polished answer is not evidence by itself. The harness should be
+able to observe what happened, verify it, preserve the result, and enforce the
+authority boundary.
 
-## Doc structure (system of record)
-- `docs/README.md` — main index
-- `docs/design-docs/` — architecture and subsystem design
-- `docs/exec-plans/` — active/completed execution plans
-- `docs/product-specs/` — product requirements and specs
-- `docs/references/` — authoritative references
-- `docs/generated/` — machine-generated artifacts
-- `docs/HOOKS.md` — hook contract, installation, trust, and validation
-- `docs/WORKFLOW.md` — discovery, planning, implementation, review, and behavioral gates
-- `docs/VERIFICATION.md` — acceptance contract, evidence lanes, and harness experiments
+## Durable context
 
-## Keeping the harness healthy
-- Prefer small, verifiable tasks with explicit test gates.
-- Update docs when behavior changes; stale guidance is worse than no guidance.
-- Add new doc entries in `docs/` and link them from `AGENTS.md`.
-- Run `scripts/doc-lint.sh` to validate doc coverage.
-- Preserve raw failure evidence before summarizing it; never commit evidence with secrets or PII.
+Artifacts live under `plans/<date>-<slug>/`. They preserve decisions across
+context compaction and allow a fresh reviewer to evaluate the change without
+the author's narrative. Paths must remain inside the repository's `plans/`
+boundary; the skills explicitly reject traversal and escaping symlinks.
+
+Load context selectively: repository rules and the active artifact first, then
+only the implementation and references needed for the current gate. One focused
+change per plan is easier to verify than several unrelated changes sharing a
+context window.
+
+## Model use
+
+GPT-5.6 benefits from concise goals, explicit constraints, verifiable outcomes,
+and permission boundaries. Neural Codex encodes those properties in artifacts
+instead of relying on repeated prose. Model and reasoning settings remain user
+configuration; see [CONFIGURATION.md](CONFIGURATION.md).

@@ -1,41 +1,50 @@
-# neural-codex - Project Instructions
+# Neural Codex project instructions
 
-## Overview
-- Codex-native port of the neural workflow features: Ralph loop, lifecycle hooks, namespaced prompts, templates, MCP, and agents.
-- All state is file-based: `plans/prd.json` (tasks), `plans/progress.jsonl` (log), `.codex/prompts/` (prompts), `.codex/templates/` (templates), `scripts/` (automation).
-- Hooks use Codex's native `.codex/hooks.json` contract; no Claude hook paths, statusline, or TTS.
-- Setup and usage reference: `README-neural-codex.md`.
+## Product boundary
 
-## Workflow
-- Use Ralph loop: `scripts/ralph-loop.sh <iters>` with `TEST_CMD` set as needed.
-- Keep tasks small; follow PRD `depends_on` and attempts limits.
-- Use namespaced prompts (`neural.*`) for loop control, recall, plan, evolve, research, todo, output styles.
-- Memory is explicit: append to `plans/progress.jsonl` or expertise files; no auto indexing.
+Neural Codex is one repository marketplace containing one plugin. Its supported
+surface is exactly five skills: `discover`, `spec`, `craft`, `vet`, and
+`exercise`, plus the reviewed hooks under `plugins/neural-codex/hooks/`.
 
-## Knowledge map
-- This file is the entry map for agent instructions; keep it short.
-- Harness guidance: `docs/AGENT-HARNESS.md`.
-- Docs index: `docs/README.md`.
-- Architecture overview: `ARCHITECTURE.md`.
-- Lifecycle hook contract and trust flow: `docs/HOOKS.md`.
-- Verification contract and evidence lanes: `docs/VERIFICATION.md`.
-- Gated development workflow: `docs/WORKFLOW.md`.
-- Setup + usage reference: `README-neural-codex.md`.
-- Task state: `plans/prd.json` and `plans/progress.jsonl`.
-- ExecPlans for multi-hour work: `docs/PLANS.md` and `docs/exec-plans/active/`.
-- Skills procedures: `.agents/skills/` (each has `SKILL.md`). Legacy copies may exist in `.codex/skills/`.
-- Persona-specific guidance: `agents/*/AGENTS.md`.
+Do not add a second skill root, a second hook manifest, or an installer that
+copies files into a user's home directory. The plugin and marketplace are the
+distribution contract.
 
-## Overrides
-- Use `AGENTS.override.md` for short-lived, local overrides. Keep it minimal and remove when done.
+## Canonical paths
 
-## Safety & Style
-- Prefer small, incremental commits; avoid touching unrelated files.
-- Use `rg` for search; respect existing code style and tests.
-- If unsure, summarize findings and ask before large changes.
-- Avoid recursive `codex` invocations; use scripts/prompts directly.
+- Marketplace: `.agents/plugins/marketplace.json`
+- Plugin manifest: `plugins/neural-codex/.codex-plugin/plugin.json`
+- Skills: `plugins/neural-codex/skills/<name>/SKILL.md`
+- Hooks: `plugins/neural-codex/hooks/hooks.json`
+- Public docs: `docs/`
+- Plans and evidence: `plans/`
 
-## Agents/Personas
-- If multiple personas are needed, reset context between them (fresh turn, restate objective).
-- Route tasks via `neural.route` prompt; keep a single active persona per task.
-- Local agents available under `agents/`: `multi-ai`, `dispatcher`, `meta-agent` (use their AGENTS.md for scope).
+## Change workflow
+
+Use `$discover` for material ambiguity, `$spec` before non-trivial
+implementation, `$craft` for an approved plan, and independent `$vet` plus
+`$exercise` gates before shipping. Keep generated evidence beside its plan.
+
+Never auto-trust hooks or mutate a user's global Codex configuration. Never
+commit credentials or read/write `.env` contents as part of validation.
+
+## Required validation
+
+```bash
+python3 -m pytest -q
+./scripts/doc-lint.sh
+python3 /path/to/plugin-creator/scripts/validate_plugin.py plugins/neural-codex
+```
+
+Validate each retained skill with Codex's `quick_validate.py` when that tool is
+available. A valid directory shape is necessary but not sufficient: tests must
+also reject stale claims and unsupported inventory.
+
+## Documentation map
+
+- Architecture: `ARCHITECTURE.md`
+- Harness contract: `docs/AGENT-HARNESS.md`
+- Workflow: `docs/WORKFLOW.md`
+- Hooks and trust: `docs/HOOKS.md`
+- Model availability and prompting: `docs/CONFIGURATION.md`
+- Verification: `docs/VERIFICATION.md`

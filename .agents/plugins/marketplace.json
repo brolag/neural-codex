@@ -1,0 +1,20 @@
+{
+  "name": "neural-codex",
+  "interface": {
+    "displayName": "Neural Codex"
+  },
+  "plugins": [
+    {
+      "name": "neural-codex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/neural-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

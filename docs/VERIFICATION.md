@@ -1,81 +1,48 @@
-# Verification Contract
+# Verification
 
-## Purpose
+Neural Codex uses four complementary evidence lanes.
 
-Tests, reviews, and screenshots answer different questions. Define what “done”
-means before implementation, then collect evidence for each claim. A green test
-suite does not replace a user flow, and a code review does not prove runtime
-behavior.
+## 1. Structural validation
 
-## Before Implementation
+The plugin validator checks the manifest and component layout. Each skill also
+passes Codex's `quick_validate.py`.
 
-For a non-trivial change, record this contract in the issue, PRD, or ExecPlan:
-
-- **Objective:** one observable outcome.
-- **Non-goals:** boundaries the change must not cross.
-- **Acceptance scenarios:** concrete inputs and visible results.
-- **Validation commands:** exact automated checks.
-- **Behavioral backend:** CLI, browser, or desktop flow.
-- **Rollback:** how to restore the previous behavior.
-
-Keep repository-level instructions minimal. Put task-specific context in the
-plan instead of expanding `AGENTS.md` with information already available in the
-code or documentation.
-
-## Verification Lanes
-
-| Change | Required evidence |
-|--------|-------------------|
-| Documentation only | Doc lint, link/HTML validation, rendered inspection |
-| Hook or configuration | Unit tests, malformed-input case, isolated install smoke test |
-| User-facing behavior | Automated tests plus a real CLI/browser/desktop scenario |
-| Security-sensitive or pre-merge | The relevant lane plus an independent clean-context review |
-
-For blocking rules, always test both the dangerous input and a nearby safe
-counterexample. For browser flows, inspect the console and network requests in
-addition to the rendered screen.
-
-## Proof Of Work
-
-Report evidence as structured facts rather than a success narrative:
-
-```yaml
-tests:
-  command: python3 -m pytest -q
-  result: <N passed, 0 failed>
-behavior:
-  scenario: project hooks install under a custom CODEX_HOME
-  result: pass
-  evidence: exercise-evidence/report.md
-review:
-  result: ship
-files_changed:
-  - scripts/setup-global.sh
-residual_risks:
-  - dynamically assembled shell commands can evade static parsing
-rollback: revert the change commit
+```bash
+python3 /path/to/plugin-creator/scripts/validate_plugin.py plugins/neural-codex
+python3 /path/to/skill-creator/scripts/quick_validate.py plugins/neural-codex/skills/spec
 ```
 
-Keep raw command output, console logs, and screenshots long enough to diagnose a
-failure. Store local exercise evidence under `exercise-evidence/` or a scoped
-`plans/<change>/evidence/` directory. Never commit evidence containing secrets,
-tokens, or personal data.
+This proves schema compatibility, not workflow correctness.
 
-## Improving The Harness
+## 2. Semantic tests
 
-Treat each harness change as a small experiment:
+```bash
+python3 -m pytest -q
+./scripts/doc-lint.sh
+```
 
-1. Capture the failing trace or baseline.
-2. State one falsifiable improvement hypothesis.
-3. Change the smallest relevant component: instruction, tool, hook, memory, or loop.
-4. Run the same representative scenarios, including held-out or regression cases.
-5. Keep the change only when the evidence improves without breaking neighboring flows.
+Tests assert the exact five-skill allowlist, manifest and marketplace paths,
+hook behavior, trust documentation, path containment, stale-reference denial,
+and GitHub Page links.
 
-Prefer additive, reversible changes when the interaction between harness
-components is uncertain. Prompt wording is only one component; tool behavior,
-state, observability, and verification often matter more.
+## 3. Independent review
 
-## Research Basis
+`$vet` verifies the approved plan against a neutral change bundle. Every
+required criterion must be `PASS`; missing required evidence prevents `SHIP`.
 
-See [`references/harness-research.md`](references/harness-research.md) for the
-research findings and caveats behind these operating rules.
+## 4. Behavioral exercise
+
+`$exercise` follows the documented installation and workflow as a user, then
+inspects the GitHub Page at desktop and mobile widths. Source inspection alone
+cannot produce `PASS`.
+
+## Release gate
+
+A change is ready only when:
+
+- plugin and skill validators pass;
+- pytest and documentation lint pass;
+- no unsupported inventory or stale claim remains;
+- `$vet` returns `SHIP`;
+- `$exercise` returns `PASS`;
+- required pull-request checks are green.
