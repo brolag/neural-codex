@@ -57,8 +57,8 @@ python3 scripts/eval-quality-gates.py --output plans/quality-gate-evals.json
 ```
 
 The runner supplies synthetic files and the selected skill to fresh ephemeral,
-read-only sessions. Per-run settings skip host skill discovery and disable
-plugins, apps, and delegation; user configuration and installed skills are not
+read-only sessions. Per-run settings skip host skill discovery, disable automatic
+AGENTS.md inclusion, and disable plugins, apps, and delegation; user configuration and installed skills are not
 modified. Each case has a bounded timeout. This uses Codex quota and is not part
 of the ordinary unit suite or automatic CI.
 
@@ -70,6 +70,9 @@ wrong verdicts, missing/contradictory gates, unanchored findings, and runner
 failures. Runnable cases also require completed tool executions with the
 expected command arguments, exit code, and observed output. Reading or quoting
 a test's source does not satisfy that oracle.
+The oracle requires the absolute fixture script path supplied in the prompt,
+so a changed working directory cannot substitute another file. It rejects
+compound shell wrappers, fallback commands, and different scripts with the same basename.
 
 The report separates **decision correctness** (verdict and defect location)
 from **gate-contract coverage** (explicit applicability, results, and evidence).

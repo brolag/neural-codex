@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import tempfile
@@ -57,29 +58,38 @@ def grade_contract(case: dict, response: dict) -> list[str]:
     return errors
 
 
-def matches_execution(command: str, expected: str) -> bool:
+def matches_execution(command: str, expected: str, *, workspace: Path) -> bool:
     """Recognize a Python script invocation, including the CLI shell wrapper."""
+    if not isinstance(command, str):
+        return False
     try:
         argv = shlex.split(command)
         if argv and Path(argv[0]).name in {"sh", "bash", "zsh"}:
-            option = next(i for i, arg in enumerate(argv[1:], 1)
-                          if arg.startswith("-") and "c" in arg)
-            argv = shlex.split(argv[option + 1])
-        if not argv or not Path(argv[0]).name.startswith("python"):
+            if len(argv) != 3 or argv[1] not in {"-c", "-lc"}:
+                return False
+            argv = shlex.split(argv[2])
+        if not argv or not re.fullmatch(r"python(?:[23](?:\.\d+)?)?", Path(argv[0]).name):
             return False
         rest = argv[1:]
         while rest and rest[0] in {"-B", "-u"}:
             rest = rest[1:]
         wanted = shlex.split(expected)
-        return bool(rest and wanted and Path(rest[0]).name == wanted[0] and rest[1:] == wanted[1:])
-    except (ValueError, StopIteration, IndexError):
+        if not rest or not wanted or rest[1:] != wanted[1:]:
+            return False
+        script, required = Path(rest[0]), Path(wanted[0])
+        if not script.is_absolute():
+            return False
+        root = workspace.resolve()
+        actual, required = (root / script).resolve(), (root / required).resolve()
+        return actual == required and actual.is_relative_to(root)
+    except (ValueError, OSError):
         return False
 
 
-def grade_execution(case: dict, executions: list[dict]) -> list[str]:
+def grade_execution(case: dict, executions: list[dict], *, workspace: Path) -> list[str]:
     """Require actual completed command observations for runnable fixtures."""
     def matches(item: dict, expected: dict) -> bool:
-        if not matches_execution(item.get("command", ""), expected["command"]) or item.get("exit_code") != expected["exit_code"]:
+        if not matches_execution(item.get("command", ""), expected["command"], workspace=workspace) or item.get("exit_code") != expected["exit_code"]:
             return False
         output = item.get("aggregated_output", "")
         if expected.get("output_contains", "") not in output:
@@ -110,6 +120,7 @@ def run_case(case: dict, skills_root: Path, timeout: int) -> dict:
               "skill_sha256": hashlib.sha256(skill.encode()).hexdigest()}
     with tempfile.TemporaryDirectory(prefix="neural-gate-case-") as directory:
         workspace = Path(directory)
+        record["fixture_root"] = str(workspace)
         for relative, content in case["files"].items():
             target = fixture_path(workspace, relative)
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -130,8 +141,13 @@ def run_case(case: dict, skills_root: Path, timeout: int) -> dict:
             "Use the skill's own gate IDs; the schema does not prescribe them.\n\n"
             f"TASK:\n{case['task']}\n\n"
             f"Fixture files: {', '.join(case['files'])}\n"
+            "For terminal execution, replace each relative Python script in the task "
+            "with its absolute fixture path below; runtime credit requires that exact "
+            "fixture, independent of the tool's working directory:\n"
+            + "\n".join(str(workspace / path) for path in case["files"] if path.endswith(".py"))
         )
         command = ["codex", "exec", "--ephemeral", "--ignore-user-config",
+                   "-c", "project_doc_max_bytes=0",
                    "--enable", "skip_host_skill_discovery", "--disable", "plugins",
                    "--disable", "apps", "--disable", "multi_agent",
                    "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "--json",
@@ -157,10 +173,10 @@ def run_case(case: dict, skills_root: Path, timeout: int) -> dict:
                         raise ValueError("Host skill contamination: read outside selected fixture")
                     if event.get("type") == "item.completed" and item.get("type") == "command_execution":
                         executions.append(item)
-                decisions = grade_decision(case, response) + grade_execution(case, executions)
+                decisions = grade_decision(case, response) + grade_execution(case, executions, workspace=workspace)
                 contract = grade_contract(case, response)
                 observed = [{key: item.get(key) for key in ("command", "exit_code", "aggregated_output")}
-                            for item in executions if any(matches_execution(item.get("command", ""), expected["command"])
+                            for item in executions if any(matches_execution(item.get("command", ""), expected["command"], workspace=workspace)
                             for expected in case["expected"].get("executions", []))]
                 record.update(passed=not (decisions + contract), errors=decisions + contract,
                               decision_passed=not decisions, contract_passed=not contract,

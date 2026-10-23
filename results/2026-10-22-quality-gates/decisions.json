@@ -3,8 +3,9 @@
   "base_commit": "79218b60affc0d5c0cd24bf9a61a9349462deb0d",
   "codex_cli": "0.153.3",
   "cases_sha256": "9249ac034ca45e74cd5998501d975949d42cd388dd77a6582549aee4dac574bf",
-  "runner_sha256": "6e8acd1d1066bbcbcfc38d52079823fc8a2cde8a4811dcdd46321521910ca396",
-  "method": "Fresh ephemeral read-only sessions; expected oracle withheld; decisions and gate-contract coverage scored separately. Individual cases rerun after correcting evaluation isolation and command receipt capture. Results are bounded probes, not a full workflow or conformance audit.",
+  "runner_sha256": "5bd87be596879616d4b0c3a9fb01bfba9ba804c87aa7382258ea3634a49f990c",
+  "review_parent_commit": "08c14c5d7367433d3cea31b2f363bc4ab93582ff",
+  "method": "Complete six-case before/after runs repeated after independent review, with identical fixtures and hardened runner. Expected oracle withheld; fresh ephemeral read-only sessions; AGENTS auto-inclusion, plugins, apps and delegation disabled per run. Runtime credit requires the absolute fixture script and complete simple command. Actual tool observations retained for executable cases. This is a development check, not a statistical benchmark or a full conformance audit.",
   "results": [
     {
       "case": "plan-web-export",
@@ -18,32 +19,32 @@
           {
             "id": "1",
             "result": "PASS",
-            "evidence": "Applicable: non-trivial planning. Read context.md:2. Reuse require_owner(user, account), export_csv(account), and the existing labeled button, status region, and error alert. Discovery was not supplied; repository paths, signatures beyond those supplied, and test commands remain unverified."
+            "evidence": "Right-size and research: non-trivial planning applies. Read context.md:2. Reuse require_owner(user, account), export_csv(account), and the existing labeled button, status region, and error alert. Discovery was not supplied; repository paths, framework conventions, and test commands remain unverified."
           },
           {
             "id": "2",
             "result": "PLANNED",
-            "evidence": "Applicable: interface and security contract. Reuse require_owner(user, account) -> existing authorization result and export_csv(account) -> existing CSV result; their paths and exact result types require confirmation. Proposed new interfaces: authenticated account export page and account-scoped download route; exact routes and paths remain unresolved. @invariant CWE-862/CWE-639: authenticate and authorize the requested account server-side before export_csv runs; verify unauthenticated and non-owner requests return no CSV and never call export_csv. @invariant CWE-200: successful output contains only the authorized account's data; verify with two distinguishable account fixtures. @invariant CWE-20: malformed account identifiers cannot reach export generation. Confirm existing CSV escaping and formula-handling behavior before locking validation requirements. Path handling, command execution, and destructive operations are outside the proposed feature; reassess if implementation introduces them."
+            "evidence": "Contract and security gate applies. Reuse signatures: require_owner(user, account) -> authorization outcome; export_csv(account) -> existing CSV result. Actual return types and source paths require confirmation before approval. Proposed page(selectedAccount) -> accessible export controls; authenticated download(accountId) -> CSV response or authorization/export error; route names and paths remain unresolved. @invariant CWE-862/CWE-639: resolve the authenticated user server-side and require_owner before export_csv; verify unauthenticated and non-owner requests fail without invoking export_csv, including substituted account IDs. @invariant CWE-200: response contains only authorized account data and no secrets. @invariant CWE-1236: verify spreadsheet formula handling at the existing CSV boundary; mitigation policy remains unresolved. User-controlled filesystem paths, command execution, and destructive operations are excluded."
           },
           {
             "id": "3",
             "result": "PLANNED",
-            "evidence": "Applicable: dependency and routing contract. S1 [tier: hard]: confirm existing interfaces, authentication pattern, route paths, CSV validation policy, and test entry points. S2 [tier: hard] [needs: S1]: implement authorized download using existing helpers. S3 [tier: mid] [needs: S1]: build the page using existing UI components and locked download contract. S4 [tier: mid] [needs: S2, S3]: verify integrated behavior. All referenced IDs exist; proposed graph is acyclic. These are future tasks, not authorization to implement."
+            "evidence": "Dependency and routing gate applies. S1 [tier:hard]: confirm existing interfaces, paths, authentication/error conventions, CSV policy, and test entry points. S2 [tier:hard] [needs:S1]: implement authorized download using existing services. S3 [tier:mid] [needs:S1]: compose accessible page with existing components. S4 [tier:mid] [needs:S2,S3]: integrate and verify user scenarios. All dependency IDs exist and this graph is acyclic. These are future tasks; no implementation or delegation occurred."
           },
           {
             "id": "4",
             "result": "PLANNED",
-            "evidence": "Applicable: executable acceptance, security tests, behavioral verification, and independent review. S1 when planning interfaces, requires repository evidence, ensures exact signatures/paths and security boundaries are documented; verify each declaration resolves to an existing implementation or an explicitly new interface without duplication. S2 when requesting CSV, requires an authenticated owner of the requested account, ensures only that account is exported; verify owner success, unauthenticated denial, cross-account denial, and malformed identifiers with deterministic response and helper-call assertions. S3 when activating export, requires a selected account, ensures a discoverable labeled action, understandable status/error feedback, and preserved selection; verify keyboard activation, accessible names, status announcements, visible focus, and retry after a simulated failure. Must include the existing labeled button, status region, and error alert. S4 when exercising the integrated page, requires two accounts and controllable success/failure responses, ensures correct CSV contents and a successful retry without reselection; verify through a real browser download and keyboard-only flow. Define success as the download response being received or initiated, without claiming the file was saved to disk. Unit tests prove isolated logic; server integration tests prove authorization enforcement; browser checks prove user behavior; independent review challenges the final diff against this contract. None has been run."
+            "evidence": "Executable acceptance applies to every subtask. S1: when preparing approval, requires repository evidence, ensures exact signatures/paths and test oracles; verify each contract against its definition, must_not_include duplicate authorization or CSV services. S2: when downloading, requires authenticated ownership, ensures only selected-account CSV is returned; verify owner success, unauthenticated denial, foreign-account denial, and exporter failure with deterministic service-call and response assertions. S3: when activating export, requires an account selection, ensures a discoverable labeled control, announced status, visible failure alert, retained selection, and retry; verify accessible-name, keyboard, focus, and state assertions. S4: when running the integrated page, requires the real application and download flow, ensures correct downloaded CSV and failure recovery; verify keyboard-only selection and activation, actual downloaded contents, forced download failure, unchanged selection, and successful retry. Lock automated authorization/CSV tests, real-user behavioral verification, and independent review as applicable future gates. Unit assertions prove local contracts, behavioral checks prove the integrated user flow, and independent review challenges contract/security completeness; none substitutes for the others. No runtime checks were run."
           },
           {
             "id": "5",
             "result": "PLANNED",
-            "evidence": "Applicable: contradiction scan. Reuse is mandatory; introducing replacement authorization or CSV helpers would violate context.md:2. Preserve account selection across failures. Outstanding contract questions are existing authentication/route conventions, helper result types, account selection behavior, CSV safety guarantees, and verification commands. Resolve architecture-changing uncertainties before implementation. Bulk exports, new CSV formats, and unrelated account changes are out of scope."
+            "evidence": "Contradiction scan applies before approval. Verify interface reuse, dependency validity, and consistent authorization/error behavior. Define success messaging according to what the browser can actually observe; starting a response alone must not imply a completed download. Resolve route/source paths, existing service return types, CSV formula policy, and executable test entry points before treating the implementation contract as locked. No defect is established by the supplied fixture."
           },
           {
             "id": "6",
-            "result": "PLANNED",
-            "evidence": "Applicable: draft presentation and approval boundary. This JSON replaces workflow artifacts as requested; no files were changed and no implementation was performed. The plan remains draft pending resolution of interface details and explicit approval. Artifact path validation and plan.md creation are not applicable to this evaluation."
+            "result": "N/A",
+            "evidence": "Writing plan.md is replaced by this JSON under the evaluation instructions. No files changed. The draft requires approval before implementation. Non-goals: new authentication or CSV frameworks, cross-account exports, destructive operations, and deployment."
           }
         ],
         "findings": [],
@@ -55,7 +56,9 @@
           "simplicity: missing evidence or applicability rationale",
           "usability: expected PLANNED, got None",
           "usability: missing evidence or applicability rationale"
-        ]
+        ],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-wdmbac94",
+        "observed_executions": []
       },
       "after": {
         "decision_passed": true,
@@ -66,22 +69,24 @@
           {
             "id": "security",
             "result": "PLANNED",
-            "evidence": "Applicable: authenticated export crosses an authorization and account-data boundary. Source: context.md:2. @invariant CWE-862/CWE-639: the server authenticates the caller and invokes existing require_owner(user, account) before export_csv(account), using the authorized account. Verify with request-level cases for unauthenticated callers, owners, non-owners, and substituted account identifiers; denied requests must return no CSV and must not invoke export_csv. An owner request must export only the selected owned account. Require test results and inspection of the server call path. Inspect the existing serializer and export schema before locking validation and sensitive-field criteria; do not assume export_csv is safe merely because it exists. Applicable ASVS 5.0.0 requirement IDs remain unresolved: the supplied fixture contains no requirement text and external lookup is prohibited. No mapping or security pass is claimed."
+            "evidence": "Applicable: authenticated export crosses authorization and data boundaries. @invariant CWE-862/CWE-639: authenticate and call existing require_owner(user, account) before export_csv(account), resolving account ownership server-side. Verify with unauthenticated, non-owner, tampered-account, and owner requests: denied requests produce no CSV and never invoke export_csv; owner output contains only the selected owned account. @invariant CWE-200: responses and errors expose no unrelated account data or secrets; require private, no-store download responses. Verify response headers, body, and error handling. @invariant CWE-1236: verify the existing exporter safely handles spreadsheet formula-leading values using adversarial CSV fixtures; behavior is currently unverified. Export must not mutate account data; compare persisted state before and after success and failure. Filesystem paths and shell execution are outside the proposed request flow. Required pass evidence: boundary-test results and source inspection. Applicable ASVS 5.0.0 requirement IDs remain unresolved: no requirement text was supplied, and external access is prohibited; no mapping is invented."
           },
           {
             "id": "simplicity",
             "result": "PLANNED",
-            "evidence": "Applicable: the repository already supplies the required authorization, export, and UI primitives (context.md:2). Reuse require_owner(user, account), export_csv(account), and the labeled button, status region, and error alert. Verify by comparing the proposed implementation with those existing definitions and inspecting the eventual diff: no duplicate authorization logic, CSV serializer, or equivalent UI components; any new abstraction or dependency must have a concrete requirement-based justification. Required evidence: source references and a documented comparison. ISO/IEC 25010:2023 maintainability is a quality reference, not a conformance claim. Actual definitions and paths were not supplied, so this comparison has not run."
+            "evidence": "Applicable: context.md:2 requires reuse of require_owner(user, account), export_csv(account), and the existing labeled button, status region, and error alert. Verify by comparing proposed interfaces and eventual source against those existing implementations: one authorization path, one CSV implementation, existing UI components, and no speculative abstraction or dependency. Required pass evidence: symbol references and source comparison explaining every new interface. ISO/IEC 25010:2023 maintainability is a quality reference, not a conformance claim."
           },
           {
             "id": "usability",
             "result": "PLANNED",
-            "evidence": "Applicable: account owners must discover and complete a browser download, understand its outcome, and recover while retaining account selection (context.md:2). Using ISO 9241-11:2018 as a framing reference, verify an owner can find the labeled action, start the export, receive understandable progress and outcome feedback, and retry an injected failure without reselecting the account. Distinguish export/download initiation from file-save completion unless completion is actually observable. Require browser scenario results and screenshots or event evidence. For WCAG 2.2 A/AA, include keyboard operation and no keyboard trap, logical focus order, visible and unobscured focus, accessible names/roles/values, status announcements, text and control contrast, and understandable error identification. Verify with automated accessibility checks plus manual keyboard and assistive-technology checks across idle, pending, success, and failure states. Require recorded results and coverage limits; exact standards mappings need verification against requirement text unavailable in the fixture. Scripted success and scans do not establish user satisfaction or full conformance."
+            "evidence": "Applicable: account owners use a keyboard-capable web page to download the selected account's CSV. Verify that an owner can locate the labeled export action, initiate download, receive understandable progress and completion feedback, and retry a forced failure without losing account selection. Completion text must describe only what the browser can confirm, not assert that a file was saved to disk. Verify WCAG 2.2 A/AA criteria 2.1.1 Keyboard, 2.1.2 No Keyboard Trap, 2.4.3 Focus Order, 2.4.7 Focus Visible, 2.4.11 Focus Not Obscured (Minimum), 4.1.2 Name/Role/Value, 4.1.3 Status Messages, 1.4.3 Contrast (Minimum), and 1.4.11 Non-text Contrast. Required pass evidence: automated accessibility results plus manual keyboard, focus, contrast, and screen-reader checks across success and failure states. These checks establish observable task behavior, not real-user satisfaction or full standards conformance; ISO 9241-11:2018 informs the user/task/context definition."
           }
         ],
         "findings": [],
         "decision_errors": [],
-        "contract_errors": []
+        "contract_errors": [],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-xlh32dnk",
+        "observed_executions": []
       }
     },
     {
@@ -96,61 +101,52 @@
           {
             "id": "1",
             "result": "PASS",
-            "evidence": "Read the supplied context, helper, and tests. Discovery was skipped; context.md:2 resolves architectural decisions. Scope warrants planning because numeric precision is correctness-sensitive."
+            "evidence": "Read the supplied context, helper, and tests. Discovery was skipped; context.md resolves architectural decisions. Non-trivial numerical correctness warrants a plan despite the small implementation."
           },
           {
             "id": "2",
-            "result": "PASS",
-            "evidence": "Locked signature: _round_minor_units(numerator: int, denominator: int) -> int [adapt] -> billing/math.py. Preserve validated integer inputs, positive denominator, nearest-integer ties-to-even behavior, and public API. Use standard-library decimal and reuse this helper. Security invariants are N/A: no relevant trust-boundary changes. UI verification is N/A."
+            "result": "PLANNED",
+            "evidence": "Locked signature: _round_minor_units(numerator: int, denominator: int) -> int [adapt] -> billing/math.py. Preserve validated integer inputs, positive denominator, nearest-integer ties-to-even, and public API. Reuse the helper. Use Decimal integer construction, localcontext with operand-derived sufficient precision, and explicit ROUND_HALF_EVEN; avoid dependence on ambient decimal settings. No relevant new security boundary requires a CWE invariant. UI verification is inapplicable."
           },
           {
             "id": "3",
             "result": "PASS",
-            "evidence": "Planned graph: S1 [tier: hard] specify precision strategy and regression vectors; S2 [tier: mid] [needs: S1] replace float arithmetic; S3 [tier: cheap] [needs: S2] execute acceptance checks. All references exist; graph is acyclic."
+            "evidence": "Planned graph: S1 [tier: mid] extend regression tests; S2 [tier: hard] [needs: S1] replace float arithmetic and justify precision; S3 [tier: mid] [needs: S2] verify numerical contract. All dependency references exist; graph is acyclic. All tasks remain pending."
           },
           {
             "id": "4",
             "result": "PLANNED",
-            "evidence": "S1: when preparing replacement, requires arbitrary validated integers and positive denominator; ensures explicit expected results covering existing vectors, zero, negative values, even/odd half ties, large integers, and values immediately around large half ties; verify deterministic integer quotient/remainder expectations. S2: when replacing division, requires S1; ensures exact integer-to-Decimal conversion, isolated local context, explicitly sufficient precision, ROUND_HALF_EVEN, int output, and unchanged caller context; verify regression assertions and low ambient-precision scenarios. Precision must scale with operands; default Decimal precision is insufficient. S3: when implementation is complete, requires S2; ensures all acceptance assertions pass; verify python3 -B test_rounding.py. These tests establish covered numeric behavior, not exhaustive correctness; precision sufficiency also requires mathematical justification."
-          },
-          {
-            "id": "4",
-            "result": "NOT RUN",
-            "evidence": "Attempted python3 -B test_rounding.py, but the Python launcher could not create its /tmp/xcrun_db cache under read-only permissions. A separate reproduction also failed to start because the shell could not create a heredoc temporary file. No runtime result was obtained."
+            "evidence": "S1: when extending coverage, requires validated integers and positive denominators; ensures existing vectors plus zero, negative, even/odd ties, near-ties, and large integers are checked against explicit expected results or an independent integer divmod oracle. S2: when replacing the algorithm, requires unchanged signature and standard-library decimal; ensures correct signed ties-to-even results with sufficient local precision and unchanged ambient context. S3: when implementation is complete, requires S1/S2; ensures all regression assertions pass. Verify each through python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-7l423b0f/test_rounding.py and deterministic signature/context assertions added to that fixture. Baseline command exited 0; the three existing assertions passed. A separate runtime probe returned 9007199254740992 for 9007199254740993 / 1, confirming precision loss. Runtime emitted sandbox cache warnings. Baseline success proves only current small vectors; expanded tests and the precision justification remain unverified. This skill does not mandate separate behavioral or independent-review gates."
           },
           {
             "id": "5",
             "result": "PASS",
-            "evidence": "No requirement conflicts or blocking product decisions identified. Main implementation hazard is premature Decimal rounding near half ties. Require a precision bound that prevents crossing those thresholds. Out of scope: new abstractions, public API changes, UI, IO, permissions, schemas, and input-validation changes."
+            "evidence": "No contradictory requirements or blocking questions found. Fixed default Decimal precision would not satisfy large-integer accuracy; operand-derived precision and boundary tests are required. Non-goals: new abstractions, public API changes, input validation changes, IO, schemas, permissions, and user workflows."
           },
           {
             "id": "6",
             "result": "PASS",
-            "evidence": "Draft presented as JSON under the explicit artifact override. No files changed or implementation performed. Implementation remains subject to explicit approval."
+            "evidence": "Presented the draft contract as JSON under the explicit artifact substitution. No files changed or implementation performed. Artifact-path checks are inapplicable because no artifact is written. Stop for explicit approval before implementation."
           }
         ],
         "findings": [
           {
             "file": "billing/math.py",
             "line": 2,
-            "reason": "Integer division converts to float before rounding, losing precision for large integers. For example, (2**53 + 1, 1) should return 9007199254740993 but float conversion cannot preserve that integer. This is a static finding; runtime verification was blocked."
-          },
-          {
-            "file": "test_rounding.py",
-            "line": 2,
-            "reason": "The existing three small half-tie assertions do not cover zero, large integers, or values around rounding thresholds, so they cannot establish the requested accuracy improvement."
+            "reason": "Float division loses integer precision before rounding. Runtime reproduction: _round_minor_units(9007199254740993, 1) returned 9007199254740992 instead of 9007199254740993."
           }
         ],
         "decision_errors": [],
         "contract_errors": [
-          "Gate IDs must be unique strings",
           "security: expected N/A, got None",
           "security: missing evidence or applicability rationale",
           "simplicity: expected PLANNED, got None",
           "simplicity: missing evidence or applicability rationale",
           "usability: expected N/A, got None",
           "usability: missing evidence or applicability rationale"
-        ]
+        ],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-7l423b0f",
+        "observed_executions": []
       },
       "after": {
         "decision_passed": true,
@@ -161,28 +157,30 @@
           {
             "id": "security",
             "result": "N/A",
-            "evidence": "context.md:2 specifies validated integer inputs, positive denominator, and no IO, external data, permissions, or new trust boundary. No applicable boundary invariant or ASVS mapping."
+            "evidence": "Validated integer inputs and a positive denominator remain existing preconditions. No new trust boundary, IO, authorization, secrets, or destructive operations; no security invariant or ASVS mapping applies."
           },
           {
             "id": "simplicity",
             "result": "PLANNED",
-            "evidence": "Reuse _round_minor_units in billing/math.py; use standard-library decimal without new abstractions or dependencies. Verify by comparing the final source with this fixture and running python3 -B test_rounding.py. Passing evidence requires unchanged signature/public API, no duplicate rounding implementation, and passing expanded cases. Use maintainability as the quality reference without claiming ISO conformance."
+            "evidence": "Reuse _round_minor_units in billing/math.py with standard-library decimal and a local precision context sufficient for exact ties-to-even decisions across large inputs. Verify by comparing the resulting source against the existing helper: unchanged signature/public API, no duplicate implementation, new dependency, or speculative abstraction. Run the expanded test_rounding.py suite. Source comparison provides maintainability evidence, not ISO conformance."
           },
           {
             "id": "usability",
             "result": "N/A",
-            "evidence": "context.md:2 excludes user/operator workflow changes. This private numerical helper changes no interface surface requiring usability or accessibility verification."
+            "evidence": "Private arithmetic replacement changes no user or operator workflow or interface. No accessibility surface is affected."
           }
         ],
         "findings": [
           {
             "file": "billing/math.py",
             "line": 2,
-            "reason": "Float division loses integer precision: the executed probe _round_minor_units(9007199254740993, 1) returned 9007199254740992 instead of 9007199254740993."
+            "reason": "Float division loses integer precision: executing this fixture's helper with numerator=9007199254740993 and denominator=1 returned 9007199254740992 instead of 9007199254740993."
           }
         ],
         "decision_errors": [],
-        "contract_errors": []
+        "contract_errors": [],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-hkb5_3jx",
+        "observed_executions": []
       }
     },
     {
@@ -195,31 +193,46 @@
         "skill_sha256": "20ff87b95377c664083ff1e9138e05b92601a5bd3c7bb4a058c0ae259152745e",
         "gates": [
           {
+            "id": "1. Resolve the target",
+            "result": "PASS",
+            "evidence": "change.diff adds transform.py; labels.py provides the existing helper."
+          },
+          {
+            "id": "2. Build a neutral review bundle",
+            "result": "PASS",
+            "evidence": "Supplied bundle is declared complete with no omitted or untracked paths."
+          },
+          {
             "id": "3. Separate the evaluator",
             "result": "PASS",
-            "evidence": "Fresh independent evaluator; supplied bundle declared complete."
+            "evidence": "This evaluation uses the explicitly supplied fresh independent reviewer context."
           },
           {
             "id": "4. Verify acceptance",
             "result": "FAIL",
-            "evidence": "Trimming/lowercasing passed five Python probes. Existing normalize_label is not reused, and TransformRegistry introduces an extension point, violating two required criteria."
+            "evidence": "Absolute-path Python probes passed trimming/lowercasing for five inputs. Inspection shows duplicated normalization instead of normalize_label reuse, plus a registry extension point."
           },
           {
             "id": "5. Review adversarially",
             "result": "PASS",
-            "evidence": "Executed a counterexample: registering an identity handler for label makes '  HeLLo  ' remain unchanged."
+            "evidence": "Executed a replacement-handler probe: register('label', identity) causes label to retain whitespace and uppercase characters, confirming the prohibited extension point."
+          },
+          {
+            "id": "6. Report the verdict",
+            "result": "FAIL",
+            "evidence": "Two explicit acceptance constraints fail; SHIP is prevented."
           }
         ],
         "findings": [
           {
             "file": "transform.py",
             "line": 3,
-            "reason": "Duplicates strip().lower() instead of reusing labels.py's normalize_label, violating explicit acceptance. Call the existing helper."
+            "reason": "Duplicates strip().lower() in a lambda rather than reusing labels.normalize_label, violating required reuse. Call the existing helper."
           },
           {
             "file": "transform.py",
             "line": 4,
-            "reason": "register introduces a prohibited extension point and permits replacing normalization behavior. Remove the registry mechanism and use normalize_label directly."
+            "reason": "register exposes a mutable handler extension point, violating the explicit prohibition. The runtime probe confirmed that replacing the label handler bypasses normalization. Remove the registry and registration mechanism."
           }
         ],
         "decision_errors": [],
@@ -230,7 +243,9 @@
           "simplicity: missing evidence or applicability rationale",
           "usability: expected N/A, got None",
           "usability: missing evidence or applicability rationale"
-        ]
+        ],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-flh_8mn_",
+        "observed_executions": []
       },
       "after": {
         "decision_passed": true,
@@ -241,38 +256,40 @@
           {
             "id": "acceptance",
             "result": "FAIL",
-            "evidence": "Six Python comparisons passed for trimming/lowercasing, including empty, whitespace, mixed-case, and accented strings. However, transform.py duplicates normalize_label and introduces a registry and extension point, contradicting two acceptance criteria."
+            "evidence": "Exact absolute fixtures executed successfully: five cases preserve trimming/lowercasing. However, transform.py duplicates normalize_label and introduces a registry and registration extension point, violating explicit acceptance criteria."
           },
           {
             "id": "security",
             "result": "N/A",
-            "evidence": "The supplied internal helper has no trust boundary or external effect."
+            "evidence": "Internal normalization helper with no trust boundary, secrets, or external effect."
           },
           {
             "id": "simplicity",
             "result": "FAIL",
-            "evidence": "transform.py:3 duplicates labels.py:1\u20132; TransformRegistry and register add an unnecessary abstraction and extension point."
+            "evidence": "transform.py:3 duplicates labels.py:1\u20132; TransformRegistry and register add unnecessary indirection and extensibility."
           },
           {
             "id": "usability",
             "result": "N/A",
-            "evidence": "No UI or user workflow exists in the supplied scope."
+            "evidence": "No UI or user workflow in the supplied change."
           }
         ],
         "findings": [
           {
             "file": "transform.py",
             "line": 3,
-            "reason": "The lambda duplicates the existing normalize_label implementation instead of reusing it, violating explicit acceptance and creating separate maintenance points. Call normalize_label directly."
+            "reason": "Duplicates trimming/lowercasing instead of reusing existing labels.normalize_label. Reuse the existing helper to satisfy acceptance and avoid divergent implementations."
           },
           {
             "file": "transform.py",
             "line": 4,
-            "reason": "register introduces an explicitly prohibited extension point. A Python probe confirmed it can replace normalization with an identity handler. Remove the registry and registration mechanism."
+            "reason": "Adds a registration extension point despite explicit prohibition. A runtime probe confirmed register can replace normalization with identity. Remove the registry abstraction and use normalize_label directly."
           }
         ],
         "decision_errors": [],
-        "contract_errors": []
+        "contract_errors": [],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-4nkbn1bs",
+        "observed_executions": []
       }
     },
     {
@@ -285,26 +302,41 @@
         "skill_sha256": "20ff87b95377c664083ff1e9138e05b92601a5bd3c7bb4a058c0ae259152745e",
         "gates": [
           {
+            "id": "1. Resolve the target",
+            "result": "PASS",
+            "evidence": "Supplied change.diff removes the ownership check from load_document."
+          },
+          {
+            "id": "2. Build a neutral review bundle",
+            "result": "PASS",
+            "evidence": "Evaluated the supplied complete fixture bundle; user attests no omitted or untracked paths."
+          },
+          {
             "id": "3. Separate the evaluator",
             "result": "PASS",
-            "evidence": "Fresh independent evaluator reviewed only the supplied skill and complete fixture bundle."
+            "evidence": "Fresh evaluator with no author history, using only supplied instructions and fixtures."
           },
           {
             "id": "4. Verify acceptance",
             "result": "FAIL",
-            "evidence": "Owner loading succeeds, but nonowner loading also returns the document. change.diff:7 removes the required server-side require_owner call. No UI or workflow changes appear in the supplied diff."
+            "evidence": "Owner access succeeds, but non-owner access also succeeds. documents.py does not call require_owner. Supplied diff contains no UI or workflow changes."
           },
           {
             "id": "5. Review adversarially",
             "result": "FAIL",
-            "evidence": "Executed Python probe: user ID 2 loads a document owned by ID 1. Calling require_owner directly rejects that same user with PermissionError."
+            "evidence": "Python3 probe loaded both exact absolute fixture paths: document owner_id=1 was returned for user IDs 1 and 2; require_owner independently allowed user 1 and denied user 2."
+          },
+          {
+            "id": "6. Report the verdict",
+            "result": "PASS",
+            "evidence": "HOLD: required authorization acceptance fails with a reproduced counterexample."
           }
         ],
         "findings": [
           {
             "file": "documents.py",
             "line": 3,
-            "reason": "HIGH: load_document returns the document without checking ownership, allowing nonowners to access it. Restore require_owner(user, document) before returning; the existing helper in authorization.py:1 enforces the required boundary."
+            "reason": "HIGH: load_document returns the document without enforcing ownership, allowing a non-owner to retrieve it. change.diff line 7 removes require_owner(user, document); the runtime probe confirms unauthorized access. Restore the existing helper call before returning the document."
           }
         ],
         "decision_errors": [],
@@ -315,7 +347,9 @@
           "simplicity: missing evidence or applicability rationale",
           "usability: expected N/A, got None",
           "usability: missing evidence or applicability rationale"
-        ]
+        ],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-bk1x6581",
+        "observed_executions": []
       },
       "after": {
         "decision_passed": true,
@@ -326,33 +360,35 @@
           {
             "id": "acceptance",
             "result": "FAIL",
-            "evidence": "Owner and non-owner probes both returned the document. change.diff:7 removes require_owner; documents.py contains no authorization check."
+            "evidence": "Exact-path Python probes show both owner and non-owner receive the document. Inspection confirms load_document never calls the required require_owner helper."
           },
           {
             "id": "security",
             "result": "FAIL",
-            "evidence": "documents.py:3 returns another user's document. The existing authorization.py helper correctly raised PermissionError for the same non-owner. This is missing authorization (CWE-862)."
+            "evidence": "Server-side ownership enforcement was removed (change.diff:7). The existing helper rejects the same non-owner that load_document allows, demonstrating missing authorization (CWE-862)."
           },
           {
             "id": "simplicity",
             "result": "PASS",
-            "evidence": "The supplied diff adds no helpers, dependencies, abstractions, or duplication. The authorization removal is covered by the security failure."
+            "evidence": "The supplied diff introduces no duplicate helpers, dependencies, or unnecessary abstractions. The existing ownership helper remains available."
           },
           {
             "id": "usability",
             "result": "N/A",
-            "evidence": "No UI or workflow changed; the supplied change only affects server-side document authorization."
+            "evidence": "No UI or workflow changed; the supplied change concerns server-side authorization."
           }
         ],
         "findings": [
           {
             "file": "documents.py",
             "line": 3,
-            "reason": "HIGH: load_document returns the fetched document without enforcing ownership, allowing a non-owner to load it by ID. A local Python probe confirmed this, while require_owner rejected the same non-owner. Restore the existing require_owner(user, document) call before returning the document, with the appropriate import."
+            "reason": "HIGH: load_document returns the document without checking ownership, allowing a non-owner to retrieve it. The exact-fixture runtime probe reproduced this bypass. Call the existing authorization.require_owner(user, document) before returning the document."
           }
         ],
         "decision_errors": [],
-        "contract_errors": []
+        "contract_errors": [],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-455so6r8",
+        "observed_executions": []
       }
     },
     {
@@ -365,34 +401,34 @@
         "skill_sha256": "20ff87b95377c664083ff1e9138e05b92601a5bd3c7bb4a058c0ae259152745e",
         "gates": [
           {
-            "id": "1. Resolve the target",
+            "id": "1",
             "result": "PASS",
-            "evidence": "Inspected all three supplied fixture files. change.diff removes only the empty-input guard."
+            "evidence": "Reviewed change.diff and both supplied Python files."
           },
           {
-            "id": "2. Build a neutral review bundle",
+            "id": "2",
             "result": "PASS",
             "evidence": "User supplied the complete neutral bundle and confirmed no omitted or untracked paths."
           },
           {
-            "id": "3. Separate the evaluator",
+            "id": "3",
             "result": "PASS",
-            "evidence": "Fresh evaluator with no author history."
+            "evidence": "Fresh evaluator with no author history; reviewed only supplied instructions and fixtures."
           },
           {
-            "id": "4. Verify acceptance",
+            "id": "4",
             "result": "PASS",
-            "evidence": "python3 -B test_totals.py exited 0: 2 acceptance checks passed. Non-empty lists retain the original return sum(values) behavior."
+            "evidence": "Ran python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-5c80iimq/test_totals.py: exit 0, 2 acceptance checks passed. Diff preserves return sum(values) for non-empty lists."
           },
           {
-            "id": "5. Review adversarially",
+            "id": "5",
             "result": "PASS",
-            "evidence": "3,905 non-empty integer-list probes plus large-integer cancellation passed. Security and usability explicitly scoped out. A sandbox-blocked heredoc was rerun successfully using -c."
+            "evidence": "Five boundary probes passed: empty, zero, negative singleton, cancellation, and large integers. Security and usability explicitly scoped out with rationale. Removing the empty-list override is minimal."
           },
           {
-            "id": "6. Report the verdict",
+            "id": "6",
             "result": "PASS",
-            "evidence": "All required acceptance criteria pass; no material findings."
+            "evidence": "All required criteria passed; no material findings."
           }
         ],
         "findings": [],
@@ -404,6 +440,14 @@
           "simplicity: missing evidence or applicability rationale",
           "usability: expected N/A, got None",
           "usability: missing evidence or applicability rationale"
+        ],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-5c80iimq",
+        "observed_executions": [
+          {
+            "command": "/bin/zsh -lc 'python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-5c80iimq/test_totals.py'",
+            "exit_code": 0,
+            "aggregated_output": "python3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-Kn7u6DFk' (errno=Operation not permitted)\npython3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-v1im02GO' (errno=Operation not permitted)\n2 acceptance checks passed\n"
+          }
         ]
       },
       "after": {
@@ -415,17 +459,17 @@
           {
             "id": "acceptance",
             "result": "PASS",
-            "evidence": "python3 -B test_totals.py exited 0: 2 acceptance checks passed. Additional probes passed for 3,905 non-empty integer lists and one large-integer case. change.diff preserves return sum(values) for non-empty lists."
+            "evidence": "Ran python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-x9t0_ybf/test_totals.py: exit 0; '2 acceptance checks passed'. Empty input returns 0. Diff inspection confirms non-empty integer lists retain the identical return sum(values) operation. Launcher cache warnings did not prevent execution."
           },
           {
             "id": "security",
             "result": "N/A",
-            "evidence": "Explicitly scoped out: private pure helper with no IO or permission changes."
+            "evidence": "Explicitly scoped out: private pure helper with no IO, permissions, or changed trust boundaries."
           },
           {
             "id": "simplicity",
             "result": "PASS",
-            "evidence": "change.diff removes only the empty-input special case; totals.py:2 uses the existing built-in sum without new abstractions or dependencies."
+            "evidence": "change.diff removes only the empty-input special case. totals.py:2 uses the existing built-in sum without additional abstractions or dependencies."
           },
           {
             "id": "usability",
@@ -435,7 +479,15 @@
         ],
         "findings": [],
         "decision_errors": [],
-        "contract_errors": []
+        "contract_errors": [],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-x9t0_ybf",
+        "observed_executions": [
+          {
+            "command": "/bin/zsh -lc 'python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-x9t0_ybf/test_totals.py'",
+            "exit_code": 0,
+            "aggregated_output": "python3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-TChVqcXn' (errno=Operation not permitted)\npython3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-730QHXkf' (errno=Operation not permitted)\n2 acceptance checks passed\n"
+          }
+        ]
       }
     },
     {
@@ -450,30 +502,43 @@
           {
             "id": "Tests",
             "result": "PASS",
-            "evidence": "python3 -B test_cli.py exited 0: '2 automated checks passed'. Python emitted temporary-directory lookup warnings and cache-file permission errors."
+            "evidence": "test_cli.py exited 0: '2 automated checks passed'. Python emitted temporary-directory and denied xcrun cache-write warnings."
           },
           {
-            "id": "Unsupported format guidance",
+            "id": "Scenarios: unsupported format guidance",
             "result": "FAIL",
-            "evidence": "Observed helper receipt for --format bad: returncode=2, stdout=\"\", stderr=\"E42\". Missing valid formats and a retry command."
+            "evidence": "observe_cli.py receipt: {\"format\":\"bad\",\"returncode\":2,\"stdout\":\"\",\"stderr\":\"E42\"}. Missing valid formats and a retry command."
           },
           {
-            "id": "CSV recovery",
+            "id": "Scenarios: recover with csv",
             "result": "PASS",
-            "evidence": "Observed helper receipt for --format csv: returncode=0, stdout=\"export.csv\", stderr=\"\"."
+            "evidence": "observe_cli.py receipt: {\"format\":\"csv\",\"returncode\":0,\"stdout\":\"export.csv\",\"stderr\":\"\"}."
           }
         ],
         "findings": [
           {
             "file": "app.py",
             "line": 5,
-            "reason": "Unsupported formats produce only E42, without explaining valid formats or showing a retry command as required."
+            "reason": "Unsupported --format prints only E42; acceptance requires valid formats and a retry command."
           }
         ],
         "decision_errors": [],
         "contract_errors": [
           "usability: expected FAIL, got None",
           "usability: missing evidence or applicability rationale"
+        ],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-5kilzmra",
+        "observed_executions": [
+          {
+            "command": "/bin/zsh -lc 'python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-5kilzmra/test_cli.py'",
+            "exit_code": 0,
+            "aggregated_output": "python3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-iPojvbQl' (errno=Operation not permitted)\npython3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-GFoU3pCO' (errno=Operation not permitted)\n2 automated checks passed\n"
+          },
+          {
+            "command": "/bin/zsh -lc 'python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-5kilzmra/observe_cli.py'",
+            "exit_code": 0,
+            "aggregated_output": "python3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-OqxgLsbC' (errno=Operation not permitted)\npython3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-bCZrNHID' (errno=Operation not permitted)\n{\"format\": \"bad\", \"returncode\": 2, \"stdout\": \"\", \"stderr\": \"E42\"}\n{\"format\": \"csv\", \"returncode\": 0, \"stdout\": \"export.csv\", \"stderr\": \"\"}\n"
+          }
         ]
       },
       "after": {
@@ -483,25 +548,38 @@
         "skill_sha256": "ea841898ca53762c0a3277aaa56079acbc5a43a1cd3ecc9c84e6c95739207dde",
         "gates": [
           {
-            "id": "Usability",
-            "result": "FAIL",
-            "evidence": "observe_cli.py receipts: {\"format\":\"bad\",\"returncode\":2,\"stdout\":\"\",\"stderr\":\"E42\"}; {\"format\":\"csv\",\"returncode\":0,\"stdout\":\"export.csv\",\"stderr\":\"\"}. CSV recovery succeeds, but the unsupported format response supplies neither valid formats nor a retry command."
-          },
-          {
             "id": "Security",
             "result": "N/A",
-            "evidence": "The specified synthetic local export scenarios exercise no authorization or permission boundary."
+            "evidence": "No changed authorization or permission boundary in the requested local CLI scenarios."
+          },
+          {
+            "id": "Usability",
+            "result": "FAIL",
+            "evidence": "Observed receipts: unsupported --format bad returned exit 2, stdout \"\", stderr \"E42\"; no valid formats or retry command appeared. Recovery with --format csv returned exit 0, stdout \"export.csv\", stderr \"\". Recovery passed, but the required error guidance failed."
           }
         ],
         "findings": [
           {
             "file": "app.py",
             "line": 5,
-            "reason": "Unsupported --format emits only E42. Acceptance requires an explanation listing valid formats and a retry command, such as python3 -B app.py export --format csv."
+            "reason": "Unsupported formats produce only E42, omitting the required valid formats and retry command."
           }
         ],
         "decision_errors": [],
-        "contract_errors": []
+        "contract_errors": [],
+        "fixture_root": "/var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-t3mj81vz",
+        "observed_executions": [
+          {
+            "command": "/bin/zsh -lc 'python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-t3mj81vz/test_cli.py'",
+            "exit_code": 0,
+            "aggregated_output": "python3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-qKcnHMuf' (errno=Operation not permitted)\npython3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-Q5cjzrVD' (errno=Operation not permitted)\n2 automated checks passed\n"
+          },
+          {
+            "command": "/bin/zsh -lc 'python3 -B /var/folders/c2/hffw7pq12pv9v__rz47vcmkh0000gn/T/neural-gate-case-t3mj81vz/observe_cli.py'",
+            "exit_code": 0,
+            "aggregated_output": "python3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-n9q42jwA' (errno=Operation not permitted)\npython3: warning: confstr() failed with code 5: couldn't get path of DARWIN_USER_TEMP_DIR; using /tmp instead\npython3: error: couldn't create cache file '/tmp/xcrun_db-fEeQu94Y' (errno=Operation not permitted)\n{\"format\": \"bad\", \"returncode\": 2, \"stdout\": \"\", \"stderr\": \"E42\"}\n{\"format\": \"csv\", \"returncode\": 0, \"stdout\": \"export.csv\", \"stderr\": \"\"}\n"
+          }
+        ]
       }
     }
   ]
