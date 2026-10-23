@@ -1,0 +1,26 @@
+---
+description: "Revisión accionable de los quality gates de Neural Codex (seguridad, simplicidad, usabilidad) antes de dar un cambio por hecho."
+alwaysApply: true
+---
+
+# Quality gates
+
+Antes de dar un cambio por hecho, cerrá seguridad, simplicidad y usabilidad. El detalle largo vive en el repo fuente; esta regla solo dice qué revisar.
+
+- Contrato de cada gate: https://github.com/brolag/neural-codex/blob/main/plugins/neural-codex/skills/spec/SKILL.md
+- Recorrido del flujo: https://github.com/brolag/neural-codex/blob/main/docs/WORKFLOW.md
+- Qué cuenta como evidencia: https://github.com/brolag/neural-codex/blob/main/docs/VERIFICATION.md
+- Revisión independiente (`SHIP` / `HOLD`): https://github.com/brolag/neural-codex/blob/main/plugins/neural-codex/skills/vet/SKILL.md
+- Comportamiento observado (`PASS` / `FAIL`): https://github.com/brolag/neural-codex/blob/main/plugins/neural-codex/skills/exercise/SKILL.md
+
+## Qué revisar
+
+1. **Seguridad.** Si el cambio toca un límite de confianza o de datos, anotá el límite, el CWE, la mitigación y la verificación en ese límite. En web o servicios, citá solo requisitos aplicables de OWASP ASVS 5.0.0 con ID versionado (`v5.0.0-…`) después de leer el requisito. Cubrí, cuando aplique, rutas, secretos, comandos, autorización, efectos destructivos e integridad de la validación.
+2. **Simplicidad.** Usá ISO/IEC 25010:2023 (mantenibilidad) como referencia, no como certificado. Nombrá el símbolo existente que reutilizás y justificá cada abstracción o dependencia nueva contra el requisito real. Rechazá helpers duplicados, puntos de extensión sin uso y capas especulativas. El conteo de líneas no es el criterio.
+3. **Usabilidad.** Si hay un flujo de usuario u operador (incluye CLI e instalador), definí persona, tarea y contexto según ISO 9241-11:2018. Tiene que poder observarse el cierre de la tarea, un feedback entendible y la recuperación ante un error probable. En una superficie web modificada, revisá los criterios WCAG 2.2 A/AA afectados: teclado, foco visible y no tapado, nombre/rol/valor, contraste y cualquier otro criterio que el cambio toque. Un scan automático limpio es cobertura parcial: no afirma conformidad WCAG completa ni satisfacción de usuarios reales. Un cambio sin comportamiento visible para alguien queda `N/A` con el motivo de alcance.
+
+## Cómo se cierra
+
+Cada gate lleva aplicabilidad, un criterio observable, un `verify` (comando o procedimiento) y la evidencia exigida. Un gate ajeno al cambio es `N/A` con motivo concreto. Mientras el plan no está verificado, el gate aplicable queda `PLANNED`.
+
+Después de verificar, el resultado es `PASS` o `FAIL`. Lo que no se corrió es `FAIL`. En el harness, un chequeo requerido que no se pudo ejecutar queda `NOT RUN` y también impide cerrar (`SHIP` no sale; en exercise el veredicto pasa a `FAIL`). Sin la evidencia requerida el cambio no está listo. No bajes el criterio después de un fallo. Quien escribe el cambio no se aprueba a sí mismo: la revisión es independiente y el flujo se observa, no se infiere solo del código.
