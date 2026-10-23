@@ -1,6 +1,6 @@
 {
   "name": "neural-codex",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A gated Codex workflow from discovery through independent review and behavioral verification.",
   "author": {
     "name": "Alfredo Bonilla",

@@ -48,6 +48,14 @@ For every material item, record its source, impact, and whether it blocks planni
 
 Ask only questions whose answers can change interfaces, data ownership, security boundaries, dependencies, rollout, or user-visible behavior. Ask a small focused batch, explain the tradeoff, and recommend a default when evidence supports one.
 
+Record the evidence that will determine the three quality gates in `$spec`:
+
+- **Security:** which trust or data boundary changes, and who may perform the action?
+- **Simplicity:** which existing interface can be reused, and what justifies any new abstraction or dependency?
+- **Usability:** who completes which task, how they recognize success, and how they recover from an error? Include accessibility needs for a user-facing surface.
+
+Derive answers from the repository and resolved decisions first. Ask only about remaining material ambiguity. Discovery identifies applicability; it does not claim a gate has passed.
+
 Stop interviewing when remaining questions can be safely decided during planning or implementation. Never ask again for a decision already established by current evidence.
 
 ## 5. Pin references

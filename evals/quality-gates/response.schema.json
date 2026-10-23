@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "gates", "findings", "summary"],
+  "properties": {
+    "verdict": {"type": "string", "enum": ["DRAFT", "SHIP", "HOLD", "PASS", "FAIL"]},
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "result", "evidence"],
+        "properties": {
+          "id": {"type": "string"},
+          "result": {"type": "string", "enum": ["PLANNED", "PASS", "FAIL", "NOT RUN", "N/A"]},
+          "evidence": {"type": "string"}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "line", "reason"],
+        "properties": {
+          "file": {"type": "string"},
+          "line": {"type": "integer"},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "summary": {"type": "string"}
+  }
+}

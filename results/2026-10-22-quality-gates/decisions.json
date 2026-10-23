@@ -1,0 +1,508 @@
+{
+  "date": "2026-10-22",
+  "base_commit": "79218b60affc0d5c0cd24bf9a61a9349462deb0d",
+  "codex_cli": "0.153.3",
+  "cases_sha256": "9249ac034ca45e74cd5998501d975949d42cd388dd77a6582549aee4dac574bf",
+  "runner_sha256": "6e8acd1d1066bbcbcfc38d52079823fc8a2cde8a4811dcdd46321521910ca396",
+  "method": "Fresh ephemeral read-only sessions; expected oracle withheld; decisions and gate-contract coverage scored separately. Individual cases rerun after correcting evaluation isolation and command receipt capture. Results are bounded probes, not a full workflow or conformance audit.",
+  "results": [
+    {
+      "case": "plan-web-export",
+      "skill": "spec",
+      "before": {
+        "decision_passed": true,
+        "contract_passed": false,
+        "verdict": "DRAFT",
+        "skill_sha256": "bbe37e961606802725e0bda5706c48c2dd7c3c9c607eead97c2c1d2625127fb8",
+        "gates": [
+          {
+            "id": "1",
+            "result": "PASS",
+            "evidence": "Applicable: non-trivial planning. Read context.md:2. Reuse require_owner(user, account), export_csv(account), and the existing labeled button, status region, and error alert. Discovery was not supplied; repository paths, signatures beyond those supplied, and test commands remain unverified."
+          },
+          {
+            "id": "2",
+            "result": "PLANNED",
+            "evidence": "Applicable: interface and security contract. Reuse require_owner(user, account) -> existing authorization result and export_csv(account) -> existing CSV result; their paths and exact result types require confirmation. Proposed new interfaces: authenticated account export page and account-scoped download route; exact routes and paths remain unresolved. @invariant CWE-862/CWE-639: authenticate and authorize the requested account server-side before export_csv runs; verify unauthenticated and non-owner requests return no CSV and never call export_csv. @invariant CWE-200: successful output contains only the authorized account's data; verify with two distinguishable account fixtures. @invariant CWE-20: malformed account identifiers cannot reach export generation. Confirm existing CSV escaping and formula-handling behavior before locking validation requirements. Path handling, command execution, and destructive operations are outside the proposed feature; reassess if implementation introduces them."
+          },
+          {
+            "id": "3",
+            "result": "PLANNED",
+            "evidence": "Applicable: dependency and routing contract. S1 [tier: hard]: confirm existing interfaces, authentication pattern, route paths, CSV validation policy, and test entry points. S2 [tier: hard] [needs: S1]: implement authorized download using existing helpers. S3 [tier: mid] [needs: S1]: build the page using existing UI components and locked download contract. S4 [tier: mid] [needs: S2, S3]: verify integrated behavior. All referenced IDs exist; proposed graph is acyclic. These are future tasks, not authorization to implement."
+          },
+          {
+            "id": "4",
+            "result": "PLANNED",
+            "evidence": "Applicable: executable acceptance, security tests, behavioral verification, and independent review. S1 when planning interfaces, requires repository evidence, ensures exact signatures/paths and security boundaries are documented; verify each declaration resolves to an existing implementation or an explicitly new interface without duplication. S2 when requesting CSV, requires an authenticated owner of the requested account, ensures only that account is exported; verify owner success, unauthenticated denial, cross-account denial, and malformed identifiers with deterministic response and helper-call assertions. S3 when activating export, requires a selected account, ensures a discoverable labeled action, understandable status/error feedback, and preserved selection; verify keyboard activation, accessible names, status announcements, visible focus, and retry after a simulated failure. Must include the existing labeled button, status region, and error alert. S4 when exercising the integrated page, requires two accounts and controllable success/failure responses, ensures correct CSV contents and a successful retry without reselection; verify through a real browser download and keyboard-only flow. Define success as the download response being received or initiated, without claiming the file was saved to disk. Unit tests prove isolated logic; server integration tests prove authorization enforcement; browser checks prove user behavior; independent review challenges the final diff against this contract. None has been run."
+          },
+          {
+            "id": "5",
+            "result": "PLANNED",
+            "evidence": "Applicable: contradiction scan. Reuse is mandatory; introducing replacement authorization or CSV helpers would violate context.md:2. Preserve account selection across failures. Outstanding contract questions are existing authentication/route conventions, helper result types, account selection behavior, CSV safety guarantees, and verification commands. Resolve architecture-changing uncertainties before implementation. Bulk exports, new CSV formats, and unrelated account changes are out of scope."
+          },
+          {
+            "id": "6",
+            "result": "PLANNED",
+            "evidence": "Applicable: draft presentation and approval boundary. This JSON replaces workflow artifacts as requested; no files were changed and no implementation was performed. The plan remains draft pending resolution of interface details and explicit approval. Artifact path validation and plan.md creation are not applicable to this evaluation."
+          }
+        ],
+        "findings": [],
+        "decision_errors": [],
+        "contract_errors": [
+          "security: expected PLANNED, got None",
+          "security: missing evidence or applicability rationale",
+          "simplicity: expected PLANNED, got None",
+          "simplicity: missing evidence or applicability rationale",
+          "usability: expected PLANNED, got None",
+          "usability: missing evidence or applicability rationale"
+        ]
+      },
+      "after": {
+        "decision_passed": true,
+        "contract_passed": true,
+        "verdict": "DRAFT",
+        "skill_sha256": "bde0c1488e12c5ad5d8296e94785faaca22c08331ba01c094d328fc8f83aa8c4",
+        "gates": [
+          {
+            "id": "security",
+            "result": "PLANNED",
+            "evidence": "Applicable: authenticated export crosses an authorization and account-data boundary. Source: context.md:2. @invariant CWE-862/CWE-639: the server authenticates the caller and invokes existing require_owner(user, account) before export_csv(account), using the authorized account. Verify with request-level cases for unauthenticated callers, owners, non-owners, and substituted account identifiers; denied requests must return no CSV and must not invoke export_csv. An owner request must export only the selected owned account. Require test results and inspection of the server call path. Inspect the existing serializer and export schema before locking validation and sensitive-field criteria; do not assume export_csv is safe merely because it exists. Applicable ASVS 5.0.0 requirement IDs remain unresolved: the supplied fixture contains no requirement text and external lookup is prohibited. No mapping or security pass is claimed."
+          },
+          {
+            "id": "simplicity",
+            "result": "PLANNED",
+            "evidence": "Applicable: the repository already supplies the required authorization, export, and UI primitives (context.md:2). Reuse require_owner(user, account), export_csv(account), and the labeled button, status region, and error alert. Verify by comparing the proposed implementation with those existing definitions and inspecting the eventual diff: no duplicate authorization logic, CSV serializer, or equivalent UI components; any new abstraction or dependency must have a concrete requirement-based justification. Required evidence: source references and a documented comparison. ISO/IEC 25010:2023 maintainability is a quality reference, not a conformance claim. Actual definitions and paths were not supplied, so this comparison has not run."
+          },
+          {
+            "id": "usability",
+            "result": "PLANNED",
+            "evidence": "Applicable: account owners must discover and complete a browser download, understand its outcome, and recover while retaining account selection (context.md:2). Using ISO 9241-11:2018 as a framing reference, verify an owner can find the labeled action, start the export, receive understandable progress and outcome feedback, and retry an injected failure without reselecting the account. Distinguish export/download initiation from file-save completion unless completion is actually observable. Require browser scenario results and screenshots or event evidence. For WCAG 2.2 A/AA, include keyboard operation and no keyboard trap, logical focus order, visible and unobscured focus, accessible names/roles/values, status announcements, text and control contrast, and understandable error identification. Verify with automated accessibility checks plus manual keyboard and assistive-technology checks across idle, pending, success, and failure states. Require recorded results and coverage limits; exact standards mappings need verification against requirement text unavailable in the fixture. Scripted success and scans do not establish user satisfaction or full conformance."
+          }
+        ],
+        "findings": [],
+        "decision_errors": [],
+        "contract_errors": []
+      }
+    },
+    {
+      "case": "plan-internal-library",
+      "skill": "spec",
+      "before": {
+        "decision_passed": true,
+        "contract_passed": false,
+        "verdict": "DRAFT",
+        "skill_sha256": "bbe37e961606802725e0bda5706c48c2dd7c3c9c607eead97c2c1d2625127fb8",
+        "gates": [
+          {
+            "id": "1",
+            "result": "PASS",
+            "evidence": "Read the supplied context, helper, and tests. Discovery was skipped; context.md:2 resolves architectural decisions. Scope warrants planning because numeric precision is correctness-sensitive."
+          },
+          {
+            "id": "2",
+            "result": "PASS",
+            "evidence": "Locked signature: _round_minor_units(numerator: int, denominator: int) -> int [adapt] -> billing/math.py. Preserve validated integer inputs, positive denominator, nearest-integer ties-to-even behavior, and public API. Use standard-library decimal and reuse this helper. Security invariants are N/A: no relevant trust-boundary changes. UI verification is N/A."
+          },
+          {
+            "id": "3",
+            "result": "PASS",
+            "evidence": "Planned graph: S1 [tier: hard] specify precision strategy and regression vectors; S2 [tier: mid] [needs: S1] replace float arithmetic; S3 [tier: cheap] [needs: S2] execute acceptance checks. All references exist; graph is acyclic."
+          },
+          {
+            "id": "4",
+            "result": "PLANNED",
+            "evidence": "S1: when preparing replacement, requires arbitrary validated integers and positive denominator; ensures explicit expected results covering existing vectors, zero, negative values, even/odd half ties, large integers, and values immediately around large half ties; verify deterministic integer quotient/remainder expectations. S2: when replacing division, requires S1; ensures exact integer-to-Decimal conversion, isolated local context, explicitly sufficient precision, ROUND_HALF_EVEN, int output, and unchanged caller context; verify regression assertions and low ambient-precision scenarios. Precision must scale with operands; default Decimal precision is insufficient. S3: when implementation is complete, requires S2; ensures all acceptance assertions pass; verify python3 -B test_rounding.py. These tests establish covered numeric behavior, not exhaustive correctness; precision sufficiency also requires mathematical justification."
+          },
+          {
+            "id": "4",
+            "result": "NOT RUN",
+            "evidence": "Attempted python3 -B test_rounding.py, but the Python launcher could not create its /tmp/xcrun_db cache under read-only permissions. A separate reproduction also failed to start because the shell could not create a heredoc temporary file. No runtime result was obtained."
+          },
+          {
+            "id": "5",
+            "result": "PASS",
+            "evidence": "No requirement conflicts or blocking product decisions identified. Main implementation hazard is premature Decimal rounding near half ties. Require a precision bound that prevents crossing those thresholds. Out of scope: new abstractions, public API changes, UI, IO, permissions, schemas, and input-validation changes."
+          },
+          {
+            "id": "6",
+            "result": "PASS",
+            "evidence": "Draft presented as JSON under the explicit artifact override. No files changed or implementation performed. Implementation remains subject to explicit approval."
+          }
+        ],
+        "findings": [
+          {
+            "file": "billing/math.py",
+            "line": 2,
+            "reason": "Integer division converts to float before rounding, losing precision for large integers. For example, (2**53 + 1, 1) should return 9007199254740993 but float conversion cannot preserve that integer. This is a static finding; runtime verification was blocked."
+          },
+          {
+            "file": "test_rounding.py",
+            "line": 2,
+            "reason": "The existing three small half-tie assertions do not cover zero, large integers, or values around rounding thresholds, so they cannot establish the requested accuracy improvement."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": [
+          "Gate IDs must be unique strings",
+          "security: expected N/A, got None",
+          "security: missing evidence or applicability rationale",
+          "simplicity: expected PLANNED, got None",
+          "simplicity: missing evidence or applicability rationale",
+          "usability: expected N/A, got None",
+          "usability: missing evidence or applicability rationale"
+        ]
+      },
+      "after": {
+        "decision_passed": true,
+        "contract_passed": true,
+        "verdict": "DRAFT",
+        "skill_sha256": "bde0c1488e12c5ad5d8296e94785faaca22c08331ba01c094d328fc8f83aa8c4",
+        "gates": [
+          {
+            "id": "security",
+            "result": "N/A",
+            "evidence": "context.md:2 specifies validated integer inputs, positive denominator, and no IO, external data, permissions, or new trust boundary. No applicable boundary invariant or ASVS mapping."
+          },
+          {
+            "id": "simplicity",
+            "result": "PLANNED",
+            "evidence": "Reuse _round_minor_units in billing/math.py; use standard-library decimal without new abstractions or dependencies. Verify by comparing the final source with this fixture and running python3 -B test_rounding.py. Passing evidence requires unchanged signature/public API, no duplicate rounding implementation, and passing expanded cases. Use maintainability as the quality reference without claiming ISO conformance."
+          },
+          {
+            "id": "usability",
+            "result": "N/A",
+            "evidence": "context.md:2 excludes user/operator workflow changes. This private numerical helper changes no interface surface requiring usability or accessibility verification."
+          }
+        ],
+        "findings": [
+          {
+            "file": "billing/math.py",
+            "line": 2,
+            "reason": "Float division loses integer precision: the executed probe _round_minor_units(9007199254740993, 1) returned 9007199254740992 instead of 9007199254740993."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": []
+      }
+    },
+    {
+      "case": "reject-duplicate-abstraction",
+      "skill": "vet",
+      "before": {
+        "decision_passed": true,
+        "contract_passed": false,
+        "verdict": "HOLD",
+        "skill_sha256": "20ff87b95377c664083ff1e9138e05b92601a5bd3c7bb4a058c0ae259152745e",
+        "gates": [
+          {
+            "id": "3. Separate the evaluator",
+            "result": "PASS",
+            "evidence": "Fresh independent evaluator; supplied bundle declared complete."
+          },
+          {
+            "id": "4. Verify acceptance",
+            "result": "FAIL",
+            "evidence": "Trimming/lowercasing passed five Python probes. Existing normalize_label is not reused, and TransformRegistry introduces an extension point, violating two required criteria."
+          },
+          {
+            "id": "5. Review adversarially",
+            "result": "PASS",
+            "evidence": "Executed a counterexample: registering an identity handler for label makes '  HeLLo  ' remain unchanged."
+          }
+        ],
+        "findings": [
+          {
+            "file": "transform.py",
+            "line": 3,
+            "reason": "Duplicates strip().lower() instead of reusing labels.py's normalize_label, violating explicit acceptance. Call the existing helper."
+          },
+          {
+            "file": "transform.py",
+            "line": 4,
+            "reason": "register introduces a prohibited extension point and permits replacing normalization behavior. Remove the registry mechanism and use normalize_label directly."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": [
+          "security: expected N/A, got None",
+          "security: missing evidence or applicability rationale",
+          "simplicity: expected FAIL, got None",
+          "simplicity: missing evidence or applicability rationale",
+          "usability: expected N/A, got None",
+          "usability: missing evidence or applicability rationale"
+        ]
+      },
+      "after": {
+        "decision_passed": true,
+        "contract_passed": true,
+        "verdict": "HOLD",
+        "skill_sha256": "3a27d0d367c342fd8778572edeb78760bfe024bad98baee62df622b8556f6e2f",
+        "gates": [
+          {
+            "id": "acceptance",
+            "result": "FAIL",
+            "evidence": "Six Python comparisons passed for trimming/lowercasing, including empty, whitespace, mixed-case, and accented strings. However, transform.py duplicates normalize_label and introduces a registry and extension point, contradicting two acceptance criteria."
+          },
+          {
+            "id": "security",
+            "result": "N/A",
+            "evidence": "The supplied internal helper has no trust boundary or external effect."
+          },
+          {
+            "id": "simplicity",
+            "result": "FAIL",
+            "evidence": "transform.py:3 duplicates labels.py:1\u20132; TransformRegistry and register add an unnecessary abstraction and extension point."
+          },
+          {
+            "id": "usability",
+            "result": "N/A",
+            "evidence": "No UI or user workflow exists in the supplied scope."
+          }
+        ],
+        "findings": [
+          {
+            "file": "transform.py",
+            "line": 3,
+            "reason": "The lambda duplicates the existing normalize_label implementation instead of reusing it, violating explicit acceptance and creating separate maintenance points. Call normalize_label directly."
+          },
+          {
+            "file": "transform.py",
+            "line": 4,
+            "reason": "register introduces an explicitly prohibited extension point. A Python probe confirmed it can replace normalization with an identity handler. Remove the registry and registration mechanism."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": []
+      }
+    },
+    {
+      "case": "reject-missing-owner-check",
+      "skill": "vet",
+      "before": {
+        "decision_passed": true,
+        "contract_passed": false,
+        "verdict": "HOLD",
+        "skill_sha256": "20ff87b95377c664083ff1e9138e05b92601a5bd3c7bb4a058c0ae259152745e",
+        "gates": [
+          {
+            "id": "3. Separate the evaluator",
+            "result": "PASS",
+            "evidence": "Fresh independent evaluator reviewed only the supplied skill and complete fixture bundle."
+          },
+          {
+            "id": "4. Verify acceptance",
+            "result": "FAIL",
+            "evidence": "Owner loading succeeds, but nonowner loading also returns the document. change.diff:7 removes the required server-side require_owner call. No UI or workflow changes appear in the supplied diff."
+          },
+          {
+            "id": "5. Review adversarially",
+            "result": "FAIL",
+            "evidence": "Executed Python probe: user ID 2 loads a document owned by ID 1. Calling require_owner directly rejects that same user with PermissionError."
+          }
+        ],
+        "findings": [
+          {
+            "file": "documents.py",
+            "line": 3,
+            "reason": "HIGH: load_document returns the document without checking ownership, allowing nonowners to access it. Restore require_owner(user, document) before returning; the existing helper in authorization.py:1 enforces the required boundary."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": [
+          "security: expected FAIL, got None",
+          "security: missing evidence or applicability rationale",
+          "simplicity: expected PASS, got None",
+          "simplicity: missing evidence or applicability rationale",
+          "usability: expected N/A, got None",
+          "usability: missing evidence or applicability rationale"
+        ]
+      },
+      "after": {
+        "decision_passed": true,
+        "contract_passed": true,
+        "verdict": "HOLD",
+        "skill_sha256": "3a27d0d367c342fd8778572edeb78760bfe024bad98baee62df622b8556f6e2f",
+        "gates": [
+          {
+            "id": "acceptance",
+            "result": "FAIL",
+            "evidence": "Owner and non-owner probes both returned the document. change.diff:7 removes require_owner; documents.py contains no authorization check."
+          },
+          {
+            "id": "security",
+            "result": "FAIL",
+            "evidence": "documents.py:3 returns another user's document. The existing authorization.py helper correctly raised PermissionError for the same non-owner. This is missing authorization (CWE-862)."
+          },
+          {
+            "id": "simplicity",
+            "result": "PASS",
+            "evidence": "The supplied diff adds no helpers, dependencies, abstractions, or duplication. The authorization removal is covered by the security failure."
+          },
+          {
+            "id": "usability",
+            "result": "N/A",
+            "evidence": "No UI or workflow changed; the supplied change only affects server-side document authorization."
+          }
+        ],
+        "findings": [
+          {
+            "file": "documents.py",
+            "line": 3,
+            "reason": "HIGH: load_document returns the fetched document without enforcing ownership, allowing a non-owner to load it by ID. A local Python probe confirmed this, while require_owner rejected the same non-owner. Restore the existing require_owner(user, document) call before returning the document, with the appropriate import."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": []
+      }
+    },
+    {
+      "case": "accept-small-internal-fix",
+      "skill": "vet",
+      "before": {
+        "decision_passed": true,
+        "contract_passed": false,
+        "verdict": "SHIP",
+        "skill_sha256": "20ff87b95377c664083ff1e9138e05b92601a5bd3c7bb4a058c0ae259152745e",
+        "gates": [
+          {
+            "id": "1. Resolve the target",
+            "result": "PASS",
+            "evidence": "Inspected all three supplied fixture files. change.diff removes only the empty-input guard."
+          },
+          {
+            "id": "2. Build a neutral review bundle",
+            "result": "PASS",
+            "evidence": "User supplied the complete neutral bundle and confirmed no omitted or untracked paths."
+          },
+          {
+            "id": "3. Separate the evaluator",
+            "result": "PASS",
+            "evidence": "Fresh evaluator with no author history."
+          },
+          {
+            "id": "4. Verify acceptance",
+            "result": "PASS",
+            "evidence": "python3 -B test_totals.py exited 0: 2 acceptance checks passed. Non-empty lists retain the original return sum(values) behavior."
+          },
+          {
+            "id": "5. Review adversarially",
+            "result": "PASS",
+            "evidence": "3,905 non-empty integer-list probes plus large-integer cancellation passed. Security and usability explicitly scoped out. A sandbox-blocked heredoc was rerun successfully using -c."
+          },
+          {
+            "id": "6. Report the verdict",
+            "result": "PASS",
+            "evidence": "All required acceptance criteria pass; no material findings."
+          }
+        ],
+        "findings": [],
+        "decision_errors": [],
+        "contract_errors": [
+          "security: expected N/A, got None",
+          "security: missing evidence or applicability rationale",
+          "simplicity: expected PASS, got None",
+          "simplicity: missing evidence or applicability rationale",
+          "usability: expected N/A, got None",
+          "usability: missing evidence or applicability rationale"
+        ]
+      },
+      "after": {
+        "decision_passed": true,
+        "contract_passed": true,
+        "verdict": "SHIP",
+        "skill_sha256": "3a27d0d367c342fd8778572edeb78760bfe024bad98baee62df622b8556f6e2f",
+        "gates": [
+          {
+            "id": "acceptance",
+            "result": "PASS",
+            "evidence": "python3 -B test_totals.py exited 0: 2 acceptance checks passed. Additional probes passed for 3,905 non-empty integer lists and one large-integer case. change.diff preserves return sum(values) for non-empty lists."
+          },
+          {
+            "id": "security",
+            "result": "N/A",
+            "evidence": "Explicitly scoped out: private pure helper with no IO or permission changes."
+          },
+          {
+            "id": "simplicity",
+            "result": "PASS",
+            "evidence": "change.diff removes only the empty-input special case; totals.py:2 uses the existing built-in sum without new abstractions or dependencies."
+          },
+          {
+            "id": "usability",
+            "result": "N/A",
+            "evidence": "Explicitly scoped out: no user-visible interface or workflow changes."
+          }
+        ],
+        "findings": [],
+        "decision_errors": [],
+        "contract_errors": []
+      }
+    },
+    {
+      "case": "reject-unrecoverable-cli-error",
+      "skill": "exercise",
+      "before": {
+        "decision_passed": true,
+        "contract_passed": false,
+        "verdict": "FAIL",
+        "skill_sha256": "d24b09a3b5f8a7fbb08d376f0cbd9689f7810cbf9012e007d7810292fe178127",
+        "gates": [
+          {
+            "id": "Tests",
+            "result": "PASS",
+            "evidence": "python3 -B test_cli.py exited 0: '2 automated checks passed'. Python emitted temporary-directory lookup warnings and cache-file permission errors."
+          },
+          {
+            "id": "Unsupported format guidance",
+            "result": "FAIL",
+            "evidence": "Observed helper receipt for --format bad: returncode=2, stdout=\"\", stderr=\"E42\". Missing valid formats and a retry command."
+          },
+          {
+            "id": "CSV recovery",
+            "result": "PASS",
+            "evidence": "Observed helper receipt for --format csv: returncode=0, stdout=\"export.csv\", stderr=\"\"."
+          }
+        ],
+        "findings": [
+          {
+            "file": "app.py",
+            "line": 5,
+            "reason": "Unsupported formats produce only E42, without explaining valid formats or showing a retry command as required."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": [
+          "usability: expected FAIL, got None",
+          "usability: missing evidence or applicability rationale"
+        ]
+      },
+      "after": {
+        "decision_passed": true,
+        "contract_passed": true,
+        "verdict": "FAIL",
+        "skill_sha256": "ea841898ca53762c0a3277aaa56079acbc5a43a1cd3ecc9c84e6c95739207dde",
+        "gates": [
+          {
+            "id": "Usability",
+            "result": "FAIL",
+            "evidence": "observe_cli.py receipts: {\"format\":\"bad\",\"returncode\":2,\"stdout\":\"\",\"stderr\":\"E42\"}; {\"format\":\"csv\",\"returncode\":0,\"stdout\":\"export.csv\",\"stderr\":\"\"}. CSV recovery succeeds, but the unsupported format response supplies neither valid formats nor a retry command."
+          },
+          {
+            "id": "Security",
+            "result": "N/A",
+            "evidence": "The specified synthetic local export scenarios exercise no authorization or permission boundary."
+          }
+        ],
+        "findings": [
+          {
+            "file": "app.py",
+            "line": 5,
+            "reason": "Unsupported --format emits only E42. Acceptance requires an explanation listing valid formats and a retry command, such as python3 -B app.py export --format csv."
+          }
+        ],
+        "decision_errors": [],
+        "contract_errors": []
+      }
+    }
+  ]
+}
