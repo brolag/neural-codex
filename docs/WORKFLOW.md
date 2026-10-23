@@ -26,9 +26,34 @@ Use `$spec` to turn evidence into a build contract.
 $spec plan the approved authentication migration
 ```
 
-`plan.md` locks interfaces, CWE-tagged invariants, dependency-aware subtasks,
+`plan.md` locks interfaces, quality gates, dependency-aware subtasks,
 and executable acceptance. Its initial status is `draft`; implementation waits
 for explicit approval.
+
+## Quality criteria carried through the workflow
+
+| Gate ID | Plan locks | Vet judges | Exercise observes |
+|---|---|---|---|
+| `security` | Trust boundaries, mitigations, CWE and applicable ASVS 5.0.0 IDs | Boundary correctness and counterexamples | Applicable authorized/unauthorized flows |
+| `simplicity` | Reuse, justified abstractions/dependencies, maintainability | Duplication and speculative layers | Not a behavioral gate |
+| `usability` | User, task, feedback, error recovery, accessibility | Workflow risks and required evidence | Task completion, recovery, and platform accessibility |
+
+Each gate has applicability, a concrete criterion, verification, and expected
+evidence. An unrelated gate is `N/A` with a reason. In a draft, an applicable
+gate is `PLANNED`; after verification it is `PASS`, `FAIL`, or `NOT RUN`.
+Missing required evidence blocks success. Carry the same criteria through
+`$craft`, `$vet`, and `$exercise`; do not lower them after a failed check.
+
+The detailed contract lives in [$spec](../plugins/neural-codex/skills/spec/SKILL.md).
+It uses ASVS 5.0.0/CWE for applicable security requirements,
+ISO/IEC 25010:2023 as a maintainability reference, ISO 9241-11:2018 for usability,
+and WCAG 2.2 A/AA criteria for affected web accessibility. Accessibility is part
+of usability; a clean automated scan does not prove full conformance, and
+automated task success does not establish real users' satisfaction.
+
+For an older plan without these gate criteria, return to `$spec` to add their
+applicability and verification before `$craft`. Preserve the already agreed
+scope and decisions; obtain renewed approval only for a material contract change.
 
 ## 3. Craft
 

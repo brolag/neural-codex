@@ -44,6 +44,11 @@ self-approve, and green tests do not replace behavioral verification.
 
 See [the workflow guide](docs/WORKFLOW.md) for artifact contracts and examples.
 
+Material changes carry three quality gates through the same five skills:
+security, simplicity, and usability. Usability includes error recovery and
+accessibility. Every gate needs evidence or a justified `N/A`; green unit tests
+alone do not establish that a user can complete the task.
+
 ## Hooks
 
 The plugin includes dependency-free Python hooks for:

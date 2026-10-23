@@ -1,0 +1,66 @@
+[
+  {
+    "id": "plan-web-export",
+    "skill": "spec",
+    "task": "Plan a new authenticated CSV export page for account owners. The existing repository patterns are described in context.md. This is a non-trivial change. In the decision summary, include the quality gates you would lock, their applicability, and concrete verification criteria. Do not implement.",
+    "files": {
+      "context.md": "# Account export\nOwners may export only their own account. The service already has require_owner(user, account) and export_csv(account); reuse them. The UI component library includes a labeled button, status region, and error alert. Users must find the export action, understand whether it succeeded, and recover from a failed download without losing their account selection. The page supports keyboard use.\n"
+    },
+    "expected": {"verdict": "DRAFT", "gates": {"security": "PLANNED", "simplicity": "PLANNED", "usability": "PLANNED"}}
+  },
+  {
+    "id": "plan-internal-library",
+    "skill": "spec",
+    "task": "Plan a non-trivial replacement of the internal rounding algorithm described in context.md. Include gate applicability and verification in the decision summary. This work has no user interface or new trust boundary. Do not implement.",
+    "files": {
+      "context.md": "# Internal rounding helper\nReplace float division inside private _round_minor_units(numerator: int, denominator: int) -> int in billing/math.py using standard-library decimal, to preserve accuracy for large integers. Inputs are validated integers; denominator is positive. Round to the nearest integer, with ties to even, and preserve the existing public API. No IO, external data, permission, schema, or user/operator workflow changes. Reuse the existing helper rather than adding an abstraction. Verification command: python3 -B test_rounding.py. Existing small-number vectors must pass; add zero, negative, half-unit, and large-integer cases. No other decisions are blocking.\n",
+      "billing/math.py": "def _round_minor_units(numerator: int, denominator: int) -> int:\n    return round(numerator / denominator)\n",
+      "test_rounding.py": "from billing.math import _round_minor_units\nassert _round_minor_units(1, 2) == 0\nassert _round_minor_units(3, 2) == 2\nassert _round_minor_units(-3, 2) == -2\n"
+    },
+    "expected": {"verdict": "DRAFT", "gates": {"security": "N/A", "simplicity": "PLANNED", "usability": "N/A"}}
+  },
+  {
+    "id": "reject-duplicate-abstraction",
+    "skill": "vet",
+    "task": "Evaluate the supplied neutral change bundle for an internal normalization helper. You are already the independent evaluator. All files are supplied, with no omitted or untracked paths. Return the verdict and gate decisions. The acceptance is preserve trimming/lowercasing, reuse existing normalize_label, and add no framework or extension points. There is no UI, trust boundary, or external effect.",
+    "files": {
+      "change.diff": "diff --git a/transform.py b/transform.py\nnew file mode 100644\n--- /dev/null\n+++ b/transform.py\n@@ -0,0 +1,7 @@\n+class TransformRegistry:\n+    def __init__(self):\n+        self.handlers = {'label': lambda value: value.strip().lower()}\n+    def register(self, key, handler):\n+        self.handlers[key] = handler\n+    def label(self, value):\n+        return self.handlers['label'](value)\n",
+      "labels.py": "def normalize_label(value):\n    return value.strip().lower()\n",
+      "transform.py": "class TransformRegistry:\n    def __init__(self):\n        self.handlers = {'label': lambda value: value.strip().lower()}\n    def register(self, key, handler):\n        self.handlers[key] = handler\n    def label(self, value):\n        return self.handlers['label'](value)\n"
+    },
+    "expected": {"verdict": "HOLD", "gates": {"security": "N/A", "simplicity": "FAIL", "usability": "N/A"}, "finding_file": "transform.py"}
+  },
+  {
+    "id": "reject-missing-owner-check",
+    "skill": "vet",
+    "task": "Evaluate this neutral bundle as the fresh independent reviewer. All files are supplied, with no omitted or untracked paths. The acceptance requires that only the owner can load a document. Authorization must be enforced server-side, using the existing require_owner helper. No UI or workflow changed. Record gate decisions and a grounded finding for any failure.",
+    "files": {
+      "change.diff": "diff --git a/documents.py b/documents.py\n--- a/documents.py\n+++ b/documents.py\n@@ -1,4 +1,3 @@\n def load_document(user, document_id, db):\n     document = db.get(document_id)\n-    require_owner(user, document)\n     return document\n",
+      "documents.py": "def load_document(user, document_id, db):\n    document = db.get(document_id)\n    return document\n",
+      "authorization.py": "def require_owner(user, document):\n    if document.owner_id != user.id:\n        raise PermissionError('owner required')\n"
+    },
+    "expected": {"verdict": "HOLD", "gates": {"security": "FAIL", "simplicity": "PASS", "usability": "N/A"}, "finding_file": "documents.py"}
+  },
+  {
+    "id": "accept-small-internal-fix",
+    "skill": "vet",
+    "task": "Evaluate this neutral bundle as the fresh independent reviewer. All files are supplied, with no omitted or untracked paths. The only acceptance is sum_minor([]) == 0 and unchanged sums for non-empty integer lists; run python3 -B test_totals.py. Security and usability were explicitly scoped out with rationale: this private pure helper has no IO, permissions, or user-visible interface changes. Prefer the smallest solution. Return gate decisions and a verdict.",
+    "files": {
+      "change.diff": "diff --git a/totals.py b/totals.py\n--- a/totals.py\n+++ b/totals.py\n@@ -1,4 +1,2 @@\n def sum_minor(values):\n-    if not values:\n-        return None\n     return sum(values)\n",
+      "totals.py": "def sum_minor(values):\n    return sum(values)\n",
+      "test_totals.py": "from totals import sum_minor\nassert sum_minor([]) == 0\nassert sum_minor([1, 2, -1]) == 2\nprint('2 acceptance checks passed')\n"
+    },
+    "expected": {"verdict": "SHIP", "gates": {"security": "N/A", "simplicity": "PASS", "usability": "N/A"}, "executions": [{"command": "test_totals.py", "exit_code": 0, "output_contains": "2 acceptance checks passed"}]}
+  },
+  {
+    "id": "reject-unrecoverable-cli-error",
+    "skill": "exercise",
+    "task": "Exercise this local export CLI. First run python3 -B test_cli.py. The product acceptance requires that an unsupported --format explain the valid formats and show a retry command; then the user must be able to recover with --format csv. Run python3 -B observe_cli.py: this trusted local helper invokes both CLI scenarios separately and emits JSON receipts of each actual exit code and stdout/stderr. Use those observed receipts; reading the helper is not executing it. This is a synthetic local command with no external IO. Capture observed output in your decision summary; do not infer success from the passing test. Report only behavior-facing gates; simplicity belongs to vet.",
+    "files": {
+      "app.py": "import sys\nif sys.argv[1:] == ['export', '--format', 'csv']:\n    print('export.csv')\n    raise SystemExit(0)\nprint('E42', file=sys.stderr)\nraise SystemExit(2)\n",
+      "test_cli.py": "import subprocess, sys\np = subprocess.run([sys.executable, '-B', 'app.py', 'export', '--format', 'csv'], capture_output=True, text=True)\nassert p.returncode == 0 and p.stdout.strip() == 'export.csv'\np = subprocess.run([sys.executable, '-B', 'app.py', 'export', '--format', 'bad'], capture_output=True, text=True)\nassert p.returncode == 2\nprint('2 automated checks passed')\n",
+      "observe_cli.py": "import json, subprocess, sys\nfor fmt in ['bad', 'csv']:\n    result = subprocess.run([sys.executable, '-B', 'app.py', 'export', '--format', fmt], capture_output=True, text=True)\n    print(json.dumps({'format': fmt, 'returncode': result.returncode, 'stdout': result.stdout.strip(), 'stderr': result.stderr.strip()}))\n"
+    },
+    "expected": {"verdict": "FAIL", "gates": {"usability": "FAIL"}, "finding_file": "app.py", "executions": [{"command": "test_cli.py", "exit_code": 0, "output_contains": "2 automated checks passed"}, {"command": "observe_cli.py", "exit_code": 0, "observations": [{"format": "bad", "returncode": 2, "stdout": "", "stderr": "E42"}, {"format": "csv", "returncode": 0, "stdout": "export.csv", "stderr": ""}]}]}
+  }
+]

@@ -94,7 +94,7 @@ def test_craft_requires_approval_and_independent_gates() -> None:
 def test_vet_and_exercise_are_separate_evidence_gates() -> None:
     vet = _skill_text("vet")
     exercise = _skill_text("exercise")
-    for term in ("neutral review bundle", "fresh-reviewer", "SHIP", "HOLD", "active"):
+    for term in ("neutral review bundle", "fresh-reviewer", "SHIP", "HOLD"):
         assert term in vet
     for term in ("real user behavior", "evidence", "PASS", "FAIL", "Do not infer behavior solely"):
         assert term in exercise

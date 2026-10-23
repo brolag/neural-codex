@@ -37,6 +37,14 @@ Each scenario needs:
 - one observable expected result;
 - the evidence type captured at the assertion point.
 
+Cover the plan's applicable behavior-facing gates:
+
+- **Security:** observe the authorized/unauthorized or permission flow at the changed boundary using synthetic local data. Do not perform destructive or external probes.
+- **Usability:** drive the intended task, success feedback, a likely error, and recovery. Observe whether the user can understand what happened and what to do next; an exit code or successful HTTP response alone is insufficient. This applies to CLI, installer, and operator workflows as well as UI.
+- For a web usability gate, drive keyboard-only navigation and focus and run axe/Lighthouse or an equivalent available accessibility tool. Record applicable WCAG 2.2 A/AA checks, manual observations, scan violations, and untested criteria. A clean scan is partial evidence, not a claim of full conformance. Use appropriate accessibility checks for other platforms.
+
+Simplicity is judged by `$vet`, not by exercising a product. Keep security and usability applicability explicit; use `N/A` with rationale where no related behavior changed. Do not require a browser for a CLI-only scenario. Unavailable required checks remain `NOT RUN`; do not silently substitute source inspection or claim user satisfaction from an automated probe.
+
 ## 4. Drive the workflow
 
 Launch only local trusted software. Poll for readiness instead of using blind delays. Follow the same public commands and navigation a user would use.
@@ -52,7 +60,7 @@ Never trigger payment, deletion, sending, deployment, or another destructive/ext
 
 ## 5. Judge from observations
 
-A scenario passes only when the observed result matches the expected result and the supporting evidence exists. Console errors, non-zero exits, unexpected files, broken links, missing UI content, or unavailable required steps fail the scenario.
+A scenario passes only when the observed result matches the expected result and the supporting evidence exists. Unexpected console errors or non-zero exits, unexpected files, broken links, missing UI content, or unavailable required steps fail the scenario. An expected error response can pass a negative scenario only when its required explanation and recovery also work.
 
 Do not infer behavior solely from source inspection. When a surface cannot be run, label it `NOT RUN` and make the overall verdict `FAIL` if it is required.
 
@@ -73,6 +81,8 @@ Scenarios: <run/passed>
 - Evidence:
 
 ### Verdict: PASS | FAIL
+### Quality gates
+| Gate | PASS / FAIL / NOT RUN / N/A | Observed evidence or applicability rationale |
 ### Residual risk
 ```
 

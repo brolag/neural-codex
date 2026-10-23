@@ -22,6 +22,8 @@ Proceed only when:
 
 If the plan is missing, stale, blocked, or still ambiguous, stop and return to `$spec`. Validate that locked signatures still match the repository and the `[needs:]` graph is complete and acyclic.
 
+Require the plan's `security`, `simplicity`, and `usability` gates, each with observable acceptance and verification or a justified `N/A`. Return an incomplete gate contract to `$spec` before implementation. Preserve the existing approval and scope boundaries.
+
 ## 2. Capture the baseline before edits
 
 Write `baseline.md` beside the plan. Record:
@@ -52,9 +54,9 @@ Fix root causes rather than suppressing checks. Keep durable state in the plan a
 
 ## 4. Control deviations
 
-A locked signature, security invariant, or scope change is a plan deviation. Update the plan through `$spec`, append the reason to the Amend log, and obtain approval when the change materially alters behavior or side effects.
+A locked signature, quality gate (including a security invariant), or scope change is a plan deviation. Update the plan through `$spec`, append the reason to the Amend log, and obtain approval when the change materially alters behavior or side effects.
 
-New evidence may refine implementation details without approval only when it preserves the contract. Never weaken acceptance criteria to make a failing build look green.
+New evidence may refine implementation details without approval only when it preserves the contract. Never weaken acceptance criteria or drop a quality gate to make a failing build look green.
 
 ## 5. Run independent gates
 
@@ -65,6 +67,8 @@ After implementation checks pass:
 
 Both gates are required when behavior is runnable. If a gate is unavailable, failed, or inconclusive, report that state and do not call the build complete. Fix addressable findings and rerun the affected gate, with roughly three loops before escalating.
 
+Carry each quality gate's criterion and required evidence into the handoff. `$vet` judges security and simplicity and inspects usability risks; `$exercise` observes applicable security and usability flows, including error recovery and accessibility. A successful build or unit suite does not establish those outcomes.
+
 ## 6. Measure and stop for ship
 
 Repeat the baseline commands and report before -> after:
@@ -73,6 +77,7 @@ Repeat the baseline commands and report before -> after:
 - lint/type/doc validation;
 - relevant behavior or performance;
 - `$vet` verdict and `$exercise` verdict;
+- each quality gate's `PASS`, `FAIL`, `NOT RUN`, or justified `N/A`, with evidence tied to the evaluated change;
 - residual risk and unrun checks.
 
 When all required checks pass, set the plan to `done`, record `pending commit` unless a user-authorized commit already exists, and summarize changed files. STOP for human ship approval.

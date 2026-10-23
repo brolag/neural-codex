@@ -16,7 +16,7 @@ def _load(path: Path) -> dict[str, object]:
 def test_manifest_has_valid_current_plugin_shape() -> None:
     manifest = _load(PLUGIN / ".codex-plugin" / "plugin.json")
     assert manifest["name"] == "neural-codex"
-    assert manifest["version"] == "1.0.0"
+    assert manifest["version"] == "1.1.0"
     assert manifest["skills"] == "./skills/"
     assert manifest["repository"] == "https://github.com/brolag/neural-codex"
     assert manifest["homepage"] == "https://brolag.github.io/neural-codex/"

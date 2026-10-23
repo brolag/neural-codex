@@ -1,6 +1,6 @@
 ---
 name: vet
-description: Independently review a working tree, branch, pull request, or implemented plan before ship. Use for a material pre-merge gate that checks acceptance criteria, regressions, security boundaries, project consistency, cleanup quality, and active counterexamples in fresh context. Returns SHIP or HOLD with evidence.
+description: Independently review a working tree, branch, pull request, or implemented plan before ship. Check acceptance, security, simplicity, usability, regressions, and counterexamples in fresh context. Returns SHIP or HOLD with evidence.
 ---
 
 # Vet
@@ -55,6 +55,12 @@ A required `FAIL` or `NOT RUN` prevents `SHIP`.
 
 ## 5. Review adversarially
 
+Judge the three quality gates `security`, `simplicity`, and `usability` against the plan. Report `PASS`, `FAIL`, `NOT RUN`, or `N/A` with evidence or a concrete applicability rationale for each. Missing required criteria or evidence prevents `SHIP`. Without a plan, derive proportionate criteria from the request and changed surface; do not invent unrelated requirements.
+
+- **Security:** challenge each trust boundary and mitigation, using the plan's versioned ASVS 5.0.0 requirement and CWE where applicable. Cite the failed requirement when one was locked; do not treat a scanner result as proof of authorization correctness.
+- **Simplicity:** compare new code with existing symbols and dependencies. Flag duplicate helpers, unused extension points, and layers without a demonstrated requirement. Use ISO/IEC 25010:2023 maintainability as a reference, not a certification or a ban on justified abstractions.
+- **Usability:** check the intended user's complete task, feedback, and recovery from likely mistakes. For web changes, inspect the applicable WCAG 2.2 A/AA criteria and required manual/automated evidence. Accessibility is one part of usability. Source inspection cannot establish a runtime observation; preserve missing required behavioral evidence as `NOT RUN`. Respect a justified `N/A` for changes without a user workflow.
+
 Prioritize failures with real impact:
 
 - authorization, trust boundaries, and secret exposure;
@@ -80,6 +86,9 @@ Reviewer: <fresh reviewer transport or disclosed limitation>
 
 ### Acceptance
 | Criterion | Result | Evidence |
+
+### Quality gates
+| Gate | PASS / FAIL / NOT RUN / N/A | Evidence or applicability rationale |
 
 ### Findings
 #### CRITICAL | HIGH | MEDIUM: <title>
